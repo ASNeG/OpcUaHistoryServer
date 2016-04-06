@@ -18,15 +18,20 @@ namespace OpcUaHistory
 	class FileAccess
 	{
 	  public:
+		typedef enum {
+			Success
+		} Result;
+
 		FileAccess(void);
 		virtual ~FileAccess(void);
 
-		void write(
-			OpcUaNodeId& nodeId,
+		void fileName(const std::string& fileName);
+		std::string& fileName(void);
+
+		Result write(
 			OpcUaDataValue& dataValue
 		);
-		void read(
-			OpcUaNodeId& nodeId,
+		Result read(
 			boost::posix_time::ptime fromTime,
 			boost::posix_time::ptime toTime,
 			OpcUaDataValueArray& dataValueArray,
@@ -34,6 +39,7 @@ namespace OpcUaHistory
 		);
 
 	  private:
+		std::string fileName_;
 	};
 
 }

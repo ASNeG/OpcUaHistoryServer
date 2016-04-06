@@ -14,6 +14,7 @@ namespace OpcUaHistory
 {
 
 	FileAccess::FileAccess(void)
+	: fileName_()
 	{
 	}
 
@@ -22,22 +23,34 @@ namespace OpcUaHistory
 	}
 
 	void
+	FileAccess::fileName(const std::string& fileName)
+	{
+		fileName_ = fileName;
+	}
+
+	std::string&
+	FileAccess::fileName(void)
+	{
+		return fileName_;
+	}
+
+	FileAccess::Result
 	FileAccess::write(
-		OpcUaNodeId& nodeId,
 		OpcUaDataValue& dataValue
 	)
 	{
+		return Success;
 	}
 
-	void
+	FileAccess::Result
 	FileAccess::read(
-		OpcUaNodeId& nodeId,
 		boost::posix_time::ptime fromTime,
 		boost::posix_time::ptime toTime,
 		OpcUaDataValueArray& dataValueArray,
 		std::string& continuousPoint
 	)
 	{
+		return Success;
 	}
 
 }

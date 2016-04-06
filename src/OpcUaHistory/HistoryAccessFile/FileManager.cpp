@@ -21,4 +21,23 @@ namespace OpcUaHistory
 	{
 	}
 
+	void
+	FileManager::write(
+		const std::string& name,
+		OpcUaDataValue& dataValue
+	)
+	{
+	}
+
+	void
+	FileManager::read(
+		const std::string& name,
+		boost::posix_time::ptime fromTime,
+		boost::posix_time::ptime toTime,
+		OpcUaDataValueArray& dataValueArray,
+		std::string& continuousPoint
+	)
+	{
+	}
+
 }
