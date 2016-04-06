@@ -1,0 +1,10 @@
+[Unit]
+Description=opc ua history server
+
+[Service]
+Environment="LD_LIBRARY_PATH=/usr/lib/OpcUaStack:${LD_LIBRARY_PATH}"
+ExecStart=/usr/bin/OpcUaServer OpcUaHistory
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
