@@ -23,6 +23,30 @@ namespace OpcUaHistory
 	}
 
 	void
+	HistoryAccessFile::rootDirectory(const std::string& rootDirectory)
+	{
+		rootDirectory_ = rootDirectory;
+	}
+
+	std::string
+	HistoryAccessFile::rootDirectory(void)
+	{
+		return rootDirectory_;
+	}
+
+	void
+	HistoryAccessFile::maxFileSize(uint32_t maxFileSize)
+	{
+		maxFileSize_ = maxFileSize;
+	}
+
+	uint32_t
+	HistoryAccessFile::maxFileSize(void)
+	{
+		return maxFileSize_;
+	}
+
+	void
 	HistoryAccessFile::write(
 		OpcUaNodeId& nodeId,
 		OpcUaDataValue& dataValue

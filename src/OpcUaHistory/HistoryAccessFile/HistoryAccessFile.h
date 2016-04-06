@@ -22,6 +22,11 @@ namespace OpcUaHistory
 		HistoryAccessFile(void);
 		virtual ~HistoryAccessFile(void);
 
+		void rootDirectory(const std::string& rootDirectory);
+		std::string rootDirectory(void);
+		void maxFileSize(uint32_t maxFileSize);
+		uint32_t maxFileSize(void);
+
 		// HistoryAccessIf ----------------------------------------------------
 		virtual void write(
 			OpcUaNodeId& nodeId,
@@ -37,6 +42,8 @@ namespace OpcUaHistory
 		// HistoryAccessIf ----------------------------------------------------
 
 	  private:
+		std::string rootDirectory_;
+		uint32_t maxFileSize_;
 	};
 
 }
