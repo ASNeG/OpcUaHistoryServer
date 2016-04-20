@@ -13,7 +13,7 @@
 #ifndef __OpcUaHistory_FileOut_h__
 #define __OpcUaHistory_FileOut_h__
 
-#include "OpcUaHistory/HistoryAccess/HistoryAccessIf.h"
+#include "OpcUaHistory/HistoryAccessFile/FileAccess.h"
 
 using namespace OpcUaStackCore;
 
@@ -23,15 +23,10 @@ namespace OpcUaHistory
 	class FileOut
 	{
 	  public:
-		typedef enum {
-			Success
-		} Result;
-
 		FileOut(void);
 		virtual ~FileOut(void);
 
-
-		Result write(
+		FileAccess::Result write(
 			OpcUaDataValue& dataValue
 		);
 

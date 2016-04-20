@@ -6,24 +6,27 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/HistoryAccessFile/FileOut.h"
+#include "OpcUaHistory/HistoryAccessFile/FileIn.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	FileOut::FileOut(void)
+	FileIn::FileIn(void)
 	{
 	}
 
-	FileOut::~FileOut(void)
+	FileIn::~FileIn(void)
 	{
 	}
 
 	FileAccess::Result
-	FileOut::write(
-		OpcUaDataValue& dataValue
+	FileIn::read(
+		boost::posix_time::ptime fromTime,
+		boost::posix_time::ptime toTime,
+		OpcUaDataValueArray& dataValueArray,
+		std::string& continuousPoint
 	)
 	{
 		return FileAccess::Success;
