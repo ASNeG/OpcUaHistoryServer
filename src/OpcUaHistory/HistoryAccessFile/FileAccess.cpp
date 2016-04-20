@@ -35,23 +35,4 @@ namespace OpcUaHistory
 		return true;
 	}
 
-	FileAccess::Result
-	FileAccess::write(
-		OpcUaDataValue& dataValue
-	)
-	{
-		return Success;
-	}
-
-	FileAccess::Result
-	FileAccess::read(
-		boost::posix_time::ptime fromTime,
-		boost::posix_time::ptime toTime,
-		OpcUaDataValueArray& dataValueArray,
-		std::string& continuousPoint
-	)
-	{
-		return Success;
-	}
-
 }

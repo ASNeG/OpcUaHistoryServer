@@ -24,7 +24,8 @@ namespace OpcUaHistory
 	{
 	  public:
 		typedef enum {
-			Success
+			Success,
+			FileNotOpen
 		} Result;
 
 		FileAccess(void);
@@ -32,16 +33,6 @@ namespace OpcUaHistory
 
 		bool open(const std::string& fileName);
 		bool close(void);
-
-		Result write(
-			OpcUaDataValue& dataValue
-		);
-		Result read(
-			boost::posix_time::ptime fromTime,
-			boost::posix_time::ptime toTime,
-			OpcUaDataValueArray& dataValueArray,
-			std::string& continuousPoint
-		);
 
 	  private:
 		std::string fileName_;

@@ -13,6 +13,7 @@
 #ifndef __OpcUaHistory_FileOut_h__
 #define __OpcUaHistory_FileOut_h__
 
+#include <boost/filesystem/fstream.hpp>
 #include "OpcUaHistory/HistoryAccessFile/FileAccess.h"
 
 using namespace OpcUaStackCore;
@@ -26,11 +27,15 @@ namespace OpcUaHistory
 		FileOut(void);
 		virtual ~FileOut(void);
 
+		FileAccess::Result open(const std::string& fileName);
+		FileAccess::Result close(void);
+
 		FileAccess::Result write(
 			OpcUaDataValue& dataValue
 		);
 
 	  private:
+		boost::filesystem::ofstream ofs_;
 	};
 
 }
