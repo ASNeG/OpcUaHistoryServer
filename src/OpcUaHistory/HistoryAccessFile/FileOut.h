@@ -29,12 +29,11 @@ namespace OpcUaHistory
 
 		FileAccess::Result open(const std::string& fileName);
 		FileAccess::Result close(void);
-
-		FileAccess::Result write(
-			OpcUaDataValue& dataValue
-		);
+		FileAccess::Result write(OpcUaDataValue& dataValue);
 
 	  private:
+		uint32_t writeBytes_;
+		std::string fileName_;
 		boost::filesystem::ofstream ofs_;
 	};
 

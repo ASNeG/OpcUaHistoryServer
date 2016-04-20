@@ -25,7 +25,8 @@ namespace OpcUaHistory
 	  public:
 		typedef enum {
 			Success,
-			FileNotOpen
+			FileNotOpen,
+			FileWriteFailed
 		} Result;
 
 		FileAccess(void);
