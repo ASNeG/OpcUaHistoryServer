@@ -3,6 +3,11 @@
    Alle Rechte vorbehalten.
 
    Autor: Kai Huebl (kai@huebl-sgh.de)
+
+
+   File := Record*
+   Record := Length SourceTimestamp ServerTimestamp StatusCode Variant
+
  */
 
 #ifndef __OpcUaHistory_FileAccess_h__
@@ -25,8 +30,8 @@ namespace OpcUaHistory
 		FileAccess(void);
 		virtual ~FileAccess(void);
 
-		void fileName(const std::string& fileName);
-		std::string& fileName(void);
+		bool open(const std::string& fileName);
+		bool close(void);
 
 		Result write(
 			OpcUaDataValue& dataValue

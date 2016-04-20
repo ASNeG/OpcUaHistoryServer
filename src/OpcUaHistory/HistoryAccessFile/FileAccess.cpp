@@ -22,16 +22,17 @@ namespace OpcUaHistory
 	{
 	}
 
-	void
-	FileAccess::fileName(const std::string& fileName)
+	bool
+	FileAccess::open(const std::string& fileName)
 	{
 		fileName_ = fileName;
+		return true;
 	}
 
-	std::string&
-	FileAccess::fileName(void)
+	bool
+	FileAccess::close(void)
 	{
-		return fileName_;
+		return true;
 	}
 
 	FileAccess::Result
