@@ -36,6 +36,7 @@ namespace OpcUaHistory
 		);
 
 	  private:
+		// configuration parameters
 		std::string basePath_;
 		uint32_t maxNumberFilesPerDirectory_;
 		uint32_t maxFileSize_;
