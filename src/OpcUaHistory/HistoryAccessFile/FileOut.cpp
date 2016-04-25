@@ -16,7 +16,8 @@ namespace OpcUaHistory
 {
 
 	FileOut::FileOut(void)
-	: ofs_()
+	: DoublyLinkedList()
+	, ofs_()
 	, writeBytes_(0)
 	{
 	}

@@ -14,6 +14,7 @@
 #define __OpcUaHistory_FileOut_h__
 
 #include <boost/filesystem/fstream.hpp>
+#include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaHistory/HistoryAccessFile/FileAccess.h"
 
 using namespace OpcUaStackCore;
@@ -22,8 +23,11 @@ namespace OpcUaHistory
 {
 
 	class FileOut
+	: public DoublyLinkedList
 	{
 	  public:
+		typedef std::map<std::string, FileOut*> Map;
+
 		FileOut(void);
 		virtual ~FileOut(void);
 
