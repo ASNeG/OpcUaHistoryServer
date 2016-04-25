@@ -9,6 +9,7 @@
 #define __OpcUaHistory_FileOutManager_h__
 
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
+#include "OpcUaHistory/HistoryAccessFile/FileOut.h"
 
 using namespace OpcUaStackCore;
 
@@ -30,17 +31,26 @@ namespace OpcUaHistory
 		void maxOpenFiles(uint32_t maxOpenFiles);
 		uint32_t maxOpenFiles(void);
 
-		void write(
+		FileAccess::Result write(
 			const std::string& name,
 			OpcUaDataValue& dataValue
 		);
 
 	  private:
+		FileOut* createFileOutEntry(const std::string& name);
+		void removeFileOutEntry(FileOut* fileOut);
+		void updateFileOutEntry(FileOut* fileOut);
+
 		// configuration parameters
 		std::string basePath_;
 		uint32_t maxNumberFilesPerDirectory_;
 		uint32_t maxFileSize_;
 		uint32_t maxOpenFiles_;
+
+		// management parameter
+		FileOut::Map fileOutMap_;
+		DoublyLinkedList fileOutList_;
+
 	};
 
 }
