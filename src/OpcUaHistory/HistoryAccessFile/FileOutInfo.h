@@ -28,7 +28,7 @@ namespace OpcUaHistory
 		bool createDataFolder(boost::filesystem::path& valueFolder, std::string& newestDataFolder);
 		bool getNewestDataFile(boost::filesystem::path& dataFolder, std::string& newestDataFile);
 		bool createDataFile(boost::filesystem::path& dataFolder, std::string& newestDataFile);
-		bool reafFileInfo(boost::filesystem::path& dataFile);
+		bool readFileInfo(boost::filesystem::path& dataFile);
 
 		// file information
 		bool newFile_;

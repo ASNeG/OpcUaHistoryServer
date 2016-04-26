@@ -76,7 +76,7 @@ namespace OpcUaHistory
 		dataFile_ = dataFolder_ / newestDataFile;
 
 		// get file information
-		if (!reafFileInfo(dataFile_)) {
+		if (!readFileInfo(dataFile_)) {
 			Log(Error, "read data file info error")
 				.parameter("DataFile", dataFile_.string());
 			return false;
@@ -189,16 +189,25 @@ namespace OpcUaHistory
 		// create new data file
 		boost::filesystem::path dataFile = dataFolder / newestDataFile;
 		std::ofstream o(dataFile.string().c_str());
+		countEntriesInFile_++;
 		newFile_ = true;
 
 		return true;
 	}
 
 	bool
-	FileOutInfo::reafFileInfo(boost::filesystem::path& dataFile)
+	FileOutInfo::readFileInfo(boost::filesystem::path& dataFile)
 	{
 		// check if file new
 		if (newFile_) {
+			countEntriesInFile_ = 0;
+			newFile_ = false;
+			return true;
+		}
+
+		// get file size
+		uint32_t fileSize = boost::filesystem::file_size(dataFile);
+		if (fileSize == 0) {
 			countEntriesInFile_ = 0;
 			newFile_ = false;
 			return true;
