@@ -17,6 +17,10 @@ namespace OpcUaHistory
 {
 
 	FileOutInfo::FileOutInfo(void)
+	: baseFolder_()
+	, valueFolder_()
+	, dataFolder_()
+	, dataFile_()
 	{
 	}
 
@@ -25,53 +29,53 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutInfo::readFileInfo(const std::string& path, const std::string& name)
+	FileOutInfo::readFileInfo(const std::string& baseFolder, const std::string& name)
 	{
+		baseFolder_ = baseFolder;
+		valueFolder_ = baseFolder_ / name;
+
 		// check if base folder exists
-		boost::filesystem::path baseFolder(path);
-		if (!boost::filesystem::exists(baseFolder)) {
+		if (!boost::filesystem::exists(baseFolder_)) {
 			Log(Error, "history base folder not exist")
-				.parameter("BaseFolder", baseFolder.string());
+				.parameter("BaseFolder", baseFolder_.string());
 			return false;
 		}
 
 		// check if value folder exists - if not create new value folder
-		boost::filesystem::path valueFolder;
-		valueFolder = baseFolder / name;
-		if (!boost::filesystem::exists(valueFolder)) {
-			if (!createValueFolder(valueFolder)) {
+		if (!boost::filesystem::exists(valueFolder_)) {
+			if (!createValueFolder(valueFolder_)) {
 				return false;
 			}
 		}
 
 		// get newest data folder
 		std::string newestDataFolder = "";
-		if (!getNewestDataFolder(valueFolder, newestDataFolder)) {
-			if (!createDataFolder(valueFolder, newestDataFolder)) {
+		if (!getNewestDataFolder(valueFolder_, newestDataFolder)) {
+			if (!createDataFolder(valueFolder_, newestDataFolder)) {
 				Log(Error, "create data folder error")
-					.parameter("ValueFolder", valueFolder.string())
+					.parameter("ValueFolder", valueFolder_.string())
 					.parameter("DataFolder", newestDataFolder);
 				return false;
 			}
 		}
+		dataFolder_ = valueFolder_ / newestDataFolder;
 
 		// get newest data file
 		std::string newestDataFile = "";
-		boost::filesystem::path dataFolder;
-		dataFolder = valueFolder / newestDataFolder;
-		if (!getNewestDataFile(dataFolder, newestDataFile)) {
-			if (!createDataFile(dataFolder, newestDataFile)) {
+		if (!getNewestDataFile(dataFolder_, newestDataFile)) {
+			if (!createDataFile(dataFolder_, newestDataFile)) {
 				Log(Error, "create data file error")
-					.parameter("DataFolder", dataFolder.string())
+					.parameter("DataFolder", dataFolder_.string())
 					.parameter("DataFile", newestDataFile);
 				return false;
 			}
 		}
+		dataFile_ = dataFolder_ / newestDataFile;
 
 		// get file information
-		boost::filesystem::path dataFile = dataFolder / newestDataFile;
 
-		Log(Error, "xxxx").parameter("xxx", dataFile.string());
+
+		Log(Error, "xxxx").parameter("xxx", dataFile_.string());
 
 		return true;
 	}
