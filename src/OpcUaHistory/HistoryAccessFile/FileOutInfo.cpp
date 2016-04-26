@@ -17,10 +17,13 @@ namespace OpcUaHistory
 {
 
 	FileOutInfo::FileOutInfo(void)
-	: baseFolder_()
+	: newFile_(false)
+	, baseFolder_()
 	, valueFolder_()
 	, dataFolder_()
 	, dataFile_()
+	, countEntriesInFile_(0)
+	, countFilesInDataFolder_(0)
 	{
 	}
 
@@ -73,7 +76,11 @@ namespace OpcUaHistory
 		dataFile_ = dataFolder_ / newestDataFile;
 
 		// get file information
-
+		if (!reafFileInfo(dataFile_)) {
+			Log(Error, "read data file info error")
+				.parameter("DataFile", dataFile_.string());
+			return false;
+		}
 
 		Log(Error, "xxxx").parameter("xxx", dataFile_.string());
 
@@ -143,6 +150,7 @@ namespace OpcUaHistory
 	bool
 	FileOutInfo::getNewestDataFile(boost::filesystem::path& dataFolder, std::string& newestDataFile)
 	{
+		countFilesInDataFolder_ = 0;
 		newestDataFile = "";
 		boost::filesystem::directory_iterator it(dataFolder);
 		boost::filesystem::directory_iterator itend;
@@ -151,6 +159,7 @@ namespace OpcUaHistory
 				continue;
 			}
 
+			countFilesInDataFolder_++;
 			std::string dataFile = (*it).path().leaf().string();
 
 			if (newestDataFile.empty()) {
@@ -180,6 +189,23 @@ namespace OpcUaHistory
 		// create new data file
 		boost::filesystem::path dataFile = dataFolder / newestDataFile;
 		std::ofstream o(dataFile.string().c_str());
+		newFile_ = true;
+
+		return true;
+	}
+
+	bool
+	FileOutInfo::reafFileInfo(boost::filesystem::path& dataFile)
+	{
+		// check if file new
+		if (newFile_) {
+			countEntriesInFile_ = 0;
+			newFile_ = false;
+			return true;
+		}
+
+		// read number of entries in file
+		// FIXME: todo
 
 		return true;
 	}
