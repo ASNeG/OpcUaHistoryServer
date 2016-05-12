@@ -7,6 +7,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <boost/asio.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDateTime.h"
 #include "OpcUaHistory/HistoryAccessFile/FileOutInfo.h"
@@ -17,18 +19,36 @@ namespace OpcUaHistory
 {
 
 	FileOutInfo::FileOutInfo(void)
-	: newFile_(false)
-	, baseFolder_()
+	: baseFolder_()
 	, valueFolder_()
 	, dataFolder_()
 	, dataFile_()
-	, countEntriesInFile_(0)
+	, countFolderInValueFolder_(0)
 	, countFilesInDataFolder_(0)
+	, countEntriesInFile_(0)
 	{
 	}
 
 	FileOutInfo::~FileOutInfo(void)
 	{
+	}
+
+	uint16_t
+	FileOutInfo::countFolderInValueFolder(void)
+	{
+		return countFolderInValueFolder_;
+	}
+
+	uint16_t
+	FileOutInfo::countFilesInDataFolder(void)
+	{
+		return countFilesInDataFolder_;
+	}
+
+	uint16_t
+	FileOutInfo::countEntriesInFile(void)
+	{
+		return countEntriesInFile_;
 	}
 
 	bool
@@ -102,6 +122,7 @@ namespace OpcUaHistory
 	bool
 	FileOutInfo::getNewestDataFolder(boost::filesystem::path& valueFolder, std::string& newestDataFolder)
 	{
+		countFolderInValueFolder_ = 0;
 		newestDataFolder = "";
 		boost::filesystem::directory_iterator it(valueFolder);
 		boost::filesystem::directory_iterator itend;
@@ -110,6 +131,7 @@ namespace OpcUaHistory
 				continue;
 			}
 
+			countFolderInValueFolder_++;
 			std::string dataFolder = (*it).path().leaf().string();
 
 			if (newestDataFolder.empty()) {
@@ -123,7 +145,7 @@ namespace OpcUaHistory
 			}
 		}
 
-		if (newestDataFolder.empty()) {
+		if (countFolderInValueFolder_ == 0) {
 			return false;
 		}
 
@@ -143,6 +165,7 @@ namespace OpcUaHistory
 			    .parameter("DataFolder", dataFolder.string());
 			return false;
 		}
+		countFolderInValueFolder_++;
 
 		return true;
 	}
@@ -190,7 +213,6 @@ namespace OpcUaHistory
 		boost::filesystem::path dataFile = dataFolder / newestDataFile;
 		std::ofstream o(dataFile.string().c_str());
 		countEntriesInFile_++;
-		newFile_ = true;
 
 		return true;
 	}
@@ -198,23 +220,27 @@ namespace OpcUaHistory
 	bool
 	FileOutInfo::readFileInfo(boost::filesystem::path& dataFile)
 	{
-		// check if file new
-		if (newFile_) {
-			countEntriesInFile_ = 0;
-			newFile_ = false;
-			return true;
-		}
-
 		// get file size
 		uint32_t fileSize = boost::filesystem::file_size(dataFile);
 		if (fileSize == 0) {
 			countEntriesInFile_ = 0;
-			newFile_ = false;
 			return true;
 		}
 
 		// read number of entries in file
-		// FIXME: todo
+		boost::filesystem::ifstream ifs;
+		ifs.open(dataFile, std::ios::in | std::ios::app | std::ios::binary);
+		if (ifs.fail()) {
+			Log(Error, "file open failed")
+				.parameter("FileName", dataFile.string());
+			return false;
+		}
+		ifs.seekg(fileSize-2);
+
+		boost::asio::streambuf sb;
+		std::iostream ios(&sb);
+		ios << ifs;
+		OpcUaNumber::opcUaBinaryDecode(ios, countEntriesInFile_);
 
 		return true;
 	}

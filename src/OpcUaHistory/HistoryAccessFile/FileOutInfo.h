@@ -20,6 +20,9 @@ namespace OpcUaHistory
 		FileOutInfo(void);
 		virtual ~FileOutInfo(void);
 
+		uint16_t countFolderInValueFolder(void);
+		uint16_t countFilesInDataFolder(void);
+		uint16_t countEntriesInFile(void);
 		bool readFileInfo(const std::string& baseFolder, const std::string& name);
 
 	  private:
@@ -31,13 +34,13 @@ namespace OpcUaHistory
 		bool readFileInfo(boost::filesystem::path& dataFile);
 
 		// file information
-		bool newFile_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
 		boost::filesystem::path dataFolder_;
 		boost::filesystem::path dataFile_;
-		uint32_t countFilesInDataFolder_;
-		uint32_t countEntriesInFile_;
+		uint16_t countFolderInValueFolder_;
+		uint16_t countFilesInDataFolder_;
+		uint16_t countEntriesInFile_;
 
 	};
 

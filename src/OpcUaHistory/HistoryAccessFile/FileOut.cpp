@@ -50,7 +50,8 @@ namespace OpcUaHistory
 
 	FileAccess::Result
 	FileOut::write(
-		OpcUaDataValue& dataValue
+		OpcUaDataValue& dataValue,
+		uint16_t countEntriesInFile
 	)
 	{
 		// write data value to stream buffer
@@ -62,6 +63,7 @@ namespace OpcUaHistory
 		if (dataValue.statusCode() == Success) {
 			dataValue.variant()->opcUaBinaryEncode(ios1);
 		}
+		OpcUaNumber::opcUaBinaryEncode(ios1, countEntriesInFile);
 
 		// write data length to stream buffer
 		boost::asio::streambuf sb2;

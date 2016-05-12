@@ -104,7 +104,7 @@ namespace OpcUaHistory
 		}
 
 		// write data value to file
-		FileAccess::Result result = fileOut->write(dataValue);
+		FileAccess::Result result = fileOut->write(dataValue, 0);
 		if (result != FileAccess::Success) {
 			removeFileOutEntry(fileOut);
 			return result;

@@ -33,7 +33,7 @@ namespace OpcUaHistory
 
 		FileAccess::Result open(const std::string& fileName);
 		FileAccess::Result close(void);
-		FileAccess::Result write(OpcUaDataValue& dataValue);
+		FileAccess::Result write(OpcUaDataValue& dataValue, uint16_t countEntriesInFile);
 
 	  private:
 		uint32_t writeBytes_;
