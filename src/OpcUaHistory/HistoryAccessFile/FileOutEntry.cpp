@@ -5,6 +5,7 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
+#include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaHistory/HistoryAccessFile/FileOutEntry.h"
 
 namespace OpcUaHistory
@@ -13,7 +14,8 @@ namespace OpcUaHistory
 	FileOutEntry::FileOutEntry(void)
 	: DoublyLinkedList()
 	, valueName_("")
-	, basePath_()
+	, baseFolder_()
+	, valueFolder_()
 	, maxDataFolderInValueFolder_(1000)
 	, maxDataFilesInDataFolder_(1000)
 	, maxEntriesInDataFile_(300)
@@ -49,18 +51,45 @@ namespace OpcUaHistory
 	FileOutEntry::valueName(const std::string& valueName)
 	{
 		valueName_ = valueName;
+		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	void
-	FileOutEntry::basePath(const boost::filesystem::path& basePath)
+	FileOutEntry::baseFolder(const boost::filesystem::path& baseFolder)
 	{
-		basePath_ = basePath;
+		baseFolder_ = baseFolder;
+		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	bool
 	FileOutEntry::write(OpcUaDataValue& dataValue)
 	{
-		// FIXME:
+		// check if base folder exists
+		if (!boost::filesystem::exists(baseFolder_)) {
+			Log(Error, "base folder not exist")
+				.parameter("BaseFolder", baseFolder_.string());
+			return false;
+		}
+
+		// check if value folder exists - if not create new value folder
+		if (!boost::filesystem::exists(valueFolder_)) {
+			if (!createValueFolder()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool
+	FileOutEntry::createValueFolder(void)
+	{
+		if (!boost::filesystem::create_directory(valueFolder_)) {
+			Log(Error, "create value folder error")
+			    .parameter("ValueFolder", valueFolder_.string());
+			return false;
+		}
+
 		return true;
 	}
 

@@ -29,15 +29,17 @@ namespace OpcUaHistory
 		void maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder);
 		void maxEntriesInDataFile(uint16_t maxEntriesInDataFile);
 		void valueName(const std::string& valueName);
-		void basePath(const boost::filesystem::path& basePath);
+		void baseFolder(const boost::filesystem::path& baseFolder);
 
 		bool write(OpcUaDataValue& dataValue);
 
 	  private:
+		bool createValueFolder(void);
 
 		// configuration parameters
 		std::string valueName_;
-		boost::filesystem::path basePath_;
+		boost::filesystem::path baseFolder_;
+		boost::filesystem::path valueFolder_;
 		uint16_t maxDataFolderInValueFolder_;
 		uint16_t maxDataFilesInDataFolder_;
 		uint16_t maxEntriesInDataFile_;
