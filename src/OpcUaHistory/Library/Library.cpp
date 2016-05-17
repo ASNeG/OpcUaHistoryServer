@@ -20,7 +20,6 @@
 #include "OpcUaHistory/Library/Library.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
-#include "OpcUaHistory/HistoryAccessFile/FileOutInfo.h"
 #include <iostream>
 
 namespace OpcUaHistory
@@ -42,9 +41,6 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::startup");
 
-
-		FileOutInfo f;
-		f.readFileInfo("/home/huebl", "xx");
 
 		return true;
 	}
