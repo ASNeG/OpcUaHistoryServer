@@ -10,6 +10,7 @@
 #define __OpcUaHistory_FileOutEntry_h__
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
@@ -35,11 +36,19 @@ namespace OpcUaHistory
 
 	  private:
 		bool createValueFolder(void);
+		void getNewestDataFolder(void);
+		bool createDataFolder(OpcUaDataValue& dataValue);
+		void getNewestDataFile(void);
+		bool createDataFile(OpcUaDataValue& dataValue);
+		bool openDataFile(OpcUaDataValue& dataValue);
+		bool writeData(OpcUaDataValue& dataValue);
 
 		// configuration parameters
 		std::string valueName_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
+		boost::filesystem::path dataFolder_;
+		boost::filesystem::path dataFile_;
 		uint16_t maxDataFolderInValueFolder_;
 		uint16_t maxDataFilesInDataFolder_;
 		uint16_t maxEntriesInDataFile_;
@@ -47,6 +56,8 @@ namespace OpcUaHistory
 		uint16_t countDataFolderInValueFolder_;
 		uint16_t countDataFilesInDataFolder_;
 		uint16_t countEntriesInDataFile_;
+
+		boost::filesystem::ofstream ofs_;
 	};
 
 }
