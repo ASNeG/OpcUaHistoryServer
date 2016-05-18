@@ -16,7 +16,7 @@ namespace OpcUaHistory
 	FileOutEntry::FileOutEntry(void)
 	: DoublyLinkedList()
 	, valueName_("")
-	, baseFolder_()
+	, baseFolder_(".")
 	, valueFolder_()
 	, dataFolder_()
 	, dataFile_()
@@ -194,7 +194,7 @@ namespace OpcUaHistory
 				continue;
 			}
 
-			if (*it > newestDataFile) {
+			if (dataFile > newestDataFile) {
 				newestDataFile = dataFile;
 				continue;
 			}
@@ -224,6 +224,8 @@ namespace OpcUaHistory
 		}
 		ofs_.close();
 
+		Log(Debug, "file create")
+		    .parameter("FileName", dataFile_.string());
 		return openDataFile(dataValue);
 	}
 
@@ -242,14 +244,15 @@ namespace OpcUaHistory
 				return false;
 			}
 
-			Log(Debug, "file create")
+			Log(Debug, "file open")
 			    .parameter("FileName", dataFile_.string());
-			return true;
+
+			return writeData(dataValue);
 		}
 
 		// read number of entries in file
 		boost::filesystem::ifstream ifs;
-		ifs.open(dataFile_, std::ios::in | std::ios::app | std::ios::binary);
+		ifs.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
 		if (ifs.fail()) {
 			Log(Error, "file open failed")
 				.parameter("FileName", dataFile_.string());
@@ -257,9 +260,12 @@ namespace OpcUaHistory
 		}
 		ifs.seekg(fileSize-2);
 
+		char buf[2];
 		boost::asio::streambuf sb;
 		std::iostream ios(&sb);
-		ios << ifs;
+
+	    ifs.read(buf, 2);
+	    ios.write(buf, 2);
 		OpcUaNumber::opcUaBinaryDecode(ios, countEntriesInDataFile_);
 		ifs.close();
 
@@ -273,7 +279,8 @@ namespace OpcUaHistory
 
 		Log(Debug, "file open")
 		    .parameter("FileName", dataFile_.string())
-		    .parameter("countEntriesInDataFile",countEntriesInDataFile_);
+		    .parameter("FileSize", fileSize)
+		    .parameter("CountEntriesInDataFile",countEntriesInDataFile_);
 
 		return writeData(dataValue);
 	}
@@ -282,6 +289,9 @@ namespace OpcUaHistory
 	FileOutEntry::writeData(OpcUaDataValue& dataValue)
 	{
 		if (countEntriesInDataFile_ >= maxEntriesInDataFile_) {
+			if (ofs_.is_open()) {
+				ofs_.close();
+			}
 			return createDataFile(dataValue);
 		}
 		countEntriesInDataFile_++;
@@ -301,10 +311,11 @@ namespace OpcUaHistory
 		boost::asio::streambuf sb2;
 		std::iostream ios2(&sb2);
 		uint32_t writeBytes_ = OpcUaStackCore::count(sb1) + sizeof(uint32_t);
-		OpcUaNumber::opcUaBinaryEncode(ios1, writeBytes_);
+		OpcUaNumber::opcUaBinaryEncode(ios2, writeBytes_);
 
 		// write stream buffers to file
-		ofs_ << ios2 << ios1;
+		ofs_.write(boost::asio::buffer_cast<const char*>(sb2.data()), sb2.size());
+		ofs_.write(boost::asio::buffer_cast<const char*>(sb1.data()), sb1.size());
 		if (ofs_.fail()) {
 			Log(Error, "file write failed")
 				.parameter("FileName", dataFile_.string());

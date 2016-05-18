@@ -17,9 +17,10 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/Library/Library.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
+#include "OpcUaHistory/Library/Library.h"
+#include "OpcUaHistory/HistoryAccessFile/FileOutEntry.h"
 #include <iostream>
 
 namespace OpcUaHistory
@@ -41,6 +42,25 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::startup");
 
+		FileOutEntry fileOutEntry;
+		fileOutEntry.baseFolder(boost::filesystem::path("./"));
+		fileOutEntry.valueName("MyValue");
+		fileOutEntry.maxDataFolderInValueFolder(5);
+		fileOutEntry.maxDataFilesInDataFolder(5);
+		fileOutEntry.maxEntriesInDataFile(5);
+
+		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+		for (uint32_t idx=0; idx<20; idx++) {
+			OpcUaDataValue dataValue;
+			boost::posix_time::ptime time = now + boost::posix_time::seconds(idx);
+
+			dataValue.sourceTimestamp(time);
+			dataValue.serverTimestamp(time);
+			dataValue.statusCode(Success);
+			dataValue.variant()->variant(idx);
+
+			fileOutEntry.write(dataValue);
+		}
 
 		return true;
 	}
