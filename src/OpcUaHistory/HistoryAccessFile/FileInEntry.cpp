@@ -191,6 +191,10 @@ namespace OpcUaHistory
 		dataFile_ = dataFolder_ / dataFileList_.front();
 		dataFileList_.pop_front();
 
+		// check file size
+		uint32_t fileSize = boost::filesystem::file_size(dataFile_.string());
+		// FIXME:
+
 		// open data file
 		ifs_.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
 		if (ifs_.fail()) {
@@ -198,6 +202,15 @@ namespace OpcUaHistory
 				.parameter("FileName", dataFile_.string());
 			return false;
 		}
+
+		// read size of entry
+#if 0
+		boost::asio::streambuf sb;
+		std::iostream ios(&sb);
+		ios.read();
+		OpcUaNumber::opcUaBinaryDecode(ios, countEntriesInDataFile_);
+		ifs.close();
+#endif
 
 		return true;
 	}
