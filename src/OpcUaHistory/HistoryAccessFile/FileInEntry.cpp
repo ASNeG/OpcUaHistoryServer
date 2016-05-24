@@ -19,6 +19,8 @@ namespace OpcUaHistory
 	, baseFolder_()
 	, valueFolder_()
 	, dataFolderList_()
+	, dataFileList_()
+	, dataFolder_()
 	{
 	}
 
@@ -59,16 +61,25 @@ namespace OpcUaHistory
 
 		// get data folder
 		if (dataFolderList_.empty()) {
-			if (!getDataFolder(from, to)) {
+			if (!getDataFolderList(from, to)) {
 				return false;
 			}
 		}
+		if (dataFolderList_.empty()) return true;
+
+		// get file folder
+		if (dataFileList_.empty()) {
+			if (!getDataFileList(from, to)) {
+				return false;
+			}
+		}
+		if (dataFileList_.empty()) return true;
 
 		return true;
 	}
 
 	bool
-	FileInEntry::getDataFolder(OpcUaDateTime& from, OpcUaDateTime& to)
+	FileInEntry::getDataFolderList(OpcUaDateTime& from, OpcUaDateTime& to)
 	{
 		dataFolderList_.clear();
 		boost::filesystem::directory_iterator it(valueFolder_);
@@ -109,6 +120,58 @@ namespace OpcUaHistory
 
 			if (actDataFolder > toString) break;
 			dataFolderList_.push_back(actDataFolder);
+		}
+
+		return true;
+	}
+
+	bool
+	FileInEntry::getDataFileList(OpcUaDateTime& from, OpcUaDateTime& to)
+	{
+		dataFileList_.clear();
+		if (dataFolderList_.empty()) return true;
+
+		dataFolder_ = valueFolder_ / dataFolderList_.front();
+		dataFolderList_.pop_front();
+
+		boost::filesystem::directory_iterator it(dataFolder_);
+		boost::filesystem::directory_iterator itend;
+
+		// read data files
+		std::list<std::string> dataFileList;
+		for(; it != itend; it++) {
+			if (!boost::filesystem::is_directory(*it)) {
+				continue;
+			}
+
+			dataFileList.push_back((*it).path().leaf().string());
+		}
+		dataFileList.sort();
+
+		// find range
+		std::string fromString = from.toISOString();
+		std::string toString = to.toISOString();
+		std::string lastDataFile = "";
+		std::string actDataFile = "";
+
+		// find first element in range
+		while (!dataFileList.empty()) {
+			actDataFile = dataFileList.front();
+			dataFileList.pop_front();
+
+			if (actDataFile >= fromString) break;
+			lastDataFile = actDataFile;
+		}
+		if (!lastDataFile.empty()) dataFileList_.push_back(lastDataFile);
+		if (!actDataFile.empty()) dataFileList_.push_back(actDataFile);
+
+		// find last element in range
+		while (!dataFileList.empty()) {
+			actDataFile = dataFileList.front();
+			dataFileList.pop_front();
+
+			if (actDataFile > toString) break;
+			dataFileList_.push_back(actDataFile);
 		}
 
 		return true;
