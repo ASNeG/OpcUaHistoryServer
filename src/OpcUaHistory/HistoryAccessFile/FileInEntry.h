@@ -25,6 +25,17 @@ namespace OpcUaHistory
 	  public:
 		FileInEntry(void);
 		virtual ~FileInEntry(void);
+
+		void valueName(const std::string& valueName);
+		void baseFolder(const boost::filesystem::path& baseFolder);
+
+		bool read(OpcUaDateTime& from, OpcUaDateTime& to);
+
+	  private:
+		// configuration parameters
+		std::string valueName_;
+		boost::filesystem::path baseFolder_;
+		boost::filesystem::path valueFolder_;
 	};
 
 }
