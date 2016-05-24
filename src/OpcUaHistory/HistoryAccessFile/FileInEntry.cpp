@@ -18,9 +18,11 @@ namespace OpcUaHistory
 	, valueName_("")
 	, baseFolder_()
 	, valueFolder_()
+	, dataFile_()
 	, dataFolderList_()
 	, dataFileList_()
 	, dataFolder_()
+	, ifs_()
 	{
 	}
 
@@ -67,13 +69,18 @@ namespace OpcUaHistory
 		}
 		if (dataFolderList_.empty()) return true;
 
-		// get file folder
+		// get data files
 		if (dataFileList_.empty()) {
 			if (!getDataFileList(from, to)) {
 				return false;
 			}
 		}
 		if (dataFileList_.empty()) return true;
+
+		// find first element in data file
+		if (!readEntryFirst(from, to)) {
+			return false;
+		}
 
 		return true;
 	}
@@ -174,6 +181,30 @@ namespace OpcUaHistory
 			dataFileList_.push_back(actDataFile);
 		}
 
+		return true;
+	}
+
+	bool
+	FileInEntry::readEntryFirst(OpcUaDateTime& from, OpcUaDateTime& to)
+	{
+		if (dataFileList_.empty()) return true;
+		dataFile_ = dataFolder_ / dataFileList_.front();
+		dataFileList_.pop_front();
+
+		// open data file
+		ifs_.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
+		if (ifs_.fail()) {
+			Log(Error, "file open error")
+				.parameter("FileName", dataFile_.string());
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	FileInEntry::readEntryNext(OpcUaDateTime& from, OpcUaDateTime& to)
+	{
 		return true;
 	}
 

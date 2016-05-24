@@ -35,14 +35,19 @@ namespace OpcUaHistory
 	  private:
 		bool getDataFolderList(OpcUaDateTime& from, OpcUaDateTime& to);
 		bool getDataFileList(OpcUaDateTime& from, OpcUaDateTime& to);
+		bool readEntryFirst(OpcUaDateTime& from, OpcUaDateTime& to);
+		bool readEntryNext(OpcUaDateTime& from, OpcUaDateTime& to);
 
 		// configuration parameters
 		std::string valueName_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
 		boost::filesystem::path dataFolder_;
+		boost::filesystem::path dataFile_;
 		std::list<std::string> dataFolderList_;
 		std::list<std::string> dataFileList_;
+
+		boost::filesystem::ifstream ifs_;
 	};
 
 }
