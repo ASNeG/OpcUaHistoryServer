@@ -18,6 +18,7 @@ namespace OpcUaHistory
 	, valueName_("")
 	, baseFolder_()
 	, valueFolder_()
+	, dataFolderList_()
 	{
 	}
 
@@ -54,6 +55,60 @@ namespace OpcUaHistory
 			Log(Error, "value folder not exist")
 				.parameter("ValueFolder", valueFolder_.string());
 			return false;
+		}
+
+		// get data folder
+		if (dataFolderList_.empty()) {
+			if (!getDataFolder(from, to)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool
+	FileInEntry::getDataFolder(OpcUaDateTime& from, OpcUaDateTime& to)
+	{
+		dataFolderList_.clear();
+		boost::filesystem::directory_iterator it(valueFolder_);
+		boost::filesystem::directory_iterator itend;
+
+		// read data folders
+		std::list<std::string> dataFolderList;
+		for(; it != itend; it++) {
+			if (!boost::filesystem::is_directory(*it)) {
+				continue;
+			}
+
+			dataFolderList.push_back((*it).path().leaf().string());
+		}
+		dataFolderList.sort();
+
+		// find range
+		std::string fromString = from.toISOString();
+		std::string toString = to.toISOString();
+		std::string lastDataFolder = "";
+		std::string actDataFolder = "";
+
+		// find first element in range
+		while (!dataFolderList.empty()) {
+			actDataFolder = dataFolderList.front();
+			dataFolderList.pop_front();
+
+			if (actDataFolder >= fromString) break;
+			lastDataFolder = actDataFolder;
+		}
+		if (!lastDataFolder.empty()) dataFolderList_.push_back(lastDataFolder);
+		if (!actDataFolder.empty()) dataFolderList_.push_back(actDataFolder);
+
+		// find last element in range
+		while (!dataFolderList.empty()) {
+			actDataFolder = dataFolderList.front();
+			dataFolderList.pop_front();
+
+			if (actDataFolder > toString) break;
+			dataFolderList_.push_back(actDataFolder);
 		}
 
 		return true;

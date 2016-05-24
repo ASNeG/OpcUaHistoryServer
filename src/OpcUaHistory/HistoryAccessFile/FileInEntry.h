@@ -11,6 +11,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <list>
 #include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
@@ -32,10 +33,13 @@ namespace OpcUaHistory
 		bool read(OpcUaDateTime& from, OpcUaDateTime& to);
 
 	  private:
+		bool getDataFolder(OpcUaDateTime& from, OpcUaDateTime& to);
+
 		// configuration parameters
 		std::string valueName_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
+		std::list<std::string> dataFolderList_;
 	};
 
 }
