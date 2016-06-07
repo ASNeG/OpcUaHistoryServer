@@ -10,6 +10,8 @@
 #include "OpcUaStackCore/Base/Utility.h"
 #include "OpcUaHistory/HistoryAccessFile/FileInEntry.h"
 
+#define MAX_RECORD_SIZE 1000000
+
 namespace OpcUaHistory
 {
 
@@ -23,6 +25,8 @@ namespace OpcUaHistory
 	, dataFileList_()
 	, dataFolder_()
 	, ifs_()
+	, from_()
+	, to_()
 	{
 	}
 
@@ -44,8 +48,20 @@ namespace OpcUaHistory
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
+	void
+	FileInEntry::dateTimeFrom(OpcUaDateTime& from)
+	{
+		from_ = from;
+	}
+
+	void
+	FileInEntry::dateTimeTo(OpcUaDateTime& to)
+	{
+		to_ = to;
+	}
+
 	bool
-	FileInEntry::read(OpcUaDateTime& from, OpcUaDateTime& to)
+	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec)
 	{
 		// check if base folder exists
 		if (!boost::filesystem::exists(baseFolder_)) {
@@ -63,30 +79,147 @@ namespace OpcUaHistory
 
 		// get data folder
 		if (dataFolderList_.empty()) {
-			if (!getDataFolderList(from, to)) {
+			if (!getDataFolderList()) {
 				return false;
 			}
 		}
 		if (dataFolderList_.empty()) return true;
 
-		// get data files
-		if (dataFileList_.empty()) {
-			if (!getDataFileList(from, to)) {
+		// read entries
+		return readNext(dataValueVec);
+	}
+
+	bool
+	FileInEntry::readNext(OpcUaDataValue::Vec& dataValueVec)
+	{
+		while (true)
+		{
+			// check if file is open. If not open a new file
+			if (!ifs_.is_open()) {
+
+				// when file list is empty read a new file list
+				if (dataFileList_.empty()) {
+					if (!getDataFileList()) {
+						return false;
+					}
+				}
+
+				// check file list an open new file
+				if (dataFileList_.empty()) return true;
+				dataFile_ = dataFolder_ / dataFileList_.front();
+				dataFileList_.pop_front();
+
+				ifs_.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
+				if (ifs_.fail()) {
+					Log(Error, "file open error")
+						.parameter("FileName", dataFile_.string());
+					return false;
+				}
+			}
+
+			// read size and source timestamp of entry
+			char header[10];
+			boost::asio::streambuf sbHeader;
+			std::iostream iosHeader(&sbHeader);
+
+			uint16_t recordSize;
+			OpcUaDateTime sourceTimestamp;
+
+			ifs_.read(header, 10);
+
+			if (ifs_.eof()) {
+				ifs_.close();
+				continue;
+			}
+
+			if (ifs_.fail()) {
+				ifs_.close();
+				Log(Error, "file read error")
+					.parameter("FileName", dataFile_.string());
 				return false;
 			}
-		}
-		if (dataFileList_.empty()) return true;
 
-		// find first element in data file
-		if (!readEntryFirst(from, to)) {
-			return false;
+			iosHeader.write(header, 10);
+			OpcUaNumber::opcUaBinaryDecode(iosHeader, recordSize);
+			sourceTimestamp.opcUaBinaryDecode(iosHeader);
+
+			// ignore record dated before from.
+			// skip record
+			if (sourceTimestamp < from_) {
+				if (!skipEntry(recordSize)) {
+					ifs_.close();
+					return false;
+				}
+			}
+
+			// ignore record dated after to
+			// we are ready
+			if (sourceTimestamp > to_) {
+				ifs_.close();
+				return true;
+			}
+
+			// check max record size
+			if (recordSize > MAX_RECORD_SIZE) {
+				Log(Error, "record larger than max record size - skip record")
+					.parameter("FileName", dataFile_.string())
+					.parameter("SourceTimestamp", sourceTimestamp.toISOString());
+
+				if (!skipEntry(recordSize)) {
+					ifs_.close();
+					return false;
+				}
+
+				continue;
+			}
+
+			// read record
+			char record[MAX_RECORD_SIZE];
+			boost::asio::streambuf sbRecord;
+			std::iostream iosRecord(&sbRecord);
+
+			ifs_.read(record, recordSize-10);
+
+			if (ifs_.eof()) {
+				ifs_.close();
+
+				Log(Error, "read eof in record - skip record")
+					.parameter("FileName", dataFile_.string())
+					.parameter("SourceTimestamp", sourceTimestamp.toISOString());
+				return false;
+			}
+
+			if (ifs_.fail()) {
+				ifs_.close();
+
+				Log(Error, "read error in record - skip record")
+					.parameter("FileName", dataFile_.string())
+					.parameter("SourceTimestamp", sourceTimestamp.toISOString());
+				return false;
+			}
+
+			uint32_t statusCode;
+			uint16_t count;
+			iosRecord.write(record, recordSize-10);
+
+			OpcUaDataValue::SPtr dataValue = constructSPtr<OpcUaDataValue>();
+			dataValue->serverTimestamp().opcUaBinaryDecode(iosRecord);
+			OpcUaNumber::opcUaBinaryDecode(iosRecord, statusCode);
+			dataValue->statusCode((OpcUaStatusCode)statusCode);
+			if (statusCode == Success) {
+				dataValue->variant()->opcUaBinaryDecode(iosRecord);
+			}
+			OpcUaNumber::opcUaBinaryDecode(iosRecord, count);
+
+			dataValueVec.push_back(dataValue);
 		}
 
 		return true;
 	}
 
+
 	bool
-	FileInEntry::getDataFolderList(OpcUaDateTime& from, OpcUaDateTime& to)
+	FileInEntry::getDataFolderList(void)
 	{
 		dataFolderList_.clear();
 		boost::filesystem::directory_iterator it(valueFolder_);
@@ -104,8 +237,8 @@ namespace OpcUaHistory
 		dataFolderList.sort();
 
 		// find range
-		std::string fromString = from.toISOString();
-		std::string toString = to.toISOString();
+		std::string fromString = from_.toISOString();
+		std::string toString = to_.toISOString();
 		std::string lastDataFolder = "";
 		std::string actDataFolder = "";
 
@@ -133,7 +266,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::getDataFileList(OpcUaDateTime& from, OpcUaDateTime& to)
+	FileInEntry::getDataFileList(void)
 	{
 		dataFileList_.clear();
 		if (dataFolderList_.empty()) return true;
@@ -156,8 +289,8 @@ namespace OpcUaHistory
 		dataFileList.sort();
 
 		// find range
-		std::string fromString = from.toISOString();
-		std::string toString = to.toISOString();
+		std::string fromString = from_.toISOString();
+		std::string toString = to_.toISOString();
 		std::string lastDataFile = "";
 		std::string actDataFile = "";
 
@@ -185,39 +318,9 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::readEntryFirst(OpcUaDateTime& from, OpcUaDateTime& to)
+	FileInEntry::skipEntry(uint16_t recordSize)
 	{
-		if (dataFileList_.empty()) return true;
-		dataFile_ = dataFolder_ / dataFileList_.front();
-		dataFileList_.pop_front();
-
-		// check file size
-		uint32_t fileSize = boost::filesystem::file_size(dataFile_.string());
-		// FIXME:
-
-		// open data file
-		ifs_.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
-		if (ifs_.fail()) {
-			Log(Error, "file open error")
-				.parameter("FileName", dataFile_.string());
-			return false;
-		}
-
-		// read size of entry
-#if 0
-		boost::asio::streambuf sb;
-		std::iostream ios(&sb);
-		ios.read();
-		OpcUaNumber::opcUaBinaryDecode(ios, countEntriesInDataFile_);
-		ifs.close();
-#endif
-
-		return true;
-	}
-
-	bool
-	FileInEntry::readEntryNext(OpcUaDateTime& from, OpcUaDateTime& to)
-	{
+		ifs_.seekg(recordSize-10, std::ios_base::cur);
 		return true;
 	}
 
