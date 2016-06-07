@@ -1,8 +1,20 @@
 #!/bin/bash
 
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#
+# config section
+# 
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 usage()
 {
-   echo "build.sh [local, package, test]"
+   echo "build.sh [local, package, test, clean]"
 }
 
 
@@ -30,6 +42,12 @@ build_local()
     fi
 
     return 0
+}
+
+
+build_local_clean()
+{
+    rm -rf build_local
 }
 
 
@@ -79,6 +97,12 @@ build_package()
     return 0
 }
 
+
+build_package_clean()
+{
+    rm -rf build_package
+}
+
 build_test()
 {    
     echo "build test start"
@@ -97,6 +121,19 @@ build_test()
     fi
 
      return 0
+}
+
+
+build_test_clean()
+{
+    rm -rf build_test
+}
+
+clean()
+{
+    build_local_clean
+    build_package_clean
+    build_test_clean
 }
 
 # -----------------------------------------------------------------------------
@@ -124,6 +161,10 @@ elif [ "$1" = "test" ] ;
 then
     build_test
     exit $?
+elif [ "$1" = "clean" ] ;
+then
+    clean
+    exit 0
 else
     usage
 fi
