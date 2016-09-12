@@ -24,6 +24,13 @@ target_link_libraries(
     ${Boost_LIBRARIES}
 )
 
+set_target_properties(
+    OpcUaHistory
+    PROPERTIES 
+    VERSION ${VERSION}
+    SOVERSION ${VERSION_MAJOR}
+)
+
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
