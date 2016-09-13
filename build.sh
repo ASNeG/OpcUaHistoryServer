@@ -28,7 +28,12 @@ build_local()
     cd build_local
 
     # install build local
-    cmake ../src "${CMAKE_GENERATOR_LOCAL}" 
+    set -x
+    cmake ../src \
+          "${CMAKE_GENERATOR_LOCAL}" \
+          -DINSTALL_PREFIX_OpcUaStack="${HOME}/install" \
+          -DCMAKE_INSTALL_PREFIX="${HOME}/install" 
+    set +x
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
@@ -113,7 +118,7 @@ build_test()
     cd build_test
 
     # build test
-    cmake ../tst
+    cmake ../tst "${CMAKE_GENERATOR_LOCAL}"
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
