@@ -385,4 +385,59 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_and_second_file)
 	BOOST_REQUIRE(number == 0);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// use several data folder
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileEntry_several_data_folder)
+{
+	boost::filesystem::path path("TestVariable");
+	boost::filesystem::remove_all(path);
+
+	FileOutEntry fileOutEntry;
+
+	fileOutEntry.maxDataFolderInValueFolder(100);
+	fileOutEntry.maxDataFilesInDataFolder(10);
+	fileOutEntry.maxEntriesInDataFile(10);
+	fileOutEntry.valueName("TestVariable");
+	fileOutEntry.baseFolder("./");
+
+	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
+
+	for (uint32_t idx=0; idx<3600; idx++) {
+		OpcUaDataValue dataValue;
+		dataValue.sourceTimestamp(time);
+		dataValue.serverTimestamp(time);
+		dataValue.statusCode(Success);
+		dataValue.variant()->variant((uint32_t)idx);
+		BOOST_REQUIRE(fileOutEntry.write(dataValue) == true);
+		time += boost::posix_time::seconds(1);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(FileEntry_read_from_several_data_folder)
+{
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T100959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 600);
+
+	uint32_t number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

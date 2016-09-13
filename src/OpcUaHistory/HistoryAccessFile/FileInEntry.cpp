@@ -281,7 +281,7 @@ namespace OpcUaHistory
 		if (!lastDataFolder.empty() && lastDataFolder != actDataFolder && fromString < actDataFolder) {
 			dataFolderList_.push_back(lastDataFolder);
 		}
-		if (!actDataFolder.empty() && fromString >= actDataFolder) {
+		if (!actDataFolder.empty() && toString >= actDataFolder) {
 			dataFolderList_.push_back(actDataFolder);
 		}
 
@@ -297,7 +297,9 @@ namespace OpcUaHistory
 		if (verbose_) {
 			std::list<std::string>::iterator it;
 
-			Log(Debug, "FileInEntry - Get DataFolderList");
+			Log(Debug, "FileInEntry - Get DataFolderList")
+			    .parameter("FromString", fromString)
+			    .parameter("ToString", toString);
 			for (it = dataFolderList_.begin(); it != dataFolderList_.end(); it++) {
 				Log(Debug, "  ")
 					.parameter("DataFolder", *it);
@@ -336,6 +338,20 @@ namespace OpcUaHistory
 		std::string lastDataFile = "";
 		std::string actDataFile = "";
 
+#if 0
+		if (verbose_) {
+			std::list<std::string>::iterator it;
+
+			Log(Debug, "FileInEntry - Get DataFileList")
+		        .parameter("FromString", fromString)
+		        .parameter("ToString", toString);
+			for (it = dataFileList.begin(); it != dataFileList.end(); it++) {
+				Log(Debug, "  ")
+					.parameter("DataFile", *it);
+			}
+		}
+#endif
+
 		// find first element in range
 		while (!dataFileList.empty()) {
 			actDataFile = dataFileList.front();
@@ -347,7 +363,7 @@ namespace OpcUaHistory
 		if (!lastDataFile.empty() && lastDataFile != actDataFile && fromString < actDataFile) {
 			dataFileList_.push_back(lastDataFile);
 		}
-		if (!actDataFile.empty() && fromString >= actDataFile) {
+		if (!actDataFile.empty() && toString >= actDataFile) {
 			dataFileList_.push_back(actDataFile);
 		}
 
@@ -363,7 +379,9 @@ namespace OpcUaHistory
 		if (verbose_) {
 			std::list<std::string>::iterator it;
 
-			Log(Debug, "FileInEntry - Get DataFileList");
+			Log(Debug, "FileInEntry - Get DataFileList")
+		        .parameter("FromString", fromString)
+		        .parameter("ToString", toString);
 			for (it = dataFileList_.begin(); it != dataFileList_.end(); it++) {
 				Log(Debug, "  ")
 					.parameter("DataFile", *it);
