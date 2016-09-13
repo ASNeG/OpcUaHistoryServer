@@ -14,7 +14,7 @@ CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
 
 usage()
 {
-   echo "build.sh [local, package, test, clean]"
+   echo "build.sh [local, package, tst, clean]"
 }
 
 
@@ -108,16 +108,16 @@ build_package_clean()
     rm -rf build_package
 }
 
-build_test()
+build_tst()
 {    
-    echo "build test start"
+    echo "build tst start"
 
-    # build test directory
-    rm -rf build_test
-    mkdir build_test
-    cd build_test
+    # build tst directory
+    rm -rf build_tst
+    mkdir build_tst
+    cd build_tst
 
-    # build test
+    # build tst
     cmake ../tst "${CMAKE_GENERATOR_LOCAL}"
     if [ $? -ne 0 ] ;
     then
@@ -129,16 +129,16 @@ build_test()
 }
 
 
-build_test_clean()
+build_tst_clean()
 {
-    rm -rf build_test
+    rm -rf build_tst
 }
 
 clean()
 {
     build_local_clean
     build_package_clean
-    build_test_clean
+    build_tst_clean
 }
 
 # -----------------------------------------------------------------------------
@@ -162,9 +162,9 @@ elif [ "$1" = "package" ] ;
 then 
     build_package
     exit $?
-elif [ "$1" = "test" ] ;
+elif [ "$1" = "tst" ] ;
 then
-    build_test
+    build_tst
     exit $?
 elif [ "$1" = "clean" ] ;
 then

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12.2)
-project	(OpcUaHistoryServerTest)
+project	(OpcUaHistoryTest)
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -41,17 +41,17 @@ include_directories(
 )
 
 file(
-    GLOB OpcUaHistoryServerTest_SRC 
+    GLOB OpcUaHistoryTest_SRC 
     ${PROJECT_SOURCE_DIR}/*.cpp
 )
 add_executable(
-    OpcUaHistoryServerTest
-    ${OpcUaHistoryServerTest_SRC}
+    OpcUaHistoryTest
+    ${OpcUaHistoryTest_SRC}
     ${PROJECT_BINARY_DIR}
 )
 
 target_link_libraries(
-    OpcUaHistoryServerTest
+    OpcUaHistoryTest
     ${OpcUaStackCore_LIBRARY}
     ${CMAKE_DL_LIBS}
     ${pthread}

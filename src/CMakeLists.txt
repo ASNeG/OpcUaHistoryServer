@@ -8,9 +8,18 @@ project	(OpcUaHistory)
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-set(VERSION_MAJOR "1" CACHE STRING "major version")
+
+message(STATUS "System info")
+message(STATUS "  host system name: ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "  host system processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+message(STATUS "  system processor: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "  system name: ${CMAKE_SYSTEM_NAME}")
+message(STATUS "  host system: ${CMAKE_HOST_SYSTEM}")
+
+set(VERSION_MAJOR "2" CACHE STRING "major version")
 set(VERSION_MINOR "0" CACHE STRING "minor version")
-set(VERSION_PATCH "5" CACHE STRING "patch version")
+set(VERSION_PATCH "2" CACHE STRING "patch version")
+set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 set(BIN_DIR "usr/bin" CACHE STRING "binary directory")
 set(LIB_DIR "usr/lib" CACHE STRING "library directory")
@@ -104,21 +113,23 @@ endif ()
 set(CPACK_PACKAGING_INSTALL_PREFIX "/")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/Copyright.txt")
 set(CPACK_PACKAGE_CONTACT "info@asneg.de")
-set(CPACK_PACKAGE_NAME "OpcUaHistory")
 set(CPACK_PACKAGE_VENDOR "asneg.de")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpcUaHistory - opc ua history server")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(CPACK_PACKAGE_FILE_NAME "OpcUaHistory_${CPACK_PACKAGE_VERSION}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+set(CPACK_PACKAGE_NAME "OpcUaHistory${VERSION_MAJOR}")
+
 
 if (CPACK_BINARY_DEB)
-    	set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}")
+    	#set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}")
 	set(CPACK_RPM_PACKAGE_LICENSE "${CMAKE_SOURCE_DIR}/Copyright.txt")
 endif()
 
 if (CPACK_BINARY_RPM)
-    	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}")
+    	#set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}")
 	set(CPACK_RPM_PACKAGE_LICENSE "${CMAKE_SOURCE_DIR}/Copyright.txt")
 endif()
 

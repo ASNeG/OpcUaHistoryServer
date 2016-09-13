@@ -10,6 +10,8 @@ ipch
 *.swo
 core
 *.log
+*.deb
+*.rpm
 build
 build_src
 build_tst
