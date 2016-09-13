@@ -17,6 +17,7 @@ namespace OpcUaHistory
 
 	FileInEntry::FileInEntry(void)
 	: DoublyLinkedList()
+	, verbose_(false)
 	, valueName_("")
 	, baseFolder_()
 	, valueFolder_()
@@ -32,6 +33,18 @@ namespace OpcUaHistory
 
 	FileInEntry::~FileInEntry(void)
 	{
+	}
+
+	void
+	FileInEntry::verbose(bool verbose)
+	{
+		verbose_ = verbose;
+	}
+
+	bool
+	FileInEntry::verbose(void)
+	{
+		return verbose_;
 	}
 
 	void
@@ -63,6 +76,7 @@ namespace OpcUaHistory
 	bool
 	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec)
 	{
+
 		// check if base folder exists
 		if (!boost::filesystem::exists(baseFolder_)) {
 			Log(Error, "base folder not exist")
@@ -83,7 +97,9 @@ namespace OpcUaHistory
 				return false;
 			}
 		}
-		if (dataFolderList_.empty()) return true;
+		if (dataFolderList_.empty()) {
+			return true;
+		}
 
 		// read entries
 		return readNext(dataValueVec);
@@ -262,6 +278,16 @@ namespace OpcUaHistory
 			dataFolderList_.push_back(actDataFolder);
 		}
 
+		if (verbose_) {
+			std::list<std::string>::iterator it;
+
+			Log(Debug, "FileInEntry - Get DataFolderList");
+			for (it = dataFolderList_.begin(); it != dataFolderList_.end(); it++) {
+				Log(Debug, "  ")
+					.parameter("DataFolder", *it);
+			}
+		}
+
 		return true;
 	}
 
@@ -312,6 +338,16 @@ namespace OpcUaHistory
 
 			if (actDataFile > toString) break;
 			dataFileList_.push_back(actDataFile);
+		}
+
+		if (verbose_) {
+			std::list<std::string>::iterator it;
+
+			Log(Debug, "FileInEntry - Get DataFileList");
+			for (it = dataFileList_.begin(); it != dataFileList_.end(); it++) {
+				Log(Debug, "  ")
+					.parameter("DataFile", *it);
+			}
 		}
 
 		return true;

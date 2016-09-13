@@ -27,6 +27,9 @@ namespace OpcUaHistory
 		FileInEntry(void);
 		virtual ~FileInEntry(void);
 
+		void verbose(bool verbose);
+		bool verbose(void);
+
 		void valueName(const std::string& valueName);
 		void baseFolder(const boost::filesystem::path& baseFolder);
 
@@ -41,6 +44,7 @@ namespace OpcUaHistory
 		bool skipEntry(uint16_t recordSize);
 
 		// configuration parameters
+		bool verbose_;
 		std::string valueName_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
