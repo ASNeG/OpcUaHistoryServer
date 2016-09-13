@@ -178,7 +178,7 @@ namespace OpcUaHistory
 				continue;
 			}
 
-			std::cout << "ST=" << sourceTimestamp.toISOString() << std::endl;
+			//std::cout << "ST=" << sourceTimestamp.toISOString() << std::endl;
 
 			// ignore record dated after to
 			// we are ready
@@ -278,8 +278,12 @@ namespace OpcUaHistory
 			if (actDataFolder >= fromString) break;
 			lastDataFolder = actDataFolder;
 		}
-		if (!lastDataFolder.empty() && lastDataFolder != actDataFolder) dataFolderList_.push_back(lastDataFolder);
-		if (!actDataFolder.empty()) dataFolderList_.push_back(actDataFolder);
+		if (!lastDataFolder.empty() && lastDataFolder != actDataFolder && fromString < actDataFolder) {
+			dataFolderList_.push_back(lastDataFolder);
+		}
+		if (!actDataFolder.empty() && fromString >= actDataFolder) {
+			dataFolderList_.push_back(actDataFolder);
+		}
 
 		// find last element in range
 		while (!dataFolderList.empty()) {
@@ -340,8 +344,12 @@ namespace OpcUaHistory
 			if (actDataFile >= fromString) break;
 			lastDataFile = actDataFile;
 		}
-		if (!lastDataFile.empty() && lastDataFile != actDataFile) dataFileList_.push_back(lastDataFile);
-		if (!actDataFile.empty()) dataFileList_.push_back(actDataFile);
+		if (!lastDataFile.empty() && lastDataFile != actDataFile && fromString < actDataFile) {
+			dataFileList_.push_back(lastDataFile);
+		}
+		if (!actDataFile.empty() && fromString >= actDataFile) {
+			dataFileList_.push_back(actDataFile);
+		}
 
 		// find last element in range
 		while (!dataFileList.empty()) {
