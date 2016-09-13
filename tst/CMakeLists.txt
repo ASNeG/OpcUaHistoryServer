@@ -8,7 +8,7 @@ project	(OpcUaHistoryTest)
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-set(OpcUaStack_INSTALL_DIR "/" CACHE STRING "OpcUaStack installation output directory")
+set(INSTALL_PREFIX_OpcUaStack "/" CACHE STRING "OpcUaStack installation output directory")
 
 
 # -----------------------------------------------------------------------------
@@ -21,9 +21,9 @@ set(OpcUaStack_INSTALL_DIR "/" CACHE STRING "OpcUaStack installation output dire
 add_definitions(-DBOOST_ALL_DYN_LINK)
 
 find_package(Boost COMPONENTS system unit_test_framework filesystem thread date_time chrono regex REQUIRED)
-find_library(OpcUaStackCore_LIBRARY NAMES OpcUaStackCore PATHS ${OpcUaStack_INSTALL_DIR}/usr/lib/OpcUaStack)
-find_library(OpcUaStackClient_LIBRARY NAMES OpcUaStackClient PATHS ${OpcUaStack_INSTALL_DIR}/usr/lib/OpcUaStack)
-find_library(OpcUaStackServer_LIBRARY NAMES OpcUaStackServer PATHS ${OpcUaStack_INSTALL_DIR}/usr/lib/OpcUaStack)
+find_library(OpcUaStackCore_LIBRARY NAMES OpcUaStackCore PATHS ${INSTALL_PREFIX_OpcUaStack}/usr/lib/OpcUaStack)
+find_library(OpcUaStackClient_LIBRARY NAMES OpcUaStackClient PATHS ${INSTALL_PREFIX_OpcUaStack}/usr/lib/OpcUaStack)
+find_library(OpcUaStackServer_LIBRARY NAMES OpcUaStackServer PATHS ${INSTALL_PREFIX_OpcUaStack}/usr/lib/OpcUaStack)
 
 
 # -----------------------------------------------------------------------------
@@ -36,13 +36,17 @@ find_library(OpcUaStackServer_LIBRARY NAMES OpcUaStackServer PATHS ${OpcUaStack_
 include_directories(
     ./
     ${PROJECT_BINARY_DIR}
-    ../src/
-	${Boost_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/../src
+    ${INSTALL_PREFIX_OpcUaStack}/usr/include/OpcUaStack
 )
 
 file(
     GLOB OpcUaHistoryTest_SRC 
     ${PROJECT_SOURCE_DIR}/*.cpp
+    ${PROJECT_SOURCE_DIR}/*/*.cpp
+    ${PROJECT_SOURCE_DIR}/../src/OpcUaHistory/HistoryAccess/*.cpp
+    ${PROJECT_SOURCE_DIR}/../src/OpcUaHistory/HistoryAccessFile/*.cpp
 )
 add_executable(
     OpcUaHistoryTest

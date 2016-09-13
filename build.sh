@@ -118,12 +118,20 @@ build_tst()
     cd build_tst
 
     # build tst
-    cmake ../tst "${CMAKE_GENERATOR_LOCAL}"
+    cmake ../tst "${CMAKE_GENERATOR_LOCAL}" -DINSTALL_PREFIX_OpcUaStack="${HOME}/install"
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
         return $?
     fi
+    make 
+     if [ $? -ne 0 ] ;
+    then
+        echo "make error"
+        return $?
+    fi
+
+
 
      return 0
 }
