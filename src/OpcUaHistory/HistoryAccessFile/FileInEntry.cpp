@@ -278,7 +278,7 @@ namespace OpcUaHistory
 			if (actDataFolder >= fromString) break;
 			lastDataFolder = actDataFolder;
 		}
-		if (!lastDataFolder.empty()) dataFolderList_.push_back(lastDataFolder);
+		if (!lastDataFolder.empty() && lastDataFolder != actDataFolder) dataFolderList_.push_back(lastDataFolder);
 		if (!actDataFolder.empty()) dataFolderList_.push_back(actDataFolder);
 
 		// find last element in range
@@ -340,7 +340,7 @@ namespace OpcUaHistory
 			if (actDataFile >= fromString) break;
 			lastDataFile = actDataFile;
 		}
-		if (!lastDataFile.empty()) dataFileList_.push_back(lastDataFile);
+		if (!lastDataFile.empty() && lastDataFile != actDataFile) dataFileList_.push_back(lastDataFile);
 		if (!actDataFile.empty()) dataFileList_.push_back(actDataFile);
 
 		// find last element in range
