@@ -124,7 +124,6 @@ namespace OpcUaHistory
 				if (dataFileList_.empty()) return true;
 				dataFile_ = dataFolder_ / dataFileList_.front();
 				dataFileList_.pop_front();
-
 				ifs_.open(dataFile_.string(), std::ios::in | std::ios::app | std::ios::binary);
 				if (ifs_.fail()) {
 					Log(Error, "file open error")
@@ -134,14 +133,22 @@ namespace OpcUaHistory
 			}
 
 			// read size and source timestamp of entry
-			char header[10];
+			char header[12];
 			boost::asio::streambuf sbHeader;
 			std::iostream iosHeader(&sbHeader);
 
-			uint16_t recordSize;
+			uint32_t recordSize;
 			OpcUaDateTime sourceTimestamp;
 
-			ifs_.read(header, 10);
+			ifs_.read(header, 12);
+
+#if 0
+			std::cout << "RECORD SIZE";
+			for (uint32_t idx=0; idx<12; idx++) {
+				std::cout << " " << (uint32_t)(header[idx] & 0xFF);
+			}
+			std::cout << std::endl;
+#endif
 
 			if (ifs_.eof()) {
 				ifs_.close();
@@ -155,18 +162,23 @@ namespace OpcUaHistory
 				return false;
 			}
 
-			iosHeader.write(header, 10);
+			iosHeader.write(header, 12);
 			OpcUaNumber::opcUaBinaryDecode(iosHeader, recordSize);
 			sourceTimestamp.opcUaBinaryDecode(iosHeader);
+
+			//std::cout << "RecordSize=" << recordSize << std::endl;
 
 			// ignore record dated before from.
 			// skip record
 			if (sourceTimestamp < from_) {
-				if (!skipEntry(recordSize)) {
+				if (!skipEntry(recordSize-12)) {
 					ifs_.close();
 					return false;
 				}
+				continue;
 			}
+
+			std::cout << "ST=" << sourceTimestamp.toISOString() << std::endl;
 
 			// ignore record dated after to
 			// we are ready
@@ -181,7 +193,7 @@ namespace OpcUaHistory
 					.parameter("FileName", dataFile_.string())
 					.parameter("SourceTimestamp", sourceTimestamp.toISOString());
 
-				if (!skipEntry(recordSize)) {
+				if (!skipEntry(recordSize-12)) {
 					ifs_.close();
 					return false;
 				}
@@ -194,7 +206,7 @@ namespace OpcUaHistory
 			boost::asio::streambuf sbRecord;
 			std::iostream iosRecord(&sbRecord);
 
-			ifs_.read(record, recordSize-10);
+			ifs_.read(record, recordSize-12);
 
 			if (ifs_.eof()) {
 				ifs_.close();
@@ -216,7 +228,7 @@ namespace OpcUaHistory
 
 			uint32_t statusCode;
 			uint16_t count;
-			iosRecord.write(record, recordSize-10);
+			iosRecord.write(record, recordSize-12);
 
 			OpcUaDataValue::SPtr dataValue = constructSPtr<OpcUaDataValue>();
 			dataValue->serverTimestamp().opcUaBinaryDecode(iosRecord);
@@ -306,7 +318,7 @@ namespace OpcUaHistory
 		// read data files
 		std::list<std::string> dataFileList;
 		for(; it != itend; it++) {
-			if (!boost::filesystem::is_directory(*it)) {
+			if (boost::filesystem::is_directory(*it)) {
 				continue;
 			}
 
@@ -354,9 +366,9 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::skipEntry(uint16_t recordSize)
+	FileInEntry::skipEntry(uint32_t recordSize)
 	{
-		ifs_.seekg(recordSize-10, std::ios_base::cur);
+		ifs_.seekg(recordSize, ifs_.cur /*std::ios_base::cur*/);
 		return true;
 	}
 

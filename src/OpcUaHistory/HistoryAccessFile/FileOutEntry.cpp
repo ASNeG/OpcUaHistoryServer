@@ -301,7 +301,7 @@ namespace OpcUaHistory
 		std::iostream ios1(&sb1);
 		dataValue.sourceTimestamp().opcUaBinaryEncode(ios1);
 		dataValue.serverTimestamp().opcUaBinaryEncode(ios1);
-		OpcUaNumber::opcUaBinaryEncode(ios1, dataValue.statusCode());
+		OpcUaNumber::opcUaBinaryEncode(ios1, (uint32_t)dataValue.statusCode());
 		if (dataValue.statusCode() == Success) {
 			dataValue.variant()->opcUaBinaryEncode(ios1);
 		}

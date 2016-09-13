@@ -41,7 +41,7 @@ namespace OpcUaHistory
 	  private:
 		bool getDataFolderList(void);
 		bool getDataFileList(void);
-		bool skipEntry(uint16_t recordSize);
+		bool skipEntry(uint32_t recordSize);
 
 		// configuration parameters
 		bool verbose_;

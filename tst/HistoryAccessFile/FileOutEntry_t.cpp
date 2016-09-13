@@ -15,6 +15,7 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_init)
 	FileOutEntry fileOutEntry;
 }
 
+#if 0
 BOOST_AUTO_TEST_CASE(FileOutEntry_out_one_value)
 {
 	boost::filesystem::path path("TestVariable");
@@ -88,5 +89,6 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_out_100)
 		time += boost::posix_time::seconds(1);
 	}
 }
+#endif
 
 BOOST_AUTO_TEST_SUITE_END()
