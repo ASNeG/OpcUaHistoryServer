@@ -29,7 +29,7 @@ build_local()
 
     # install build local
     set -x
-    cmake ../src \
+    cmake ../src \ 
           "${CMAKE_GENERATOR_LOCAL}" \
           -DINSTALL_PREFIX_OpcUaStack="${HOME}/install" \
           -DCMAKE_INSTALL_PREFIX="${HOME}/install" 
@@ -64,20 +64,20 @@ build_package()
     if which dpkg > /dev/null ;
     then
         echo "build deb package enable"
-        DEB=1
+        CPACK_BINARY_DEB="-DCPACK_BINARY_DEB=1"
     else
-    	echo "build deb package disable"
-        DEB=0    
+        echo "build deb package disable"
+        CPACK_BINARY_DEB="-DCPACK_BINARY_DEB=0"
     fi
 
     # check if rpm package to be produced
     if which rpmbuild > /dev/null ;
     then
         echo "build rpm package enable"
-        RPM=1
+        CPACK_BINARY_RPM="-DCPACK_BINARY_RPM=1"
     else
         echo "build rpm package disable"
-        RPM=0
+        CPACK_BINARY_RPM="-DCPACK_BINARY_RPM=0"
     fi
     
     # build package directory
@@ -86,7 +86,11 @@ build_package()
     cd build_package
 
     # build package
-    cmake ../src
+   echo "${CPACK_BINARY}"
+    cmake ../src \
+        "${CMAKE_GENERATOR_LOCAL}" \
+        ${CPACK_BINARY_DEB} \
+        ${CPACK_BINARY_RPM} 
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
@@ -118,7 +122,9 @@ build_tst()
     cd build_tst
 
     # build tst
-    cmake ../tst "${CMAKE_GENERATOR_LOCAL}" -DINSTALL_PREFIX_OpcUaStack="${HOME}/install"
+    cmake ../tst \
+  	"${CMAKE_GENERATOR_LOCAL}" \
+	-DINSTALL_PREFIX_OpcUaStack="${HOME}/install"
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
