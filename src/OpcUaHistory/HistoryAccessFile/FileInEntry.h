@@ -38,6 +38,8 @@ namespace OpcUaHistory
 		bool readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
 		bool readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
 
+		bool maxResultEntriesReached(void);
+
 	  private:
 		bool getDataFolderList(void);
 		bool getDataFileList(void);
@@ -55,6 +57,7 @@ namespace OpcUaHistory
 
 		boost::filesystem::ifstream ifs_;
 
+		bool maxResultEntriesReached_;
 		OpcUaDateTime from_;
 		OpcUaDateTime to_;
 	};

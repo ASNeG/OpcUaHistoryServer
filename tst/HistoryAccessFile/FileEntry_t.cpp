@@ -754,4 +754,186 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_instance_second)
 	BOOST_REQUIRE(number == 6);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// max result entries
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit1)
+{
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 61) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == false);
+}
+
+BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit2)
+{
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 60) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+}
+
+BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit3)
+{
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 50) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 50);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+}
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// readNext
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileEntry_readNext_empty)
+{
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 70) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == false);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileInEntry.readNext(dataValueVec, 70) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 0);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == false);
+}
+
+BOOST_AUTO_TEST_CASE(FileEntry_readNext_not_empty_1)
+{
+	uint32_t number;
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 25) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 25);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+	number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 60);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileInEntry.readNext(dataValueVec, 25) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 25);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+	number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 85);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileInEntry.readNext(dataValueVec, 25) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 10);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == false);
+	number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 110);
+}
+
+BOOST_AUTO_TEST_CASE(FileEntry_readNext_not_empty_2)
+{
+	uint32_t number;
+	FileInEntry fileInEntry;
+
+	fileInEntry.verbose(true);
+	fileInEntry.valueName("TestVariable");
+	fileInEntry.baseFolder("./");
+
+	// first read access
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T101000.000000000"));
+	fileInEntry.dateTimeFrom(from);
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T101959.000000000"));
+	fileInEntry.dateTimeTo(to);
+
+	OpcUaDataValue::Vec dataValueVec;
+	BOOST_REQUIRE(fileInEntry.readInitial(dataValueVec, 30) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 30);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+	number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 60);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileInEntry.readNext(dataValueVec, 30) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 30);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == true);
+	number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
+	BOOST_REQUIRE(number == 90);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileInEntry.readNext(dataValueVec, 30) == true);
+	std::cout << "Size=" << dataValueVec.size() << std::endl;
+	BOOST_REQUIRE(dataValueVec.size() == 0);
+	BOOST_REQUIRE(fileInEntry.maxResultEntriesReached() == false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -28,6 +28,7 @@ namespace OpcUaHistory
 	, ifs_()
 	, from_()
 	, to_()
+	, maxResultEntriesReached_(false)
 	{
 	}
 
@@ -74,8 +75,15 @@ namespace OpcUaHistory
 	}
 
 	bool
+	FileInEntry::maxResultEntriesReached(void)
+	{
+		return maxResultEntriesReached_;
+	}
+
+	bool
 	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
+		maxResultEntriesReached_ = false;
 
 		// check if base folder exists
 		if (!boost::filesystem::exists(baseFolder_)) {
@@ -108,7 +116,9 @@ namespace OpcUaHistory
 	bool
 	FileInEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
+		maxResultEntriesReached_ = false;
 		uint32_t numberResultEntries = 0;
+
 		while (true)
 		{
 			// check if file is open. If not open a new file
@@ -245,6 +255,7 @@ namespace OpcUaHistory
 			if (maxResultEntries != 0) {
 				numberResultEntries++;
 				if (numberResultEntries >= maxResultEntries) {
+					maxResultEntriesReached_ = true;
 					return true;
 				}
 			}
