@@ -74,7 +74,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec)
+	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
 
 		// check if base folder exists
@@ -102,12 +102,13 @@ namespace OpcUaHistory
 		}
 
 		// read entries
-		return readNext(dataValueVec);
+		return readNext(dataValueVec, maxResultEntries);
 	}
 
 	bool
-	FileInEntry::readNext(OpcUaDataValue::Vec& dataValueVec)
+	FileInEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
+		uint32_t numberResultEntries = 0;
 		while (true)
 		{
 			// check if file is open. If not open a new file
@@ -240,6 +241,13 @@ namespace OpcUaHistory
 			OpcUaNumber::opcUaBinaryDecode(iosRecord, count);
 
 			dataValueVec.push_back(dataValue);
+
+			if (maxResultEntries != 0) {
+				numberResultEntries++;
+				if (numberResultEntries >= maxResultEntries) {
+					return true;
+				}
+			}
 		}
 
 		return true;

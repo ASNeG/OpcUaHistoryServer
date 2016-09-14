@@ -35,8 +35,8 @@ namespace OpcUaHistory
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
-		bool readInitial(OpcUaDataValue::Vec& dataValueVec);
-		bool readNext(OpcUaDataValue::Vec& dataValueVec);
+		bool readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
+		bool readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
 
 	  private:
 		bool getDataFolderList(void);
