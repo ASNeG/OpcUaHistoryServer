@@ -9,6 +9,8 @@
 #define __OpcUaHistory_FileWriteManager_h__
 
 #include <boost/filesystem.hpp>
+#include "OpcUaStackCore/Container/DoublyLinkedList.h"
+#include "OpcUaHistory/HistoryAccessFile/FileWriteEntry.h"
 
 using namespace OpcUaStackCore;
 
@@ -30,13 +32,18 @@ namespace OpcUaHistory
 		bool write(const std::string& valueName, OpcUaDataValue& dataValue);
 
 	  private:
-		// configuration parameters
+		bool createFileWriteEntry(const std::string& valueName);
+		bool write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue);
 
+		// configuration parameters
 		uint16_t maxDataFolderInValueFolder_;
 		uint16_t maxDataFilesInDataFolder_;
 		uint16_t maxEntriesInDataFile_;
 		boost::filesystem::path baseFolder_;
 		uint32_t maxConcurrentValues_;
+
+		FileWriteEntry::Map fileWriteEntryMap_;
+		DoublyLinkedList fileWriteEntryList_;
 	};
 
 }

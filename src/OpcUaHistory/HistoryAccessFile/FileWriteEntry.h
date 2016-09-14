@@ -23,6 +23,9 @@ namespace OpcUaHistory
 	: public DoublyLinkedList
 	{
 	  public:
+		typedef boost::shared_ptr<FileWriteEntry> SPtr;
+		typedef std::map<std::string, FileWriteEntry::SPtr> Map;
+
 		FileWriteEntry(void);
 		virtual ~FileWriteEntry(void);
 

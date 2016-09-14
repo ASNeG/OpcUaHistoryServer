@@ -19,6 +19,8 @@ namespace OpcUaHistory
 	, maxEntriesInDataFile_(300)
 	, baseFolder_(".")
 	, maxConcurrentValues_(0)
+	, fileWriteEntryMap_()
+	, fileWriteEntryList_()
 	{
 	}
 
@@ -59,6 +61,40 @@ namespace OpcUaHistory
 	bool
 	FileWriteManager::write(const std::string& valueName, OpcUaDataValue& dataValue)
 	{
+		// check if write access entry exists
+		FileWriteEntry::Map::iterator it;
+		it = fileWriteEntryMap_.find(valueName);
+
+		// create a new entry if it does not exist
+		if (it == fileWriteEntryMap_.end()) {
+			if (!createFileWriteEntry(valueName)) {
+				return false;
+			}
+			return write(valueName, dataValue);
+		}
+
+		// write data to historical value store
+		FileWriteEntry::SPtr fileWriteEntry = it->second;
+		return write(fileWriteEntry, dataValue);
+	}
+
+	bool
+	FileWriteManager::write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue)
+	{
+		return fileWriteEntry->write(dataValue);
+	}
+
+	bool
+	FileWriteManager::createFileWriteEntry(const std::string& valueName)
+	{
+		FileWriteEntry::SPtr fileWriteEntry = constructSPtr<FileWriteEntry>();
+		fileWriteEntry->maxDataFolderInValueFolder(maxDataFolderInValueFolder_);
+		fileWriteEntry->maxDataFilesInDataFolder(maxDataFilesInDataFolder_);
+		fileWriteEntry->maxEntriesInDataFile(maxEntriesInDataFile_);
+		fileWriteEntry->valueName(valueName);
+		fileWriteEntry->baseFolder(baseFolder_);
+		fileWriteEntryMap_.insert(std::make_pair(valueName, fileWriteEntry));
 		return true;
 	}
+
 }
