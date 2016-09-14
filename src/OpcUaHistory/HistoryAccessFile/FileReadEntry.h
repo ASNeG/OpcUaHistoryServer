@@ -32,6 +32,8 @@ namespace OpcUaHistory
 
 		void valueName(const std::string& valueName);
 		void baseFolder(const boost::filesystem::path& baseFolder);
+		void usedCounter(uint32_t usedCounter);
+		uint32_t usedCounter(void);
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
@@ -55,6 +57,7 @@ namespace OpcUaHistory
 		std::list<std::string> dataFolderList_;
 		std::list<std::string> dataFileList_;
 
+		uint32_t usedCounter_;
 		boost::filesystem::ifstream ifs_;
 
 		bool maxResultEntriesReached_;

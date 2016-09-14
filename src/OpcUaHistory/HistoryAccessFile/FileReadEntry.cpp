@@ -29,6 +29,7 @@ namespace OpcUaHistory
 	, from_()
 	, to_()
 	, maxResultEntriesReached_(false)
+	, usedCounter_(0)
 	{
 	}
 
@@ -63,6 +64,18 @@ namespace OpcUaHistory
 	{
 		baseFolder_ = baseFolder;
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
+	}
+
+	void
+	FileReadEntry::usedCounter(uint32_t usedCounter)
+	{
+		usedCounter_ = usedCounter;
+	}
+
+	uint32_t
+	FileReadEntry::usedCounter(void)
+	{
+		return usedCounter_;
 	}
 
 	void
@@ -119,6 +132,7 @@ namespace OpcUaHistory
 	bool
 	FileReadEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
+		usedCounter_++;
 		maxResultEntriesReached_ = false;
 		uint32_t numberResultEntries = 0;
 

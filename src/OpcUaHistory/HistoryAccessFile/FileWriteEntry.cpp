@@ -26,6 +26,7 @@ namespace OpcUaHistory
 	, countDataFolderInValueFolder_(0)
 	, countDataFilesInDataFolder_(0)
 	, countEntriesInDataFile_(0)
+	, usedCounter_(0)
 	, ofs_()
 	{
 	}
@@ -69,9 +70,23 @@ namespace OpcUaHistory
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
+	void
+	FileWriteEntry::usedCounter(uint32_t usedCounter)
+	{
+		usedCounter_ = usedCounter;
+	}
+
+	uint32_t
+	FileWriteEntry::usedCounter(void)
+	{
+		return usedCounter_;
+	}
+
 	bool
 	FileWriteEntry::write(OpcUaDataValue& dataValue)
 	{
+		usedCounter_++;
+
 		// check if base folder exists
 		if (!boost::filesystem::exists(baseFolder_)) {
 			Log(Error, "base folder not exist")
