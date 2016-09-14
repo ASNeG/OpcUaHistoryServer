@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_)
 
 BOOST_AUTO_TEST_CASE(FileOutEntry_init)
 {
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 }
 
 BOOST_AUTO_TEST_CASE(FileOutEntry_out_one_value)
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_out_one_value)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(5);
 	fileOutEntry.maxDataFilesInDataFolder(5);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_out_10)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(5);
 	fileOutEntry.maxDataFilesInDataFolder(5);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(FileOutEntry_out_100)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(5);
 	fileOutEntry.maxDataFilesInDataFolder(5);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects1)
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
 	for (uint32_t idx=0; idx<2; idx++) {
-		FileOutEntry fileOutEntry;
+		FileWriteEntry fileOutEntry;
 
 		fileOutEntry.maxDataFolderInValueFolder(100);
 		fileOutEntry.maxDataFilesInDataFolder(10);
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects2)
 
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(100);
 	fileOutEntry.maxDataFilesInDataFolder(10);
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects2)
 		BOOST_REQUIRE(number == 0);
 	}
 
-	FileOutEntry fileOutEntry1;
+	FileWriteEntry fileOutEntry1;
 
 	fileOutEntry1.maxDataFolderInValueFolder(100);
 	fileOutEntry1.maxDataFilesInDataFolder(10);
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects3)
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
 	{
-		FileOutEntry fileOutEntry;
+		FileWriteEntry fileOutEntry;
 
 		fileOutEntry.maxDataFolderInValueFolder(100);
 		fileOutEntry.maxDataFilesInDataFolder(10);
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects3)
 	}
 
 	{
-		FileOutEntry fileOutEntry;
+		FileWriteEntry fileOutEntry;
 
 		fileOutEntry.maxDataFolderInValueFolder(100);
 		fileOutEntry.maxDataFilesInDataFolder(10);

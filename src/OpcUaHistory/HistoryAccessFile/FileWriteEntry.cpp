@@ -8,12 +8,12 @@
 #include <boost/asio.hpp>
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackCore/Base/Utility.h"
-#include "OpcUaHistory/HistoryAccessFile/FileOutEntry.h"
+#include "OpcUaHistory/HistoryAccessFile/FileWriteEntry.h"
 
 namespace OpcUaHistory
 {
 
-	FileOutEntry::FileOutEntry(void)
+	FileWriteEntry::FileWriteEntry(void)
 	: DoublyLinkedList()
 	, valueName_("")
 	, baseFolder_(".")
@@ -30,7 +30,7 @@ namespace OpcUaHistory
 	{
 	}
 
-	FileOutEntry::~FileOutEntry(void)
+	FileWriteEntry::~FileWriteEntry(void)
 	{
 		if (ofs_.is_open()) {
 			ofs_.close();
@@ -38,39 +38,39 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileOutEntry::maxDataFolderInValueFolder(uint16_t maxDataFolderInValueFolder)
+	FileWriteEntry::maxDataFolderInValueFolder(uint16_t maxDataFolderInValueFolder)
 	{
 		maxDataFolderInValueFolder_ = maxDataFolderInValueFolder;
 	}
 
 	void
-	FileOutEntry::maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder)
+	FileWriteEntry::maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder)
 	{
 		maxDataFilesInDataFolder_ = maxDataFilesInDataFolder;
 	}
 
 	void
-	FileOutEntry::maxEntriesInDataFile(uint16_t maxEntriesInDataFile)
+	FileWriteEntry::maxEntriesInDataFile(uint16_t maxEntriesInDataFile)
 	{
 		maxEntriesInDataFile_ = maxEntriesInDataFile;
 	}
 
 	void
-	FileOutEntry::valueName(const std::string& valueName)
+	FileWriteEntry::valueName(const std::string& valueName)
 	{
 		valueName_ = valueName;
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	void
-	FileOutEntry::baseFolder(const boost::filesystem::path& baseFolder)
+	FileWriteEntry::baseFolder(const boost::filesystem::path& baseFolder)
 	{
 		baseFolder_ = baseFolder;
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	bool
-	FileOutEntry::write(OpcUaDataValue& dataValue)
+	FileWriteEntry::write(OpcUaDataValue& dataValue)
 	{
 		// check if base folder exists
 		if (!boost::filesystem::exists(baseFolder_)) {
@@ -111,7 +111,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutEntry::createValueFolder(void)
+	FileWriteEntry::createValueFolder(void)
 	{
 		if (!boost::filesystem::create_directory(valueFolder_)) {
 			Log(Error, "create value folder error")
@@ -123,7 +123,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileOutEntry::getNewestDataFolder(void)
+	FileWriteEntry::getNewestDataFolder(void)
 	{
 		countDataFolderInValueFolder_ = 0;
 		boost::filesystem::directory_iterator it(valueFolder_);
@@ -155,7 +155,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutEntry::createDataFolder(OpcUaDataValue& dataValue)
+	FileWriteEntry::createDataFolder(OpcUaDataValue& dataValue)
 	{
 		if (countDataFolderInValueFolder_ >= maxDataFolderInValueFolder_) {
 			Log(Error, "to many folders available")
@@ -177,7 +177,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileOutEntry::getNewestDataFile(void)
+	FileWriteEntry::getNewestDataFile(void)
 	{
 		countDataFilesInDataFolder_ = 0;
 		boost::filesystem::directory_iterator it(dataFolder_);
@@ -209,7 +209,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutEntry::createDataFile(OpcUaDataValue& dataValue)
+	FileWriteEntry::createDataFile(OpcUaDataValue& dataValue)
 	{
 		if (countDataFilesInDataFolder_ >= maxDataFilesInDataFolder_) {
 			return createDataFolder(dataValue);
@@ -233,7 +233,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutEntry::openDataFile(OpcUaDataValue& dataValue)
+	FileWriteEntry::openDataFile(OpcUaDataValue& dataValue)
 	{
 		// get file size
 		uint32_t fileSize = boost::filesystem::file_size(dataFile_.string());
@@ -289,7 +289,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileOutEntry::writeData(OpcUaDataValue& dataValue)
+	FileWriteEntry::writeData(OpcUaDataValue& dataValue)
 	{
 		if (countEntriesInDataFile_ >= maxEntriesInDataFile_) {
 			if (ofs_.is_open()) {

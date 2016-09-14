@@ -20,7 +20,7 @@
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
 #include "OpcUaHistory/Library/Library.h"
-#include "OpcUaHistory/HistoryAccessFile/FileOutEntry.h"
+#include "OpcUaHistory/HistoryAccessFile/FileWriteEntry.h"
 #include <iostream>
 
 namespace OpcUaHistory
@@ -42,7 +42,7 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::startup");
 
-		FileOutEntry fileOutEntry;
+		FileWriteEntry fileOutEntry;
 		fileOutEntry.baseFolder(boost::filesystem::path("./"));
 		fileOutEntry.valueName("MyValue");
 		fileOutEntry.maxDataFolderInValueFolder(5);

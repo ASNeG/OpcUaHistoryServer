@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_1)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(100);
 	fileOutEntry.maxDataFilesInDataFolder(100);
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_data_folder)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(100);
 	fileOutEntry.maxDataFilesInDataFolder(10);
@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_2)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileOutEntry fileOutEntry;
+	FileWriteEntry fileOutEntry;
 
 	fileOutEntry.maxDataFolderInValueFolder(100);
 	fileOutEntry.maxDataFilesInDataFolder(10);

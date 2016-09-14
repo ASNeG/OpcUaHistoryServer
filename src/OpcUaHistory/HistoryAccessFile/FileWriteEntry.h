@@ -6,8 +6,8 @@
 
  */
 
-#ifndef __OpcUaHistory_FileOutEntry_h__
-#define __OpcUaHistory_FileOutEntry_h__
+#ifndef __OpcUaHistory_FileWriteEntry_h__
+#define __OpcUaHistory_FileWriteEntry_h__
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -19,12 +19,12 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class FileOutEntry
+	class FileWriteEntry
 	: public DoublyLinkedList
 	{
 	  public:
-		FileOutEntry(void);
-		virtual ~FileOutEntry(void);
+		FileWriteEntry(void);
+		virtual ~FileWriteEntry(void);
 
 		void maxDataFolderInValueFolder(uint16_t maxDataFolderInValueFolder);
 		void maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder);
