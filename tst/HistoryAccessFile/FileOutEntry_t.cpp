@@ -342,7 +342,6 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects3)
 		uint32_t number = dataValueVec[0]->variant()->get<OpcUaUInt32>();
 		BOOST_REQUIRE(number == 0);
 	}
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()
