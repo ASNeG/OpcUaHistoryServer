@@ -1,6 +1,6 @@
 #include "unittest.h"
-#include "OpcUaHistory/HistoryAccessFile/FileOutEntry.h"
-#include "OpcUaHistory/HistoryAccessFile/FileInEntry.h"
+#include "OpcUaHistory/HistoryAccessFile/FileWriteEntry.h"
+#include "OpcUaHistory/HistoryAccessFile/FileReadEntry.h"
 
 using namespace OpcUaHistory;
 
@@ -25,13 +25,13 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_1)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileWriteEntry fileOutEntry;
+	FileWriteEntry fileWriteEntry;
 
-	fileOutEntry.maxDataFolderInValueFolder(100);
-	fileOutEntry.maxDataFilesInDataFolder(100);
-	fileOutEntry.maxEntriesInDataFile(300);
-	fileOutEntry.valueName("TestVariable");
-	fileOutEntry.baseFolder("./");
+	fileWriteEntry.maxDataFolderInValueFolder(100);
+	fileWriteEntry.maxDataFilesInDataFolder(100);
+	fileWriteEntry.maxEntriesInDataFile(300);
+	fileWriteEntry.valueName("TestVariable");
+	fileWriteEntry.baseFolder("./");
 
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_1)
 		dataValue.serverTimestamp(time);
 		dataValue.statusCode(Success);
 		dataValue.variant()->variant((uint32_t)idx);
-		BOOST_REQUIRE(fileOutEntry.write(dataValue) == true);
+		BOOST_REQUIRE(fileWriteEntry.write(dataValue) == true);
 		time += boost::posix_time::seconds(1);
 	}
 }
@@ -397,13 +397,13 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_data_folder)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileWriteEntry fileOutEntry;
+	FileWriteEntry fileWriteEntry;
 
-	fileOutEntry.maxDataFolderInValueFolder(100);
-	fileOutEntry.maxDataFilesInDataFolder(10);
-	fileOutEntry.maxEntriesInDataFile(10);
-	fileOutEntry.valueName("TestVariable");
-	fileOutEntry.baseFolder("./");
+	fileWriteEntry.maxDataFolderInValueFolder(100);
+	fileWriteEntry.maxDataFilesInDataFolder(10);
+	fileWriteEntry.maxEntriesInDataFile(10);
+	fileWriteEntry.valueName("TestVariable");
+	fileWriteEntry.baseFolder("./");
 
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_data_folder)
 		dataValue.serverTimestamp(time);
 		dataValue.statusCode(Success);
 		dataValue.variant()->variant((uint32_t)idx);
-		BOOST_REQUIRE(fileOutEntry.write(dataValue) == true);
+		BOOST_REQUIRE(fileWriteEntry.write(dataValue) == true);
 		time += boost::posix_time::seconds(1);
 	}
 }
@@ -452,13 +452,13 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_2)
 	boost::filesystem::path path("TestVariable");
 	boost::filesystem::remove_all(path);
 
-	FileWriteEntry fileOutEntry;
+	FileWriteEntry fileWriteEntry;
 
-	fileOutEntry.maxDataFolderInValueFolder(100);
-	fileOutEntry.maxDataFilesInDataFolder(10);
-	fileOutEntry.maxEntriesInDataFile(6);
-	fileOutEntry.valueName("TestVariable");
-	fileOutEntry.baseFolder("./");
+	fileWriteEntry.maxDataFolderInValueFolder(100);
+	fileWriteEntry.maxDataFilesInDataFolder(10);
+	fileWriteEntry.maxEntriesInDataFile(6);
+	fileWriteEntry.valueName("TestVariable");
+	fileWriteEntry.baseFolder("./");
 
 	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T100000.000000000");
 
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_2)
 		dataValue.serverTimestamp(time);
 		dataValue.statusCode(Success);
 		dataValue.variant()->variant((uint32_t)idx);
-		BOOST_REQUIRE(fileOutEntry.write(dataValue) == true);
+		BOOST_REQUIRE(fileWriteEntry.write(dataValue) == true);
 		time += boost::posix_time::seconds(10);
 	}
 }
