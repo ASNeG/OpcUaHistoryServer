@@ -321,6 +321,8 @@ namespace OpcUaHistory
 				.parameter("FileName", dataFile_.string());
 			return false;
 		}
+
+		ofs_.flush();
 		return true;
 	}
 
