@@ -17,6 +17,16 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	class ValueWriteContext
+	{
+	  public:
+		ValueWriteContext(void);
+		~ValueWriteContext(void);
+
+		std::string valueName_;
+		FileWriteEntry::WPtr fileEntryWrite_;
+	};
+
 	class FileWriteManager
 	{
 	  public:
@@ -30,6 +40,7 @@ namespace OpcUaHistory
 		void maxConcurrentValues(uint32_t maxConcurrentValues);
 
 		bool write(const std::string& valueName, OpcUaDataValue& dataValue);
+		bool write(ValueWriteContext& valueWriteContext, OpcUaDataValue& dataValue);
 
 	  private:
 		bool createFileWriteEntry(const std::string& valueName);

@@ -13,6 +13,30 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// ValueWriteContext
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	ValueWriteContext::ValueWriteContext(void)
+	: valueName_("")
+	, fileEntryWrite_()
+	{
+	}
+
+	ValueWriteContext::~ValueWriteContext(void)
+	{
+	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// FileWriteManager
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	FileWriteManager::FileWriteManager(void)
 	: maxDataFolderInValueFolder_(1000)
 	, maxDataFilesInDataFolder_(1000)
@@ -76,6 +100,29 @@ namespace OpcUaHistory
 		// write data to historical value store
 		FileWriteEntry::SPtr fileWriteEntry = it->second;
 		return write(fileWriteEntry, dataValue);
+	}
+
+	bool
+	FileWriteManager::write(ValueWriteContext& valueWriteContext, OpcUaDataValue& dataValue)
+	{
+		if (FileWriteEntry::SPtr fileEntryWrite = valueWriteContext.fileEntryWrite_.lock()) {
+			return write(fileEntryWrite, dataValue);
+		}
+
+		// check if write access entry exists
+		FileWriteEntry::Map::iterator it;
+		it = fileWriteEntryMap_.find(valueWriteContext.valueName_);
+		if (it == fileWriteEntryMap_.end()) {
+			valueWriteContext.fileEntryWrite_ = it->second;
+			return write(valueWriteContext, dataValue);
+		}
+
+		// create a new entry
+		if (!createFileWriteEntry(valueWriteContext.valueName_)) {
+			return false;
+		}
+
+		return write(valueWriteContext, dataValue);
 	}
 
 	bool

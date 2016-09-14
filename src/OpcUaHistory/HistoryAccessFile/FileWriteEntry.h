@@ -11,6 +11,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/weak_ptr.hpp>
 #include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
@@ -24,6 +25,7 @@ namespace OpcUaHistory
 	{
 	  public:
 		typedef boost::shared_ptr<FileWriteEntry> SPtr;
+		typedef boost::weak_ptr<FileWriteEntry> WPtr;
 		typedef std::map<std::string, FileWriteEntry::SPtr> Map;
 
 		FileWriteEntry(void);
