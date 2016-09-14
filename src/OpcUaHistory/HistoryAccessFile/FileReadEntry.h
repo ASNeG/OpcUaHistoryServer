@@ -6,8 +6,8 @@
 
  */
 
-#ifndef __OpcUaHistory_FileInEntry_h__
-#define __OpcUaHistory_FileInEntry_h__
+#ifndef __OpcUaHistory_FileReadEntry_h__
+#define __OpcUaHistory_FileReadEntry_h__
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -20,12 +20,12 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class FileInEntry
+	class FileReadEntry
 	: public DoublyLinkedList
 	{
 	  public:
-		FileInEntry(void);
-		virtual ~FileInEntry(void);
+		FileReadEntry(void);
+		virtual ~FileReadEntry(void);
 
 		void verbose(bool verbose);
 		bool verbose(void);

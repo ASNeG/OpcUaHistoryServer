@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_1)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_first_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_first_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_second_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_second_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_center_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_center_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_last_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_last_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_first_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_first_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_second_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_second_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_first_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_first_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_second_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_second_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_last_element)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_last_element)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_begin)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_begin)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_center)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_center)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_end)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_file_end)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_begin)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_second_file_begin)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_end)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -365,7 +365,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_last_file_end)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_and_second_file)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -420,7 +420,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_data_folder)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_from_several_data_folder)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -475,7 +475,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_write_test_data_2)
 
 BOOST_AUTO_TEST_CASE(FileEntry_empty_result_first_file_befor)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_empty_result_first_file_befor)
 
 BOOST_AUTO_TEST_CASE(FileEntry_empty_result_first_file_center)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_empty_result_first_file_center)
 
 BOOST_AUTO_TEST_CASE(FileEntry_empty_result_second_file_before)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_empty_result_second_file_before)
 
 BOOST_AUTO_TEST_CASE(FileEntry_empty_result_second_file_center)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -558,7 +558,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_empty_result_second_file_center)
 // ----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_begin)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_begin)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_center)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -602,7 +602,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_center)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_end)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_first_folder_end)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_second_folder_begin)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -646,7 +646,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_second_folder_begin)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_begin)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -668,7 +668,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_begin)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_center)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -690,7 +690,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_center)
 
 BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_end)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -719,7 +719,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_several_directory_end)
 // ----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(FileEntry_read_instance_second)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -763,7 +763,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_read_instance_second)
 // ----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit1)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit1)
 
 BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit2)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -805,7 +805,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit2)
 
 BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit3)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -833,7 +833,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_max_result_entries_limit3)
 // ----------------------------------------------------------------------------
 BOOST_AUTO_TEST_CASE(FileEntry_readNext_empty)
 {
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -861,7 +861,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_readNext_empty)
 BOOST_AUTO_TEST_CASE(FileEntry_readNext_not_empty_1)
 {
 	uint32_t number;
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -901,7 +901,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_readNext_not_empty_1)
 BOOST_AUTO_TEST_CASE(FileEntry_readNext_not_empty_2)
 {
 	uint32_t number;
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");

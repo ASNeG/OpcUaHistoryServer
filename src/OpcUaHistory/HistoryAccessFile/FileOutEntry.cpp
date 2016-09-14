@@ -32,6 +32,9 @@ namespace OpcUaHistory
 
 	FileOutEntry::~FileOutEntry(void)
 	{
+		if (ofs_.is_open()) {
+			ofs_.close();
+		}
 	}
 
 	void

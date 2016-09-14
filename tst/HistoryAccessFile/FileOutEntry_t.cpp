@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects1)
 		}
 	}
 
-	FileInEntry fileInEntry;
+	FileReadEntry fileInEntry;
 
 	fileInEntry.verbose(true);
 	fileInEntry.valueName("TestVariable");
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects2)
 	}
 
 	{
-		FileInEntry fileInEntry;
+		FileReadEntry fileInEntry;
 
 		fileInEntry.verbose(true);
 		fileInEntry.valueName("TestVariable");
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects2)
 	}
 
 	{
-		FileInEntry fileInEntry;
+		FileReadEntry fileInEntry;
 
 		fileInEntry.verbose(true);
 		fileInEntry.valueName("TestVariable");
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects2)
 	}
 
 	{
-		FileInEntry fileInEntry;
+		FileReadEntry fileInEntry;
 
 		fileInEntry.verbose(true);
 		fileInEntry.valueName("TestVariable");
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects3)
 	}
 
 	{
-		FileInEntry fileInEntry;
+		FileReadEntry fileInEntry;
 
 		fileInEntry.verbose(true);
 		fileInEntry.valueName("TestVariable");
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(FileEntry_several_write_objects3)
 	}
 
 	{
-		FileInEntry fileInEntry;
+		FileReadEntry fileInEntry;
 
 		fileInEntry.verbose(true);
 		fileInEntry.valueName("TestVariable");

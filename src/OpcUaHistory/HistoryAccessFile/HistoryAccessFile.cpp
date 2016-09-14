@@ -35,18 +35,6 @@ namespace OpcUaHistory
 	}
 
 	void
-	HistoryAccessFile::maxFileSize(uint32_t maxFileSize)
-	{
-		maxFileSize_ = maxFileSize;
-	}
-
-	uint32_t
-	HistoryAccessFile::maxFileSize(void)
-	{
-		return maxFileSize_;
-	}
-
-	void
 	HistoryAccessFile::write(
 		OpcUaNodeId& nodeId,
 		OpcUaDataValue& dataValue

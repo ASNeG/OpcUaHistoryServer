@@ -8,14 +8,14 @@
 #include <boost/asio.hpp>
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackCore/Base/Utility.h"
-#include "OpcUaHistory/HistoryAccessFile/FileInEntry.h"
+#include "OpcUaHistory/HistoryAccessFile/FileReadEntry.h"
 
 #define MAX_RECORD_SIZE 1000000
 
 namespace OpcUaHistory
 {
 
-	FileInEntry::FileInEntry(void)
+	FileReadEntry::FileReadEntry(void)
 	: DoublyLinkedList()
 	, verbose_(false)
 	, valueName_("")
@@ -32,56 +32,59 @@ namespace OpcUaHistory
 	{
 	}
 
-	FileInEntry::~FileInEntry(void)
+	FileReadEntry::~FileReadEntry(void)
 	{
+		if (ifs_.is_open()) {
+			ifs_.close();
+		}
 	}
 
 	void
-	FileInEntry::verbose(bool verbose)
+	FileReadEntry::verbose(bool verbose)
 	{
 		verbose_ = verbose;
 	}
 
 	bool
-	FileInEntry::verbose(void)
+	FileReadEntry::verbose(void)
 	{
 		return verbose_;
 	}
 
 	void
-	FileInEntry::valueName(const std::string& valueName)
+	FileReadEntry::valueName(const std::string& valueName)
 	{
 		valueName_ = valueName;
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	void
-	FileInEntry::baseFolder(const boost::filesystem::path& baseFolder)
+	FileReadEntry::baseFolder(const boost::filesystem::path& baseFolder)
 	{
 		baseFolder_ = baseFolder;
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
 	void
-	FileInEntry::dateTimeFrom(OpcUaDateTime& from)
+	FileReadEntry::dateTimeFrom(OpcUaDateTime& from)
 	{
 		from_ = from;
 	}
 
 	void
-	FileInEntry::dateTimeTo(OpcUaDateTime& to)
+	FileReadEntry::dateTimeTo(OpcUaDateTime& to)
 	{
 		to_ = to;
 	}
 
 	bool
-	FileInEntry::maxResultEntriesReached(void)
+	FileReadEntry::maxResultEntriesReached(void)
 	{
 		return maxResultEntriesReached_;
 	}
 
 	bool
-	FileInEntry::readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
+	FileReadEntry::readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
 		maxResultEntriesReached_ = false;
 
@@ -114,7 +117,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
+	FileReadEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
 		maxResultEntriesReached_ = false;
 		uint32_t numberResultEntries = 0;
@@ -266,7 +269,7 @@ namespace OpcUaHistory
 
 
 	bool
-	FileInEntry::getDataFolderList(void)
+	FileReadEntry::getDataFolderList(void)
 	{
 		dataFolderList_.clear();
 		boost::filesystem::directory_iterator it(valueFolder_);
@@ -329,7 +332,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::getDataFileList(void)
+	FileReadEntry::getDataFileList(void)
 	{
 		dataFileList_.clear();
 		if (dataFolderList_.empty()) return true;
@@ -411,7 +414,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileInEntry::skipEntry(uint32_t recordSize)
+	FileReadEntry::skipEntry(uint32_t recordSize)
 	{
 		ifs_.seekg(recordSize, ifs_.cur /*std::ios_base::cur*/);
 		return true;
