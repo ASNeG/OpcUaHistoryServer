@@ -47,11 +47,15 @@ namespace OpcUaHistory
 	, maxConcurrentValues_(0)
 	, fileWriteEntryMap_()
 	, fileWriteEntryList_()
+	, usedCounter_(30)
 	{
 	}
 
 	FileWriteManager::~FileWriteManager(void)
 	{
+		while (fileWriteEntryMap_.begin() != fileWriteEntryMap_.end()) {
+			deleteFileWriteEntry(fileWriteEntryMap_.begin()->second.get());
+		}
 	}
 
 	void
@@ -94,6 +98,13 @@ namespace OpcUaHistory
 	FileWriteManager::actConcurrentValues(void)
 	{
 		return fileWriteEntryMap_.size();
+	}
+
+	void
+	FileWriteManager::usedCounter(uint32_t usedCounter)
+	{
+		usedCounter_ = usedCounter;
+		if (usedCounter_ == 0) usedCounter_ = 1;
 	}
 
 	bool
@@ -142,6 +153,17 @@ namespace OpcUaHistory
 	bool
 	FileWriteManager::write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue)
 	{
+		if (maxConcurrentValues_ != 0) {
+			uint32_t usedCounter = fileWriteEntry->usedCounter();
+			usedCounter--;
+
+			if (usedCounter_ == 0) {
+				usedCounter = usedCounter_;
+				fileWriteEntry->remove();
+				fileWriteEntryList_.pushAfter(*fileWriteEntry);
+			}
+			fileWriteEntry->usedCounter(usedCounter);
+		}
 		return fileWriteEntry->write(dataValue);
 	}
 
@@ -153,13 +175,31 @@ namespace OpcUaHistory
 			    .parameter("ValueName", valueName);
 		}
 
+		if (maxConcurrentValues_ != 0 && maxConcurrentValues_ <= fileWriteEntryMap_.size()) {
+			FileWriteEntry* fileWriteEntry = dynamic_cast<FileWriteEntry*>(fileWriteEntryList_.last());
+			deleteFileWriteEntry(fileWriteEntry);
+		}
+
 		FileWriteEntry::SPtr fileWriteEntry = constructSPtr<FileWriteEntry>();
 		fileWriteEntry->maxDataFolderInValueFolder(maxDataFolderInValueFolder_);
 		fileWriteEntry->maxDataFilesInDataFolder(maxDataFilesInDataFolder_);
 		fileWriteEntry->maxEntriesInDataFile(maxEntriesInDataFile_);
 		fileWriteEntry->valueName(valueName);
 		fileWriteEntry->baseFolder(baseFolder_);
+		fileWriteEntry->usedCounter(usedCounter_);
 		fileWriteEntryMap_.insert(std::make_pair(valueName, fileWriteEntry));
+		fileWriteEntryList_.pushAfter(*fileWriteEntry);
+		return true;
+	}
+
+	bool
+	FileWriteManager::deleteFileWriteEntry(FileWriteEntry* fileWriteEntry)
+	{
+		FileWriteEntry::Map::iterator it;
+		it = fileWriteEntryMap_.find(fileWriteEntry->valueName());
+		if (it == fileWriteEntryMap_.end()) return false;
+		it->second->remove();
+		fileWriteEntryMap_.erase(it);
 		return true;
 	}
 

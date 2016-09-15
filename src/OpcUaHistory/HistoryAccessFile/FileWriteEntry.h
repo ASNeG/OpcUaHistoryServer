@@ -35,6 +35,7 @@ namespace OpcUaHistory
 		void maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder);
 		void maxEntriesInDataFile(uint16_t maxEntriesInDataFile);
 		void valueName(const std::string& valueName);
+		std::string valueName(void);
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void usedCounter(uint32_t usedCounter);
 		uint32_t usedCounter(void);
