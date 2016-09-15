@@ -22,12 +22,13 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	ValueWriteContext::ValueWriteContext(void)
 	: valueName_("")
-	, fileEntryWrite_()
+	, fileWriteEntry_()
 	{
 	}
 
 	ValueWriteContext::~ValueWriteContext(void)
 	{
+		fileWriteEntry_.reset();
 	}
 
 	// ------------------------------------------------------------------------
@@ -38,7 +39,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	FileWriteManager::FileWriteManager(void)
-	: maxDataFolderInValueFolder_(1000)
+	: verbose_(false)
+	, maxDataFolderInValueFolder_(1000)
 	, maxDataFilesInDataFolder_(1000)
 	, maxEntriesInDataFile_(300)
 	, baseFolder_(".")
@@ -50,6 +52,12 @@ namespace OpcUaHistory
 
 	FileWriteManager::~FileWriteManager(void)
 	{
+	}
+
+	void
+	FileWriteManager::verbose(bool verbose)
+	{
+		verbose_ = verbose;
 	}
 
 	void
@@ -82,6 +90,12 @@ namespace OpcUaHistory
 		maxConcurrentValues_ = maxConcurrentValues;
 	}
 
+	uint32_t
+	FileWriteManager::actConcurrentValues(void)
+	{
+		return fileWriteEntryMap_.size();
+	}
+
 	bool
 	FileWriteManager::write(const std::string& valueName, OpcUaDataValue& dataValue)
 	{
@@ -105,15 +119,15 @@ namespace OpcUaHistory
 	bool
 	FileWriteManager::write(ValueWriteContext& valueWriteContext, OpcUaDataValue& dataValue)
 	{
-		if (FileWriteEntry::SPtr fileEntryWrite = valueWriteContext.fileEntryWrite_.lock()) {
+		if (FileWriteEntry::SPtr fileEntryWrite = valueWriteContext.fileWriteEntry_.lock()) {
 			return write(fileEntryWrite, dataValue);
 		}
 
 		// check if write access entry exists
 		FileWriteEntry::Map::iterator it;
 		it = fileWriteEntryMap_.find(valueWriteContext.valueName_);
-		if (it == fileWriteEntryMap_.end()) {
-			valueWriteContext.fileEntryWrite_ = it->second;
+		if (it != fileWriteEntryMap_.end()) {
+			valueWriteContext.fileWriteEntry_ = it->second;
 			return write(valueWriteContext, dataValue);
 		}
 
@@ -134,6 +148,11 @@ namespace OpcUaHistory
 	bool
 	FileWriteManager::createFileWriteEntry(const std::string& valueName)
 	{
+		if (verbose_) {
+			Log(Debug, "FileWriteManager - create entry")
+			    .parameter("ValueName", valueName);
+		}
+
 		FileWriteEntry::SPtr fileWriteEntry = constructSPtr<FileWriteEntry>();
 		fileWriteEntry->maxDataFolderInValueFolder(maxDataFolderInValueFolder_);
 		fileWriteEntry->maxDataFilesInDataFolder(maxDataFilesInDataFolder_);

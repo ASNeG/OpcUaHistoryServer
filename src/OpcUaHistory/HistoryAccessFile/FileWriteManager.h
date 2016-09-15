@@ -24,7 +24,7 @@ namespace OpcUaHistory
 		~ValueWriteContext(void);
 
 		std::string valueName_;
-		FileWriteEntry::WPtr fileEntryWrite_;
+		FileWriteEntry::WPtr fileWriteEntry_;
 	};
 
 	class FileWriteManager
@@ -33,11 +33,13 @@ namespace OpcUaHistory
 		FileWriteManager(void);
 		~FileWriteManager(void);
 
+		void verbose(bool verbose);
 		void maxDataFolderInValueFolder(uint16_t maxDataFolderInValueFolder);
 		void maxDataFilesInDataFolder(uint16_t maxDataFilesInDataFolder);
 		void maxEntriesInDataFile(uint16_t maxEntriesInDataFile);
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void maxConcurrentValues(uint32_t maxConcurrentValues);
+		uint32_t actConcurrentValues(void);
 
 		bool write(const std::string& valueName, OpcUaDataValue& dataValue);
 		bool write(ValueWriteContext& valueWriteContext, OpcUaDataValue& dataValue);
@@ -47,6 +49,7 @@ namespace OpcUaHistory
 		bool write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue);
 
 		// configuration parameters
+		bool verbose_;
 		uint16_t maxDataFolderInValueFolder_;
 		uint16_t maxDataFilesInDataFolder_;
 		uint16_t maxEntriesInDataFile_;
