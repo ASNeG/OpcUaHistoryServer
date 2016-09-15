@@ -47,7 +47,8 @@ namespace OpcUaHistory
 	, maxConcurrentValues_(0)
 	, fileWriteEntryMap_()
 	, fileWriteEntryList_()
-	, usedCounter_(30)
+	, ageCounter_(30)
+	, deletedValueName_("")
 	{
 	}
 
@@ -101,10 +102,16 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileWriteManager::usedCounter(uint32_t usedCounter)
+	FileWriteManager::ageCounter(uint32_t ageCounter)
 	{
-		usedCounter_ = usedCounter;
-		if (usedCounter_ == 0) usedCounter_ = 1;
+		ageCounter_ = ageCounter;
+		if (ageCounter_ == 0) ageCounter_ = 1;
+	}
+
+	std::string
+	FileWriteManager::deletedValueName(void)
+	{
+		return deletedValueName_;
 	}
 
 	bool
@@ -153,18 +160,25 @@ namespace OpcUaHistory
 	bool
 	FileWriteManager::write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue)
 	{
-		if (maxConcurrentValues_ != 0) {
-			uint32_t usedCounter = fileWriteEntry->usedCounter();
-			usedCounter--;
+		if (!fileWriteEntry->write(dataValue)) {
+			return false;
+		}
 
-			if (usedCounter_ == 0) {
-				usedCounter = usedCounter_;
+		if (maxConcurrentValues_ != 0) {
+			uint32_t ageCounter = fileWriteEntry->ageCounter();
+
+			if (ageCounter >= ageCounter_) {
+				if (verbose_) {
+					Log(Debug, "FileWriteManager - aging")
+					    .parameter("ValueName", fileWriteEntry->valueName());
+				}
+
+				fileWriteEntry->ageCounter(0);
 				fileWriteEntry->remove();
 				fileWriteEntryList_.pushAfter(*fileWriteEntry);
 			}
-			fileWriteEntry->usedCounter(usedCounter);
 		}
-		return fileWriteEntry->write(dataValue);
+		return true;
 	}
 
 	bool
@@ -177,7 +191,7 @@ namespace OpcUaHistory
 
 		if (maxConcurrentValues_ != 0 && maxConcurrentValues_ <= fileWriteEntryMap_.size()) {
 			FileWriteEntry* fileWriteEntry = dynamic_cast<FileWriteEntry*>(fileWriteEntryList_.last());
-			deleteFileWriteEntry(fileWriteEntry);
+			deleteFileWriteEntry(fileWriteEntry, true);
 		}
 
 		FileWriteEntry::SPtr fileWriteEntry = constructSPtr<FileWriteEntry>();
@@ -186,15 +200,22 @@ namespace OpcUaHistory
 		fileWriteEntry->maxEntriesInDataFile(maxEntriesInDataFile_);
 		fileWriteEntry->valueName(valueName);
 		fileWriteEntry->baseFolder(baseFolder_);
-		fileWriteEntry->usedCounter(usedCounter_);
 		fileWriteEntryMap_.insert(std::make_pair(valueName, fileWriteEntry));
 		fileWriteEntryList_.pushAfter(*fileWriteEntry);
 		return true;
 	}
 
 	bool
-	FileWriteManager::deleteFileWriteEntry(FileWriteEntry* fileWriteEntry)
+	FileWriteManager::deleteFileWriteEntry(FileWriteEntry* fileWriteEntry, bool aging)
 	{
+		if (verbose_) {
+			Log(Debug, "FileWriteManager - delete entry")
+			    .parameter("ValueName", fileWriteEntry->valueName())
+			    .parameter("Aging", aging);
+		}
+
+		deletedValueName_ = fileWriteEntry->valueName();
+
 		FileWriteEntry::Map::iterator it;
 		it = fileWriteEntryMap_.find(fileWriteEntry->valueName());
 		if (it == fileWriteEntryMap_.end()) return false;

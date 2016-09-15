@@ -248,4 +248,99 @@ BOOST_AUTO_TEST_CASE(FileWriteManager_write_10_value_with_context_10_times)
 	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 10);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+//  concurrent values
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileWriteManager_concurrent_values_3)
+{
+	boost::filesystem::path path("TestFolder");
+	boost::filesystem::remove_all(path);
+	boost::filesystem::create_directory("TestFolder");
+
+	FileWriteManager fileWriteManager;
+
+	fileWriteManager.maxDataFolderInValueFolder(5);
+	fileWriteManager.maxDataFilesInDataFolder(5);
+	fileWriteManager.maxEntriesInDataFile(5);
+	fileWriteManager.baseFolder("TestFolder");
+	fileWriteManager.maxConcurrentValues(3);
+	fileWriteManager.ageCounter(2);
+	fileWriteManager.verbose(true);
+
+	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T102030.000000000");
+	OpcUaDataValue dataValue;
+	dataValue.sourceTimestamp(time);
+	dataValue.serverTimestamp(time);
+	dataValue.statusCode(Success);
+	dataValue.variant()->variant((uint32_t)123);
+
+	BOOST_REQUIRE(fileWriteManager.write("MyValue1", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 1);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue2", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 2);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue3", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue4", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.deletedValueName() == "MyValue1");
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue5", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.deletedValueName() == "MyValue2");
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+}
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+//  concurrent values
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileWriteManager_aging_values_3)
+{
+	boost::filesystem::path path("TestFolder");
+	boost::filesystem::remove_all(path);
+	boost::filesystem::create_directory("TestFolder");
+
+	FileWriteManager fileWriteManager;
+
+	fileWriteManager.maxDataFolderInValueFolder(5);
+	fileWriteManager.maxDataFilesInDataFolder(5);
+	fileWriteManager.maxEntriesInDataFile(5);
+	fileWriteManager.baseFolder("TestFolder");
+	fileWriteManager.maxConcurrentValues(3);
+	fileWriteManager.ageCounter(3);
+	fileWriteManager.verbose(true);
+
+	boost::posix_time::ptime time = boost::posix_time::from_iso_string("20150101T102030.000000000");
+	OpcUaDataValue dataValue;
+	dataValue.sourceTimestamp(time);
+	dataValue.serverTimestamp(time);
+	dataValue.statusCode(Success);
+	dataValue.variant()->variant((uint32_t)123);
+
+	BOOST_REQUIRE(fileWriteManager.write("MyValue1", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 1);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue2", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 2);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue3", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+
+	BOOST_REQUIRE(fileWriteManager.write("MyValue1", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue1", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue3", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue3", dataValue) == true);
+
+	BOOST_REQUIRE(fileWriteManager.write("MyValue4", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.deletedValueName() == "MyValue2");
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+	BOOST_REQUIRE(fileWriteManager.write("MyValue5", dataValue) == true);
+	BOOST_REQUIRE(fileWriteManager.deletedValueName() == "MyValue1");
+	BOOST_REQUIRE(fileWriteManager.actConcurrentValues() == 3);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

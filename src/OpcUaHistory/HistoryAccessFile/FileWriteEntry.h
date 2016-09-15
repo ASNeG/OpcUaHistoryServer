@@ -37,8 +37,8 @@ namespace OpcUaHistory
 		void valueName(const std::string& valueName);
 		std::string valueName(void);
 		void baseFolder(const boost::filesystem::path& baseFolder);
-		void usedCounter(uint32_t usedCounter);
-		uint32_t usedCounter(void);
+		void ageCounter(uint32_t ageCounter);
+		uint32_t ageCounter(void);
 
 		bool write(OpcUaDataValue& dataValue);
 
@@ -61,7 +61,7 @@ namespace OpcUaHistory
 		uint16_t maxDataFilesInDataFolder_;
 		uint16_t maxEntriesInDataFile_;
 
-		uint32_t usedCounter_;
+		uint32_t ageCounter_;
 		uint16_t countDataFolderInValueFolder_;
 		uint16_t countDataFilesInDataFolder_;
 		uint16_t countEntriesInDataFile_;

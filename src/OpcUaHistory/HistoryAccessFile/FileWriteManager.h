@@ -40,14 +40,15 @@ namespace OpcUaHistory
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void maxConcurrentValues(uint32_t maxConcurrentValues);
 		uint32_t actConcurrentValues(void);
-		void usedCounter(uint32_t usedCounter);
+		void ageCounter(uint32_t ageCounter);
+		std::string deletedValueName(void);
 
 		bool write(const std::string& valueName, OpcUaDataValue& dataValue);
 		bool write(ValueWriteContext& valueWriteContext, OpcUaDataValue& dataValue);
 
 	  private:
 		bool createFileWriteEntry(const std::string& valueName);
-		bool deleteFileWriteEntry(FileWriteEntry* fileWriteEntry);
+		bool deleteFileWriteEntry(FileWriteEntry* fileWriteEntry, bool aging=false);
 		bool write(FileWriteEntry::SPtr& fileWriteEntry, OpcUaDataValue& dataValue);
 
 		// configuration parameters
@@ -57,10 +58,11 @@ namespace OpcUaHistory
 		uint16_t maxEntriesInDataFile_;
 		boost::filesystem::path baseFolder_;
 		uint32_t maxConcurrentValues_;
-		uint32_t usedCounter_;
+		uint32_t ageCounter_;
 
 		FileWriteEntry::Map fileWriteEntryMap_;
 		DoublyLinkedList fileWriteEntryList_;
+		std::string deletedValueName_;
 	};
 
 }
