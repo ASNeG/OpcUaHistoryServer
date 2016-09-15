@@ -29,7 +29,7 @@ namespace OpcUaHistory
 	, from_()
 	, to_()
 	, maxResultEntriesReached_(false)
-	, usedCounter_(0)
+	, aging_(0)
 	{
 	}
 
@@ -67,15 +67,15 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileReadEntry::usedCounter(uint32_t usedCounter)
+	FileReadEntry::aging(uint32_t aging)
 	{
-		usedCounter_ = usedCounter;
+		aging_ = aging;
 	}
 
 	uint32_t
-	FileReadEntry::usedCounter(void)
+	FileReadEntry::aging(void)
 	{
-		return usedCounter_;
+		return aging_;
 	}
 
 	void
@@ -132,7 +132,7 @@ namespace OpcUaHistory
 	bool
 	FileReadEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
 	{
-		usedCounter_++;
+		aging_++;
 		maxResultEntriesReached_ = false;
 		uint32_t numberResultEntries = 0;
 

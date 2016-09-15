@@ -11,6 +11,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/weak_ptr.hpp>
 #include <list>
 #include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
@@ -24,6 +25,10 @@ namespace OpcUaHistory
 	: public DoublyLinkedList
 	{
 	  public:
+		typedef boost::shared_ptr<FileReadEntry> SPtr;
+		typedef std::map<std::string, FileReadEntry::SPtr> Map;
+		typedef boost::weak_ptr<FileReadEntry> WPtr;
+
 		FileReadEntry(void);
 		virtual ~FileReadEntry(void);
 
@@ -32,8 +37,8 @@ namespace OpcUaHistory
 
 		void valueName(const std::string& valueName);
 		void baseFolder(const boost::filesystem::path& baseFolder);
-		void usedCounter(uint32_t usedCounter);
-		uint32_t usedCounter(void);
+		void aging(uint32_t aging);
+		uint32_t aging(void);
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
@@ -57,7 +62,7 @@ namespace OpcUaHistory
 		std::list<std::string> dataFolderList_;
 		std::list<std::string> dataFileList_;
 
-		uint32_t usedCounter_;
+		uint32_t aging_;
 		boost::filesystem::ifstream ifs_;
 
 		bool maxResultEntriesReached_;
