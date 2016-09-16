@@ -79,4 +79,61 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readInitial)
 	BOOST_REQUIRE(dataValueVec.size() == 3600);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// aging
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileReadManager_readInitial_aging)
+{
+	FileReadManager fileReadManager;
+
+	fileReadManager.verbose(true);
+	fileReadManager.baseFolder("TestFolder");
+	fileReadManager.maxConcurrentValues(3);
+	fileReadManager.ageCounter(2);
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T100059.000000000"));
+
+	ValueReadContext valueReadContext[5];
+	for (uint32_t idx=0; idx<5; idx++) {
+		std::stringstream valueName;
+		valueName << "MyValue" << idx;
+		valueReadContext[idx].valueName_ = valueName.str();
+	}
+
+	OpcUaDataValue::Vec dataValueVec;
+
+	// reading
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[0], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[1], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[2], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+
+	// aging
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[0], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[2], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+
+	// delete oldest entry
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext[3], nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 60);
+	BOOST_REQUIRE(fileReadManager.deletedValueName() == "MyValue1");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
