@@ -22,6 +22,14 @@ namespace OpcUaHistory
 
 		std::string valueName_;
 		FileReadEntry::WPtr fileReadEntry_;
+	};
+
+	class ValueReadContinousPoint
+	{
+	  public:
+		ValueReadContinousPoint(void);
+		~ValueReadContinousPoint(void);
+
 		std::string continousPoint_;
 	};
 
@@ -42,6 +50,7 @@ namespace OpcUaHistory
 
 		bool readInitial(
 			ValueReadContext& valueReadContext,
+			ValueReadContinousPoint* continousPoint,
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
@@ -56,6 +65,7 @@ namespace OpcUaHistory
 	  private:
 		bool readInitial(
 			ValueReadContext& valueReadContext,
+			ValueReadContinousPoint* continousPoint,
 			FileReadEntry::SPtr& fileReadEntry,
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
@@ -65,13 +75,16 @@ namespace OpcUaHistory
 
 		bool createFileReadEntry(const std::string& valueName);
 		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
+		void createContinousPoint(FileReadEntry* fileReadEntry, ValueReadContinousPoint* continousPoint);
 
 		bool verbose_;
 		boost::filesystem::path baseFolder_;
 		uint32_t maxConcurrentValues_;
 		uint32_t ageCounter_;
+		uint32_t continousPointId_;
 
 		FileReadEntry::Map fileReadEntryMap_;
+		DoublyLinkedList fileReadEntryList_;
 		std::string deletedValueName_;
 	};
 

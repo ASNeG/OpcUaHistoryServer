@@ -71,7 +71,11 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readInitial)
 	valueReadContext.valueName_ = "MyValue0";
 
 	OpcUaDataValue::Vec dataValueVec;
-	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, nullptr, from, to, dataValueVec) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 3600);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, nullptr, from, to, dataValueVec) == true);
 	BOOST_REQUIRE(dataValueVec.size() == 3600);
 }
 

@@ -22,7 +22,6 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	ValueReadContext::ValueReadContext(void)
 	: valueName_("")
-	, continousPoint_("")
 	, fileReadEntry_()
 	{
 	}
@@ -32,6 +31,21 @@ namespace OpcUaHistory
 		fileReadEntry_.reset();
 	}
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// ValueReadContinousPoint
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	ValueReadContinousPoint::ValueReadContinousPoint(void)
+	: continousPoint_("")
+	{
+	}
+
+	ValueReadContinousPoint::~ValueReadContinousPoint(void)
+	{
+	}
 
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
@@ -45,8 +59,10 @@ namespace OpcUaHistory
 	, baseFolder_(".")
 	, ageCounter_(30)
 	, fileReadEntryMap_()
+	, fileReadEntryList_()
 	, maxConcurrentValues_(0)
 	, deletedValueName_("")
+	, continousPointId_(rand() % 0xFFFFFFFF)
 	{
 	}
 
@@ -102,6 +118,7 @@ namespace OpcUaHistory
 	bool
 	FileReadManager::readInitial(
 		ValueReadContext& valueReadContext,
+		ValueReadContinousPoint* continousPoint,
 		FileReadEntry::SPtr& fileReadEntry,
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
@@ -109,8 +126,6 @@ namespace OpcUaHistory
 		uint32_t maxResultEntries
 	)
 	{
-		valueReadContext.continousPoint_ = "";
-
 		fileReadEntry->dateTimeFrom(from);
 		fileReadEntry->dateTimeTo(to);
 
@@ -121,26 +136,23 @@ namespace OpcUaHistory
 		if (!rc) return false;
 
 
-		if (fileReadEntry->maxResultEntriesReached()) {
-			// FIXME: todo
-		}
-
 		if (maxConcurrentValues_ != 0) {
-#if 0
-			// FIXME: todo
 			uint32_t ageCounter = fileReadEntry->ageCounter();
 
 			if (ageCounter >= ageCounter_) {
 				if (verbose_) {
 					Log(Debug, "FileReadManager - aging")
-					    .parameter("ValueName", fileWriteEntry->valueName());
+					    .parameter("ValueName", fileReadEntry->valueName());
 				}
 
-				fileWriteEntry->ageCounter(0);
-				fileWriteEntry->remove();
-				fileWriteEntryList_.pushAfter(*fileWriteEntry);
+				fileReadEntry->ageCounter(0);
+				fileReadEntry->remove();
+				fileReadEntryList_.pushAfter(*fileReadEntry);
 			}
-#endif
+		}
+
+		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
+			createContinousPoint(fileReadEntry.get(), continousPoint);
 		}
 
 		return true;
@@ -149,6 +161,7 @@ namespace OpcUaHistory
 	bool
 	FileReadManager::readInitial(
 		ValueReadContext& valueReadContext,
+		ValueReadContinousPoint* continousPoint,
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
 		OpcUaDataValue::Vec& dataValueVec,
@@ -158,6 +171,7 @@ namespace OpcUaHistory
 		if (FileReadEntry::SPtr fileReadEntry = valueReadContext.fileReadEntry_.lock()) {
 			return readInitial(
 				valueReadContext,
+				continousPoint,
 				fileReadEntry,
 				from,
 				to,
@@ -173,6 +187,7 @@ namespace OpcUaHistory
 			valueReadContext.fileReadEntry_ = it->second;
 			return readInitial(
 				valueReadContext,
+				continousPoint,
 				it->second,
 				from,
 				to,
@@ -188,6 +203,7 @@ namespace OpcUaHistory
 
 		return readInitial(
 			valueReadContext,
+			continousPoint,
 			from,
 			to,
 			dataValueVec,
@@ -215,21 +231,16 @@ namespace OpcUaHistory
 		}
 
 		if (maxConcurrentValues_ != 0 && maxConcurrentValues_ <= fileReadEntryMap_.size()) {
-#if 0
-			// FIXME: todo
 			FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(fileReadEntryList_.last());
 			deleteFileReadEntry(fileReadEntry, true);
-#endif
 		}
 
 		FileReadEntry::SPtr fileReadEntry = constructSPtr<FileReadEntry>();
 		fileReadEntry->valueName(valueName);
 		fileReadEntry->baseFolder(baseFolder_);
 		fileReadEntryMap_.insert(std::make_pair(valueName, fileReadEntry));
-#if 0
-		// FIXME: todo
 		fileReadEntryList_.pushAfter(*fileReadEntry);
-#endif
+
 		return true;
 	}
 
@@ -250,6 +261,19 @@ namespace OpcUaHistory
 		it->second->remove();
 		fileReadEntryMap_.erase(it);
 		return true;
+	}
+
+	void
+	FileReadManager::createContinousPoint(FileReadEntry* fileReadEntry, ValueReadContinousPoint* continousPoint)
+	{
+		// create new continous point
+		std::stringstream continousPointString;
+		continousPointId_++;
+		continousPointString << fileReadEntry->valueName() << std::hex << continousPointId_;
+		continousPoint->continousPoint_ = continousPointString.str();
+
+
+		// FIXME: todo
 	}
 
 }

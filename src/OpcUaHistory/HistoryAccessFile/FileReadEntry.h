@@ -38,8 +38,8 @@ namespace OpcUaHistory
 		void valueName(const std::string& valueName);
 		std::string valueName(void);
 		void baseFolder(const boost::filesystem::path& baseFolder);
-		void aging(uint32_t aging);
-		uint32_t aging(void);
+		void ageCounter(uint32_t ageCounter);
+		uint32_t ageCounter(void);
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
@@ -63,7 +63,7 @@ namespace OpcUaHistory
 		std::list<std::string> dataFolderList_;
 		std::list<std::string> dataFileList_;
 
-		uint32_t aging_;
+		uint32_t ageCounter_;
 		boost::filesystem::ifstream ifs_;
 
 		bool maxResultEntriesReached_;
