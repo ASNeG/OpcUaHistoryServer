@@ -30,6 +30,7 @@ namespace OpcUaHistory
 	, to_()
 	, maxResultEntriesReached_(false)
 	, ageCounter_(0)
+	, lastAccessTime_(boost::posix_time::microsec_clock::local_time())
 	{
 	}
 
@@ -82,6 +83,18 @@ namespace OpcUaHistory
 	FileReadEntry::ageCounter(void)
 	{
 		return ageCounter_;
+	}
+
+	void
+	FileReadEntry::lastAccessTime(boost::posix_time::ptime lastAccessTime)
+	{
+		lastAccessTime_ = lastAccessTime;
+	}
+
+	boost::posix_time::ptime
+	FileReadEntry::lastAccessTime(void)
+	{
+		return lastAccessTime_;
 	}
 
 	void

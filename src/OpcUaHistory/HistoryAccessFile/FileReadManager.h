@@ -30,7 +30,14 @@ namespace OpcUaHistory
 		ValueReadContinousPoint(void);
 		~ValueReadContinousPoint(void);
 
+		typedef enum {
+			NormalAccess,
+			LastAccess,
+			Delete
+		} Command;
+
 		std::string continousPoint_;
+		Command command_;
 	};
 
 
@@ -48,6 +55,10 @@ namespace OpcUaHistory
 		uint32_t ageCounter(void);
 		std::string deletedValueName(void);
 
+		void maxContinousPoint(uint32_t maxContinousPoints);
+		void continousPointIdleTimeout(uint32_t continousPointIdleTimeout);
+		std::string deletedContinousPoint(void);
+
 		bool readInitial(
 			ValueReadContext& valueReadContext,
 			ValueReadContinousPoint* continousPoint,
@@ -57,7 +68,7 @@ namespace OpcUaHistory
 			uint32_t maxResultEntries = 0
 		);
 		bool readNext(
-			ValueReadContext& valueReadConext,
+			ValueReadContinousPoint& continousPoint,
 			OpcUaDataValue::Vec& dataValueVec,
 			uint32_t maxResultEntries = 0
 		);
@@ -72,6 +83,12 @@ namespace OpcUaHistory
 			OpcUaDataValue::Vec& dataValueVec,
 			uint32_t maxResultEntries = 0
 		);
+		bool readNext(
+			ValueReadContinousPoint& continousPoint,
+			FileReadEntry::SPtr& fileReadEntry,
+			OpcUaDataValue::Vec& dataValueVec,
+			uint32_t maxResultEntries = 0
+		);
 
 		bool createFileReadEntry(const std::string& valueName);
 		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
@@ -83,9 +100,16 @@ namespace OpcUaHistory
 		uint32_t ageCounter_;
 		uint32_t continousPointId_;
 
+		uint32_t maxContinousPoints_;
+		uint32_t continousPointIdleTimeout_;
+
 		FileReadEntry::Map fileReadEntryMap_;
 		DoublyLinkedList fileReadEntryList_;
 		std::string deletedValueName_;
+
+		FileReadEntry::Map continousPointMap_;
+		DoublyLinkedList continousPointList_;
+		std::string deletedContinousPoint_;
 	};
 
 }

@@ -40,6 +40,8 @@ namespace OpcUaHistory
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void ageCounter(uint32_t ageCounter);
 		uint32_t ageCounter(void);
+		void lastAccessTime(boost::posix_time::ptime lastAccessTime);
+		boost::posix_time::ptime lastAccessTime(void);
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
@@ -69,6 +71,7 @@ namespace OpcUaHistory
 		bool maxResultEntriesReached_;
 		OpcUaDateTime from_;
 		OpcUaDateTime to_;
+		boost::posix_time::ptime lastAccessTime_;
 	};
 
 }

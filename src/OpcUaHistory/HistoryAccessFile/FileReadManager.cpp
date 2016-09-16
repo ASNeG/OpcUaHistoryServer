@@ -40,6 +40,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	ValueReadContinousPoint::ValueReadContinousPoint(void)
 	: continousPoint_("")
+	, command_(NormalAccess)
 	{
 	}
 
@@ -63,6 +64,11 @@ namespace OpcUaHistory
 	, maxConcurrentValues_(0)
 	, deletedValueName_("")
 	, continousPointId_(rand() % 0xFFFFFFFF)
+	, maxContinousPoints_(1000)
+	, continousPointIdleTimeout_(60000)
+	, continousPointMap_()
+	, continousPointList_()
+	, deletedContinousPoint_("")
 	{
 	}
 
@@ -109,10 +115,28 @@ namespace OpcUaHistory
 		return ageCounter_;
 	}
 
+	void
+	FileReadManager::maxContinousPoint(uint32_t maxContinousPoints)
+	{
+		maxContinousPoints_ = maxContinousPoints;
+	}
+
+	void
+	FileReadManager::continousPointIdleTimeout(uint32_t continousPointIdleTimeout)
+	{
+		continousPointIdleTimeout_ = continousPointIdleTimeout;
+	}
+
 	std::string
 	FileReadManager::deletedValueName(void)
 	{
 		return deletedValueName_;
+	}
+
+	std::string
+	FileReadManager::deletedContinousPoint(void)
+	{
+		return deletedContinousPoint_;
 	}
 
 	bool
@@ -152,6 +176,7 @@ namespace OpcUaHistory
 		}
 
 		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
+			valueReadContext.fileReadEntry_.reset();
 			createContinousPoint(fileReadEntry.get(), continousPoint);
 		}
 
@@ -213,7 +238,19 @@ namespace OpcUaHistory
 
 	bool
 	FileReadManager::readNext(
-		ValueReadContext& valueReadConext,
+		ValueReadContinousPoint& continousPoint,
+		FileReadEntry::SPtr& fileReadEntry,
+		OpcUaDataValue::Vec& dataValueVec,
+		uint32_t maxResultEntries
+	)
+	{
+		// FIXME: todo
+		return false;
+	}
+
+	bool
+	FileReadManager::readNext(
+		ValueReadContinousPoint& continousPoint,
 		OpcUaDataValue::Vec& dataValueVec,
 		uint32_t maxResultEntries
 	)
@@ -271,7 +308,6 @@ namespace OpcUaHistory
 		continousPointId_++;
 		continousPointString << fileReadEntry->valueName() << std::hex << continousPointId_;
 		continousPoint->continousPoint_ = continousPointString.str();
-
 
 		// FIXME: todo
 	}
