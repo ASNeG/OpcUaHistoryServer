@@ -176,6 +176,7 @@ namespace OpcUaHistory
 		}
 
 		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
+			deleteFileReadEntry(fileReadEntry.get());
 			valueReadContext.fileReadEntry_.reset();
 			createContinousPoint(fileReadEntry.get(), continousPoint);
 		}
@@ -310,6 +311,12 @@ namespace OpcUaHistory
 		continousPoint->continousPoint_ = continousPointString.str();
 
 		// FIXME: todo
+	}
+
+	bool
+	FileReadManager::deleteContinousPoint(FileReadEntry* fileReadEntry, bool timeout)
+	{
+		return false;
 	}
 
 }

@@ -93,6 +93,7 @@ namespace OpcUaHistory
 		bool createFileReadEntry(const std::string& valueName);
 		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
 		void createContinousPoint(FileReadEntry* fileReadEntry, ValueReadContinousPoint* continousPoint);
+		bool deleteContinousPoint(FileReadEntry* fileReadEntry, bool timeout=false);
 
 		bool verbose_;
 		boost::filesystem::path baseFolder_;
