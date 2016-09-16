@@ -36,6 +36,7 @@ namespace OpcUaHistory
 		bool verbose(void);
 
 		void valueName(const std::string& valueName);
+		std::string valueName(void);
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void aging(uint32_t aging);
 		uint32_t aging(void);

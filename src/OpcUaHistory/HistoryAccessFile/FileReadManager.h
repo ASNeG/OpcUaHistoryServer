@@ -34,8 +34,11 @@ namespace OpcUaHistory
 
 		void verbose(bool verbose);
 		void baseFolder(const boost::filesystem::path& baseFolder);
+		void maxConcurrentValues(uint32_t maxConcurrentValues);
+		uint32_t actConcurrentValues(void);
 		void ageCounter(uint32_t ageCounter);
 		uint32_t ageCounter(void);
+		std::string deletedValueName(void);
 
 		bool readInitial(
 			ValueReadContext& valueReadContext,
@@ -52,13 +55,7 @@ namespace OpcUaHistory
 
 	  private:
 		bool readInitial(
-			const std::string& valueName,
-			OpcUaDateTime& from,
-			OpcUaDateTime& to,
-			OpcUaDataValue::Vec& dataValueVec,
-			uint32_t maxResultEntries = 0
-		);
-		bool readInitial(
+			ValueReadContext& valueReadContext,
 			FileReadEntry::SPtr& fileReadEntry,
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
@@ -67,13 +64,15 @@ namespace OpcUaHistory
 		);
 
 		bool createFileReadEntry(const std::string& valueName);
-		bool deleteFileReadEntry(FileReadEntry* fileReadEntry);
+		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
 
 		bool verbose_;
 		boost::filesystem::path baseFolder_;
+		uint32_t maxConcurrentValues_;
 		uint32_t ageCounter_;
 
 		FileReadEntry::Map fileReadEntryMap_;
+		std::string deletedValueName_;
 	};
 
 }

@@ -59,6 +59,12 @@ namespace OpcUaHistory
 		valueFolder_ = baseFolder_ / boost::filesystem::path(valueName_);
 	}
 
+	std::string
+	FileReadEntry::valueName(void)
+	{
+		return valueName_;
+	}
+
 	void
 	FileReadEntry::baseFolder(const boost::filesystem::path& baseFolder)
 	{
