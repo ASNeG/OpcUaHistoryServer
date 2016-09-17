@@ -77,6 +77,10 @@ namespace OpcUaHistory
 		while (fileReadEntryMap_.begin() != fileReadEntryMap_.end()) {
 			deleteFileReadEntry(fileReadEntryMap_.begin()->second.get());
 		}
+
+		while (continousPointMap_.begin() != continousPointMap_.end()) {
+			deleteContinousPoint(fileReadEntryMap_.begin()->second.get());
+		}
 	}
 
 	void
@@ -310,12 +314,34 @@ namespace OpcUaHistory
 		continousPointString << fileReadEntry->valueName() << std::hex << continousPointId_;
 		continousPoint->continousPoint_ = continousPointString.str();
 
-		// FIXME: todo
+		fileReadEntry->valueName(continousPoint->continousPoint_);
+		fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
+		continousPointMap_.insert(std::make_pair(continousPoint->continousPoint_, fileReadEntry));
+		continousPointList_.pushAfter(*fileReadEntry);
+
+		if (verbose_) {
+			Log(Debug, "FileReadManager - create continous point")
+			    .parameter("ContinousPoint", continousPoint->continousPoint_);
+		}
 	}
 
 	bool
 	FileReadManager::deleteContinousPoint(FileReadEntry* fileReadEntry, bool timeout)
 	{
+		if (verbose_) {
+			Log(Debug, "FileReadManager - delete continous point")
+			    .parameter("ContinoutPoint", fileReadEntry->valueName())
+			    .parameter("Timeout", timeout);
+		}
+
+		deletedContinousPoint_ = fileReadEntry->valueName();
+
+		FileReadEntry::Map::iterator it;
+		it = continousPointMap_.find(fileReadEntry->valueName());
+		if (it == continousPointMap_.end()) return false;
+		it->second->remove();
+		continousPointMap_.erase(it);
+		return true;
 		return false;
 	}
 
