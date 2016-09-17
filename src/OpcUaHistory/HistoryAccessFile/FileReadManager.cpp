@@ -249,8 +249,39 @@ namespace OpcUaHistory
 		uint32_t maxResultEntries
 	)
 	{
-		// FIXME: todo
-		return false;
+		bool rc = fileReadEntry->readNext(
+			dataValueVec,
+			maxResultEntries
+		);
+		if (!rc) return false;
+
+#if 0
+		if (maxConcurrentValues_ != 0) {
+			uint32_t ageCounter = fileReadEntry->ageCounter();
+
+			if (ageCounter >= ageCounter_) {
+				if (verbose_) {
+					Log(Debug, "FileReadManager - aging")
+					    .parameter("ValueName", fileReadEntry->valueName());
+				}
+
+				fileReadEntry->ageCounter(0);
+				fileReadEntry->remove();
+				fileReadEntryList_.pushAfter(*fileReadEntry);
+			}
+		}
+
+		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
+			deleteFileReadEntry(fileReadEntry.get());
+			valueReadContext.fileReadEntry_.reset();
+			createContinousPoint(fileReadEntry.get(), continousPoint);
+		}
+#endif
+		if (!fileReadEntry->maxResultEntriesReached()) {
+			deleteContinousPoint(fileReadEntry.get());
+		}
+
+		return true;
 	}
 
 	bool
@@ -260,8 +291,21 @@ namespace OpcUaHistory
 		uint32_t maxResultEntries
 	)
 	{
-		// FIXME: todo
-		return false;
+		// check if read continout point exists
+		FileReadEntry::Map::iterator it;
+		it = continousPointMap_.find(continousPoint.continousPoint_);
+		if (it != fileReadEntryMap_.end()) {
+			Log(Error, "continous point do not exist")
+				.parameter("ContinousPoint", continousPoint.continousPoint_);
+			return false;
+		}
+
+		return readNext(
+			continousPoint,
+			it->second,
+			dataValueVec,
+			maxResultEntries
+		);
 	}
 
 	bool
