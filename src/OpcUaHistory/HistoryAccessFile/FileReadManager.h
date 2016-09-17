@@ -38,6 +38,7 @@ namespace OpcUaHistory
 
 		std::string continousPoint_;
 		Command command_;
+		bool readComplete_;
 	};
 
 
@@ -92,7 +93,7 @@ namespace OpcUaHistory
 
 		bool createFileReadEntry(const std::string& valueName);
 		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
-		void createContinousPoint(FileReadEntry* fileReadEntry, ValueReadContinousPoint* continousPoint);
+		void createContinousPoint(FileReadEntry::SPtr& fileReadEntry, ValueReadContinousPoint* continousPoint);
 		bool deleteContinousPoint(FileReadEntry* fileReadEntry, bool timeout=false);
 
 		bool verbose_;

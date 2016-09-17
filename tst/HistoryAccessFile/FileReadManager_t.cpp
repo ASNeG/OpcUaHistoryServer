@@ -136,4 +136,35 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readInitial_aging)
 	BOOST_REQUIRE(fileReadManager.deletedValueName() == "MyValue1");
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// readNext
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileReadManager_readNext)
+{
+	FileReadManager fileReadManager;
+
+	fileReadManager.verbose(true);
+	fileReadManager.baseFolder("TestFolder");
+	fileReadManager.maxConcurrentValues(3);
+	fileReadManager.ageCounter(2);
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T110000.000000000"));
+
+	ValueReadContext valueReadContext;
+	ValueReadContinousPoint continousPoint;
+	OpcUaDataValue::Vec dataValueVec;
+
+	valueReadContext.valueName_ = "MyValue0";
+
+	// reading
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, &continousPoint, from, to, dataValueVec, 2000) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 2000);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

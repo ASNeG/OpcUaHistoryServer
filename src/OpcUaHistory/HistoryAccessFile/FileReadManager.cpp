@@ -41,6 +41,7 @@ namespace OpcUaHistory
 	ValueReadContinousPoint::ValueReadContinousPoint(void)
 	: continousPoint_("")
 	, command_(NormalAccess)
+	, readComplete_(false)
 	{
 	}
 
@@ -79,7 +80,7 @@ namespace OpcUaHistory
 		}
 
 		while (continousPointMap_.begin() != continousPointMap_.end()) {
-			deleteContinousPoint(fileReadEntryMap_.begin()->second.get());
+			deleteContinousPoint(continousPointMap_.begin()->second.get());
 		}
 	}
 
@@ -182,7 +183,8 @@ namespace OpcUaHistory
 		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
 			deleteFileReadEntry(fileReadEntry.get());
 			valueReadContext.fileReadEntry_.reset();
-			createContinousPoint(fileReadEntry.get(), continousPoint);
+
+			createContinousPoint(fileReadEntry, continousPoint);
 		}
 
 		return true;
@@ -214,11 +216,12 @@ namespace OpcUaHistory
 		FileReadEntry::Map::iterator it;
 		it = fileReadEntryMap_.find(valueReadContext.valueName_);
 		if (it != fileReadEntryMap_.end()) {
-			valueReadContext.fileReadEntry_ = it->second;
+			FileReadEntry::SPtr fileReadEntry = it->second;
+			valueReadContext.fileReadEntry_ = fileReadEntry;
 			return readInitial(
 				valueReadContext,
 				continousPoint,
-				it->second,
+				fileReadEntry,
 				from,
 				to,
 				dataValueVec,
@@ -277,7 +280,8 @@ namespace OpcUaHistory
 			createContinousPoint(fileReadEntry.get(), continousPoint);
 		}
 #endif
-		if (!fileReadEntry->maxResultEntriesReached()) {
+		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
+			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
 		}
 
@@ -350,7 +354,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	FileReadManager::createContinousPoint(FileReadEntry* fileReadEntry, ValueReadContinousPoint* continousPoint)
+	FileReadManager::createContinousPoint(FileReadEntry::SPtr& fileReadEntry, ValueReadContinousPoint* continousPoint)
 	{
 		// create new continous point
 		std::stringstream continousPointString;
