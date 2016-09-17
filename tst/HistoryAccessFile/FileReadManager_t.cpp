@@ -161,10 +161,11 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext)
 
 	valueReadContext.valueName_ = "MyValue0";
 
-	// reading
+	// readInitial
 	dataValueVec.clear();
-	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, &continousPoint, from, to, dataValueVec, 2000) == true);
-	BOOST_REQUIRE(dataValueVec.size() == 2000);
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext, &continousPoint, from, to, dataValueVec, 1000) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 1000);
+	BOOST_REQUIRE(continousPoint.readComplete_ == false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

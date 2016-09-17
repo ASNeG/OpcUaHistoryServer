@@ -281,6 +281,7 @@ namespace OpcUaHistory
 		}
 #endif
 		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
+			std::cout << "YYYY" << std::endl;
 			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
 		}
@@ -359,8 +360,9 @@ namespace OpcUaHistory
 		// create new continous point
 		std::stringstream continousPointString;
 		continousPointId_++;
-		continousPointString << fileReadEntry->valueName() << std::hex << continousPointId_;
+		continousPointString << fileReadEntry->valueName() << "_" << std::hex << continousPointId_;
 		continousPoint->continousPoint_ = continousPointString.str();
+		continousPoint->readComplete_ = false;
 
 		fileReadEntry->valueName(continousPoint->continousPoint_);
 		fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
