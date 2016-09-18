@@ -283,8 +283,13 @@ namespace OpcUaHistory
 			}
 		}
 
-		//if (maxResultEntries > dataValueVec.size()) {
 		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
+			continousPoint.readComplete_ = true;
+			deleteContinousPoint(fileReadEntry.get());
+		}
+
+		// delete continous point
+		else if (continousPoint.command_ == ValueReadContinousPoint::LastAccess) {
 			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
 		}
