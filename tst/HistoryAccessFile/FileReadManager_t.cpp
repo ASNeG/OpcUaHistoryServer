@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext_no_free_resource_available)
 	fileReadManager.maxContinousPoint(2);
 
 	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
-	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T110059.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T100059.000000000"));
 
 	ValueReadContext valueReadContext1;
 	ValueReadContext valueReadContext2;
@@ -269,12 +269,16 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext_no_free_resource_available)
 	BOOST_REQUIRE(continousPoint3.readComplete_ == false);
 	BOOST_REQUIRE(continousPoint3.error_ == true);
 
-#if 0
+	// readNext
 	dataValueVec.clear();
-	BOOST_REQUIRE(fileReadManager.readNext(continousPoint, dataValueVec, 1000) == true);
-	BOOST_REQUIRE(dataValueVec.size() == 1000);
-	BOOST_REQUIRE(continousPoint.readComplete_ == false);
-#endif
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint1, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == true);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint2, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint2.readComplete_ == true);
 
 }
 

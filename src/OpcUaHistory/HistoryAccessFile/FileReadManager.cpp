@@ -267,28 +267,22 @@ namespace OpcUaHistory
 		);
 		if (!rc) return false;
 
-#if 0
 		if (maxConcurrentValues_ != 0) {
 			uint32_t ageCounter = fileReadEntry->ageCounter();
 
 			if (ageCounter >= ageCounter_) {
 				if (verbose_) {
 					Log(Debug, "FileReadManager - aging")
-					    .parameter("ValueName", fileReadEntry->valueName());
+					    .parameter("ContinousPoint", fileReadEntry->continousPoint());
 				}
 
+				fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
 				fileReadEntry->ageCounter(0);
 				fileReadEntry->remove();
-				fileReadEntryList_.pushAfter(*fileReadEntry);
+				continousPointList_.pushAfter(*fileReadEntry);
 			}
 		}
 
-		if (continousPoint != nullptr && fileReadEntry->maxResultEntriesReached()) {
-			deleteFileReadEntry(fileReadEntry.get());
-			valueReadContext.fileReadEntry_.reset();
-			createContinousPoint(fileReadEntry.get(), continousPoint);
-		}
-#endif
 		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
 			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
