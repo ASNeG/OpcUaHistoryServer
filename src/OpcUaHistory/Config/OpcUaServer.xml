@@ -81,9 +81,9 @@
 
   <Applications>
     <Application>
-      <Name>OpcUaHistory</name>  
-      <Library>OpcUaHistory</Application>
-      <Config></Config>
+      <Name>OpcUaHistory</Name>  
+      <Library>OpcUaHistory</Library>
+      <Config>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaHistory.xml</Config>
     </Application>
   </Applications>
  

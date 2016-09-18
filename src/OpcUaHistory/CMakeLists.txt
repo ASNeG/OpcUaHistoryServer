@@ -42,6 +42,7 @@ install(TARGETS OpcUaHistory DESTINATION ${LIB_DIR}/OpcUaStack)
 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServer.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory) 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaHistory.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/log/README DESTINATION ${LOG_DIR}/OpcUaStack/OpcUaHistory)
 install(DIRECTORY DESTINATION ${LOG_DIR}/OpcUaStack/OpcUaHistory)
 
