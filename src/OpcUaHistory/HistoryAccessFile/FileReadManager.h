@@ -39,6 +39,7 @@ namespace OpcUaHistory
 		std::string continousPoint_;
 		Command command_;
 		bool readComplete_;
+		bool error_;
 	};
 
 

@@ -218,4 +218,64 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext_2)
 	BOOST_REQUIRE(continousPoint.readComplete_ == true);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// readNext - no free resource available
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileReadManager_readNext_no_free_resource_available)
+{
+	FileReadManager fileReadManager;
+
+	fileReadManager.verbose(true);
+	fileReadManager.baseFolder("TestFolder");
+	fileReadManager.maxConcurrentValues(3);
+	fileReadManager.ageCounter(2);
+	fileReadManager.maxContinousPoint(2);
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T110059.000000000"));
+
+	ValueReadContext valueReadContext1;
+	ValueReadContext valueReadContext2;
+	ValueReadContext valueReadContext3;
+	ValueReadContinousPoint continousPoint1;
+	ValueReadContinousPoint continousPoint2;
+	ValueReadContinousPoint continousPoint3;
+	OpcUaDataValue::Vec dataValueVec;
+
+	valueReadContext1.valueName_ = "MyValue0";
+	valueReadContext2.valueName_ = "MyValue0";
+	valueReadContext3.valueName_ = "MyValue0";
+
+	// readInitial
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext1, &continousPoint1, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint1.error_ == false);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext2, &continousPoint2, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint2.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint2.error_ == false);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext3, &continousPoint3, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint3.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint3.error_ == true);
+
+#if 0
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint, dataValueVec, 1000) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 1000);
+	BOOST_REQUIRE(continousPoint.readComplete_ == false);
+#endif
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()

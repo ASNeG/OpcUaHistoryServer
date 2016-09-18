@@ -42,6 +42,7 @@ namespace OpcUaHistory
 	: continousPoint_("")
 	, command_(NormalAccess)
 	, readComplete_(false)
+	, error_(false)
 	{
 	}
 
@@ -373,6 +374,7 @@ namespace OpcUaHistory
 			FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(continousPointList_.last());
 			if (fileReadEntry->lastAccessTime() < timeout) {
 				deleteContinousPoint(fileReadEntry, true);
+				deletedEntries++;
 			}
 			else {
 				return deletedEntries;
@@ -388,6 +390,7 @@ namespace OpcUaHistory
 			if (timeoutHandler() == 0) {
 				Log(Warning, "no free continous points available")
 					.parameter("ContinousPoint", fileReadEntry->valueName());
+				continousPoint->error_ = true;
 				return false;
 			}
 		}
