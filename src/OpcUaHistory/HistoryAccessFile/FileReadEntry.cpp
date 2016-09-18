@@ -19,6 +19,7 @@ namespace OpcUaHistory
 	: DoublyLinkedList()
 	, verbose_(false)
 	, valueName_("")
+	, continousPoint_("")
 	, baseFolder_()
 	, valueFolder_()
 	, dataFile_()
@@ -64,6 +65,18 @@ namespace OpcUaHistory
 	FileReadEntry::valueName(void)
 	{
 		return valueName_;
+	}
+
+	void
+	FileReadEntry::continousPoint(const std::string& continousPoint)
+	{
+		continousPoint_ = continousPoint;
+	}
+
+	std::string
+	FileReadEntry::continousPoint(void)
+	{
+		return continousPoint_;
 	}
 
 	void

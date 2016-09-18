@@ -37,6 +37,8 @@ namespace OpcUaHistory
 
 		void valueName(const std::string& valueName);
 		std::string valueName(void);
+		void continousPoint(const std::string& continousPoint);
+		std::string continousPoint(void);
 		void baseFolder(const boost::filesystem::path& baseFolder);
 		void ageCounter(uint32_t ageCounter);
 		uint32_t ageCounter(void);
@@ -58,6 +60,7 @@ namespace OpcUaHistory
 		// configuration parameters
 		bool verbose_;
 		std::string valueName_;
+		std::string continousPoint_;
 		boost::filesystem::path baseFolder_;
 		boost::filesystem::path valueFolder_;
 		boost::filesystem::path dataFolder_;

@@ -281,7 +281,6 @@ namespace OpcUaHistory
 		}
 #endif
 		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
-			std::cout << "YYYY" << std::endl;
 			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
 		}
@@ -299,7 +298,7 @@ namespace OpcUaHistory
 		// check if read continout point exists
 		FileReadEntry::Map::iterator it;
 		it = continousPointMap_.find(continousPoint.continousPoint_);
-		if (it != fileReadEntryMap_.end()) {
+		if (it == fileReadEntryMap_.end()) {
 			Log(Error, "continous point do not exist")
 				.parameter("ContinousPoint", continousPoint.continousPoint_);
 			return false;
@@ -364,7 +363,7 @@ namespace OpcUaHistory
 		continousPoint->continousPoint_ = continousPointString.str();
 		continousPoint->readComplete_ = false;
 
-		fileReadEntry->valueName(continousPoint->continousPoint_);
+		fileReadEntry->continousPoint(continousPoint->continousPoint_);
 		fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
 		continousPointMap_.insert(std::make_pair(continousPoint->continousPoint_, fileReadEntry));
 		continousPointList_.pushAfter(*fileReadEntry);
@@ -380,14 +379,14 @@ namespace OpcUaHistory
 	{
 		if (verbose_) {
 			Log(Debug, "FileReadManager - delete continous point")
-			    .parameter("ContinoutPoint", fileReadEntry->valueName())
+			    .parameter("ContinoutPoint", fileReadEntry->continousPoint())
 			    .parameter("Timeout", timeout);
 		}
 
-		deletedContinousPoint_ = fileReadEntry->valueName();
+		deletedContinousPoint_ = fileReadEntry->continousPoint();
 
 		FileReadEntry::Map::iterator it;
-		it = continousPointMap_.find(fileReadEntry->valueName());
+		it = continousPointMap_.find(fileReadEntry->continousPoint());
 		if (it == continousPointMap_.end()) return false;
 		it->second->remove();
 		continousPointMap_.erase(it);
