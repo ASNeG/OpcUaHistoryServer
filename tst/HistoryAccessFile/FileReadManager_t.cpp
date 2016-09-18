@@ -1,4 +1,5 @@
 #include "unittest.h"
+#include <boost/thread/thread.hpp>
 #include "OpcUaHistory/HistoryAccessFile/FileReadManager.h"
 #include "OpcUaHistory/HistoryAccessFile/FileWriteManager.h"
 
@@ -280,6 +281,83 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext_no_free_resource_available)
 	BOOST_REQUIRE(dataValueVec.size() == 20);
 	BOOST_REQUIRE(continousPoint2.readComplete_ == true);
 
+}
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// readNext - timeout handling - continous point
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileReadManager_readNext_timeout)
+{
+	FileReadManager fileReadManager;
+
+	fileReadManager.verbose(true);
+	fileReadManager.baseFolder("TestFolder");
+	fileReadManager.maxConcurrentValues(3);
+	fileReadManager.ageCounter(1);
+	fileReadManager.maxContinousPoint(3);
+	fileReadManager.continousPointIdleTimeout(1);
+	fileReadManager.maxDeleteTimeoutEntries(10);
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T100059.000000000"));
+
+	ValueReadContext valueReadContext1;
+	ValueReadContext valueReadContext2;
+	ValueReadContext valueReadContext3;
+	ValueReadContext valueReadContext4;
+	ValueReadContinousPoint continousPoint1;
+	ValueReadContinousPoint continousPoint2;
+	ValueReadContinousPoint continousPoint3;
+	ValueReadContinousPoint continousPoint4;
+	OpcUaDataValue::Vec dataValueVec;
+
+	valueReadContext1.valueName_ = "MyValue0";
+	valueReadContext2.valueName_ = "MyValue1";
+	valueReadContext3.valueName_ = "MyValue2";
+	valueReadContext4.valueName_ = "MyValue3";
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext1, &continousPoint1, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint1.error_ == false);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext2, &continousPoint2, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint2.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint2.error_ == false);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext3, &continousPoint3, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint2.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint2.error_ == false);
+
+	// wait 20 milliseconds
+	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint1, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == true);
+
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint3, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint3.readComplete_ == true);
+
+#if 0
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext4, &continousPoint4, from, to, dataValueVec, 40) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 40);
+	BOOST_REQUIRE(continousPoint3.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint3.error_ == true);
+#endif
 }
 
 BOOST_AUTO_TEST_SUITE_END()

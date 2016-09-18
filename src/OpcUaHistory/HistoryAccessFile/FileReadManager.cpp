@@ -298,6 +298,9 @@ namespace OpcUaHistory
 		uint32_t maxResultEntries
 	)
 	{
+		continousPoint.readComplete_ = false;
+		continousPoint.error_ = false;
+
 		// check if read continout point exists
 		FileReadEntry::Map::iterator it;
 		it = continousPointMap_.find(continousPoint.continousPoint_);
