@@ -279,10 +279,11 @@ namespace OpcUaHistory
 				fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
 				fileReadEntry->ageCounter(0);
 				fileReadEntry->remove();
-				continousPointList_.pushAfter(*fileReadEntry);
+				continousPointList_.pushAfter(*fileReadEntry.get());
 			}
 		}
 
+		//if (maxResultEntries > dataValueVec.size()) {
 		if (!fileReadEntry->maxResultEntriesReached() || dataValueVec.size() == 0) {
 			continousPoint.readComplete_ = true;
 			deleteContinousPoint(fileReadEntry.get());
@@ -304,7 +305,7 @@ namespace OpcUaHistory
 		// check if read continout point exists
 		FileReadEntry::Map::iterator it;
 		it = continousPointMap_.find(continousPoint.continousPoint_);
-		if (it == fileReadEntryMap_.end()) {
+		if (it == continousPointMap_.end()) {
 			Log(Error, "continous point do not exist")
 				.parameter("ContinousPoint", continousPoint.continousPoint_);
 			return false;
@@ -316,6 +317,84 @@ namespace OpcUaHistory
 			dataValueVec,
 			maxResultEntries
 		);
+	}
+
+	void
+	FileReadManager::logFileReadEntryList(uint32_t maxEntries, bool inverse)
+	{
+		uint32_t counter = 0;
+		Log(Debug, "file entry list")
+		    .parameter("Inverse", inverse);
+
+		if (inverse) {
+			DoublyLinkedList* listEntry = fileReadEntryList_.last();
+			while (listEntry != (&fileReadEntryList_)) {
+				FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(listEntry);
+				Log(Debug, "--")
+				    .parameter("ValueName", fileReadEntry->valueName());
+				listEntry = listEntry->last();
+
+				counter++;
+				if (maxEntries != 0 && counter > maxEntries) {
+					Log(Debug, "continous point list skip entries ...");
+					return;
+				}
+			}
+		}
+		else {
+			DoublyLinkedList* listEntry = fileReadEntryList_.next();
+			while (listEntry != (&fileReadEntryList_)) {
+				FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(listEntry);
+				Log(Debug, "--")
+				    .parameter("ValueName", fileReadEntry->valueName());
+				listEntry = listEntry->next();
+
+				counter++;
+				if (maxEntries != 0 && counter > maxEntries) {
+					Log(Debug, "continous point list skip entries ...");
+					return;
+				}
+			}
+		}
+	}
+
+	void
+	FileReadManager::logContinousPointList(uint32_t maxEntries, bool inverse)
+	{
+		uint32_t counter = 0;
+		Log(Debug, "continous point list")
+			.parameter("Inverse", inverse);
+
+		if (inverse) {
+			DoublyLinkedList* listEntry = continousPointList_.last();
+			while (listEntry != (&continousPointList_)) {
+				FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(listEntry);
+				Log(Debug, "--")
+				    .parameter("ValueName", fileReadEntry->valueName());
+				listEntry = listEntry->last();
+
+				counter++;
+				if (maxEntries != 0 && counter > maxEntries) {
+					Log(Debug, "continous point list skip entries ...");
+					return;
+				}
+			}
+		}
+		else {
+			DoublyLinkedList* listEntry = continousPointList_.next();
+			while (listEntry != (&continousPointList_)) {
+				FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(listEntry);
+				Log(Debug, "--")
+				    .parameter("ValueName", fileReadEntry->valueName());
+				listEntry = listEntry->next();
+
+				counter++;
+				if (maxEntries != 0 && counter > maxEntries) {
+					Log(Debug, "continous point list skip entries ...");
+					return;
+				}
+			}
+		}
 	}
 
 	bool
@@ -356,8 +435,10 @@ namespace OpcUaHistory
 		if (it == fileReadEntryMap_.end()) return false;
 		it->second->remove();
 		fileReadEntryMap_.erase(it);
+
 		return true;
 	}
+
 
 	uint32_t
 	FileReadManager::timeoutHandler(void)
@@ -377,6 +458,8 @@ namespace OpcUaHistory
 				return deletedEntries;
 			}
 		}
+
+		return deletedEntries;
 	}
 
 	bool
@@ -423,6 +506,7 @@ namespace OpcUaHistory
 		}
 
 		deletedContinousPoint_ = fileReadEntry->continousPoint();
+		deletedValueName_ = fileReadEntry->valueName();
 
 		FileReadEntry::Map::iterator it;
 		it = continousPointMap_.find(fileReadEntry->continousPoint());
@@ -430,7 +514,6 @@ namespace OpcUaHistory
 		it->second->remove();
 		continousPointMap_.erase(it);
 		return true;
-		return false;
 	}
 
 }

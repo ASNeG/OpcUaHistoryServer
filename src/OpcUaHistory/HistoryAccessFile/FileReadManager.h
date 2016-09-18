@@ -64,6 +64,9 @@ namespace OpcUaHistory
 
 		uint32_t timeoutHandler(void);
 
+		void logFileReadEntryList(uint32_t maxEntries = 0, bool inverse = false);
+		void logContinousPointList(uint32_t maxEntries = 0, bool inverse = false);
+
 		bool readInitial(
 			ValueReadContext& valueReadContext,
 			ValueReadContinousPoint* continousPoint,
