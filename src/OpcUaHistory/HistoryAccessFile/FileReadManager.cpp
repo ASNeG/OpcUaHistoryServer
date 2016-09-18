@@ -70,6 +70,7 @@ namespace OpcUaHistory
 	, continousPointMap_()
 	, continousPointList_()
 	, deletedContinousPoint_("")
+	, maxDeleteTimeoutEntries_(10)
 	{
 	}
 
@@ -142,6 +143,13 @@ namespace OpcUaHistory
 	FileReadManager::deletedContinousPoint(void)
 	{
 		return deletedContinousPoint_;
+	}
+
+
+	void
+	FileReadManager::maxDeleteTimeoutEntries(uint32_t maxDeleteTimeoutEntries)
+	{
+		maxDeleteTimeoutEntries_ = maxDeleteTimeoutEntries;
 	}
 
 	bool
@@ -353,9 +361,37 @@ namespace OpcUaHistory
 		return true;
 	}
 
-	void
+	uint32_t
+	FileReadManager::timeoutHandler(void)
+	{
+		uint32_t deletedEntries = 0;
+		boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time() - boost::posix_time::milliseconds(continousPointIdleTimeout_);
+
+		for (uint32_t idx=0; idx<maxDeleteTimeoutEntries_; idx++) {
+			if (continousPointMap_.size() == 0) return deletedEntries;
+
+			FileReadEntry* fileReadEntry = dynamic_cast<FileReadEntry*>(continousPointList_.last());
+			if (fileReadEntry->lastAccessTime() < timeout) {
+				deleteContinousPoint(fileReadEntry, true);
+			}
+			else {
+				return deletedEntries;
+			}
+		}
+	}
+
+	bool
 	FileReadManager::createContinousPoint(FileReadEntry::SPtr& fileReadEntry, ValueReadContinousPoint* continousPoint)
 	{
+		// check whether there is enough free resources available
+		if (maxContinousPoints_ != 0 && continousPointMap_.size() >= maxContinousPoints_ ) {
+			if (timeoutHandler() == 0) {
+				Log(Warning, "no free continous points available")
+					.parameter("ContinousPoint", fileReadEntry->valueName());
+				return false;
+			}
+		}
+
 		// create new continous point
 		std::stringstream continousPointString;
 		continousPointId_++;
@@ -364,6 +400,7 @@ namespace OpcUaHistory
 		continousPoint->readComplete_ = false;
 
 		fileReadEntry->continousPoint(continousPoint->continousPoint_);
+		fileReadEntry->ageCounter(0);
 		fileReadEntry->lastAccessTime(boost::posix_time::microsec_clock::local_time());
 		continousPointMap_.insert(std::make_pair(continousPoint->continousPoint_, fileReadEntry));
 		continousPointList_.pushAfter(*fileReadEntry);
@@ -372,6 +409,8 @@ namespace OpcUaHistory
 			Log(Debug, "FileReadManager - create continous point")
 			    .parameter("ContinousPoint", continousPoint->continousPoint_);
 		}
+
+		return true;
 	}
 
 	bool

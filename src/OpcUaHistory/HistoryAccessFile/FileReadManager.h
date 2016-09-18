@@ -59,6 +59,9 @@ namespace OpcUaHistory
 		void maxContinousPoint(uint32_t maxContinousPoints);
 		void continousPointIdleTimeout(uint32_t continousPointIdleTimeout);
 		std::string deletedContinousPoint(void);
+		void maxDeleteTimeoutEntries(uint32_t maxDeleteTimeoutEntries);
+
+		uint32_t timeoutHandler(void);
 
 		bool readInitial(
 			ValueReadContext& valueReadContext,
@@ -93,7 +96,7 @@ namespace OpcUaHistory
 
 		bool createFileReadEntry(const std::string& valueName);
 		bool deleteFileReadEntry(FileReadEntry* fileReadEntry, bool aging=false);
-		void createContinousPoint(FileReadEntry::SPtr& fileReadEntry, ValueReadContinousPoint* continousPoint);
+		bool createContinousPoint(FileReadEntry::SPtr& fileReadEntry, ValueReadContinousPoint* continousPoint);
 		bool deleteContinousPoint(FileReadEntry* fileReadEntry, bool timeout=false);
 
 		bool verbose_;
@@ -104,6 +107,7 @@ namespace OpcUaHistory
 
 		uint32_t maxContinousPoints_;
 		uint32_t continousPointIdleTimeout_;
+		uint32_t maxDeleteTimeoutEntries_;
 
 		FileReadEntry::Map fileReadEntryMap_;
 		DoublyLinkedList fileReadEntryList_;
