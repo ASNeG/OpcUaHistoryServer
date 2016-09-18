@@ -311,6 +311,13 @@ namespace OpcUaHistory
 			return false;
 		}
 
+		if (continousPoint.command_ == ValueReadContinousPoint::Delete) {
+			FileReadEntry::SPtr fileReadEntry = it->second;
+			deleteContinousPoint(fileReadEntry.get());
+			continousPoint.readComplete_ = true;
+			return true;
+		}
+
 		return readNext(
 			continousPoint,
 			it->second,

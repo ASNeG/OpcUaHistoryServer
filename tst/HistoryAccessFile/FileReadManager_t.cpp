@@ -364,4 +364,56 @@ BOOST_AUTO_TEST_CASE(FileReadManager_readNext_timeout)
 	BOOST_REQUIRE(fileReadManager.deletedContinousPoint() == continousPoint2.continousPoint_);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//
+// readNext - delete coninous point
+//
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+BOOST_AUTO_TEST_CASE(FileReadManager_readNext_delete_continous_point)
+{
+	FileReadManager fileReadManager;
+
+	fileReadManager.verbose(true);
+	fileReadManager.baseFolder("TestFolder");
+	fileReadManager.maxConcurrentValues(3);
+	fileReadManager.ageCounter(1);
+	fileReadManager.maxContinousPoint(3);
+	fileReadManager.continousPointIdleTimeout(1);
+	fileReadManager.maxDeleteTimeoutEntries(10);
+
+	OpcUaDateTime from(boost::posix_time::from_iso_string("20150101T100000.000000000"));
+	OpcUaDateTime to(boost::posix_time::from_iso_string("20150101T100059.000000000"));
+
+	ValueReadContext valueReadContext1;
+	ValueReadContinousPoint continousPoint1;
+
+	OpcUaDataValue::Vec dataValueVec;
+	valueReadContext1.valueName_ = "MyValue0";
+
+
+	// readInitial
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readInitial(valueReadContext1, &continousPoint1, from, to, dataValueVec, 20) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == false);
+	BOOST_REQUIRE(continousPoint1.error_ == false);
+
+	// readNext
+	dataValueVec.clear();
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint1, dataValueVec, 20) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 20);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == false);
+
+	// readNext - delete continous point
+	dataValueVec.clear();
+	continousPoint1.command_ = ValueReadContinousPoint::Delete;
+	BOOST_REQUIRE(fileReadManager.readNext(continousPoint1, dataValueVec, 20) == true);
+	BOOST_REQUIRE(dataValueVec.size() == 0);
+	BOOST_REQUIRE(continousPoint1.readComplete_ == true);
+	BOOST_REQUIRE(fileReadManager.deletedContinousPoint() == continousPoint1.continousPoint_);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
