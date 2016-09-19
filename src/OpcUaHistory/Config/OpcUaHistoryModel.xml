@@ -2,9 +2,11 @@
 <OpcUaHistory xmlns="http://ASNeG.de/OpcUaHistory.xsd">
 
 	<OpcUaClient>
-	</OpcUaClient>
+		<OpcUaClient>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaClientModel.xml</OpcUaClient>
+	</OpcUaClients>
 	
-	<OpcUaServer>
-	</OpcUaServer>
+	<OpcUaServers>
+	    <OpcUaServer>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaServerModel.xml</OpcUaServer>
+	</OpcUaServers>
 
 </OpcUaHistory>
