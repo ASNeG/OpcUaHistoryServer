@@ -21,4 +21,18 @@ namespace OpcUaHistory
 	{
 	}
 
+    bool
+    HistoryServer::startup(Config* config, IOThread::SPtr ioThread)
+    {
+    	// FIXME: todo
+    	return true;
+    }
+
+    bool
+    HistoryServer::shutdown(void)
+    {
+    	// FIXME: todo
+    	return true;
+    }
+
 }

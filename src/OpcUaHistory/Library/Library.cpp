@@ -17,10 +17,10 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackCore/Base/ConfigXml.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
 #include "OpcUaHistory/Library/Library.h"
-#include "OpcUaHistory/HistoryAccessFile/FileWriteEntry.h"
 #include <iostream>
 
 namespace OpcUaHistory
@@ -42,25 +42,22 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::startup");
 
-		FileWriteEntry fileOutEntry;
-		fileOutEntry.baseFolder(boost::filesystem::path("./"));
-		fileOutEntry.valueName("MyValue");
-		fileOutEntry.maxDataFolderInValueFolder(5);
-		fileOutEntry.maxDataFilesInDataFolder(5);
-		fileOutEntry.maxEntriesInDataFile(5);
+        ioThread_ = constructSPtr<IOThread>();
+        if (!ioThread_->startup()) return false;
 
-		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-		for (uint32_t idx=0; idx<20; idx++) {
-			OpcUaDataValue dataValue;
-			boost::posix_time::ptime time = now + boost::posix_time::seconds(idx);
+        // read history model configuration file
+        ConfigXml configXml;
+        Config config;
+        if (!configXml.parse(applicationInfo()->configFileName(), &config)) {
+        	Log(Error, "parse configuration file error")
+            	.parameter("ConfigFileName", applicationInfo()->configFileName())
+                .parameter("Reason", configXml.errorMessage());
+            return false;
+        }
 
-			dataValue.sourceTimestamp(time);
-			dataValue.serverTimestamp(time);
-			dataValue.statusCode(Success);
-			dataValue.variant()->variant(idx);
-
-			fileOutEntry.write(dataValue);
-		}
+        // start history client and history server
+        if (!historyClient_.startup(&config, ioThread_)) return false;
+        if (!historyServer_.startup(&config, ioThread_)) return false;
 
 		return true;
 	}
@@ -69,6 +66,14 @@ namespace OpcUaHistory
 	Library::shutdown(void)
 	{
 		Log(Debug, "Library::shutdown");
+
+        if (!ioThread_->shutdown()) return false;
+        ioThread_.reset();
+
+        // shutdown history client and history server
+        if (!historyServer_.shutdown()) return false;
+        if (!historyClient_.shutdown()) return false;
+
 		return true;
 	}
 

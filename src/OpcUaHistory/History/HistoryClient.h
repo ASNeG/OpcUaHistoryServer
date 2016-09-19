@@ -8,6 +8,11 @@
 #ifndef __OpcUaHistory_HistoryClient_h__
 #define __OpcUaHistory_HistoryClient_h__
 
+#include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Utility/IOThread.h"
+
+using namespace OpcUaStackCore;
+
 namespace OpcUaHistory
 {
 
@@ -16,6 +21,9 @@ namespace OpcUaHistory
 	  public:
 		HistoryClient(void);
 		~HistoryClient(void);
+
+        bool startup(Config* config, IOThread::SPtr ioThread);
+        bool shutdown(void);
 
 	  private:
 	};

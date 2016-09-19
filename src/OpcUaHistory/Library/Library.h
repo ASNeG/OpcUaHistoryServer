@@ -18,7 +18,10 @@
 #ifndef __OpcUaHistory_Library_h__
 #define __OpcUaHistory_Library_h__
 
+#include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
+#include "OpcUaHistory/History/HistoryClient.h"
+#include "OpcUaHistory/History/HistoryServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -39,6 +42,9 @@ namespace OpcUaHistory
 		//- ApplicationIf -----------------------------------------------------
 
 	  private:
+		IOThread::SPtr ioThread_;
+		HistoryClient historyClient_;
+		HistoryServer historyServer_;
 	};
 
 }
