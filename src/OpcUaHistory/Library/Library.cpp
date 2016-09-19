@@ -57,7 +57,7 @@ namespace OpcUaHistory
 
         // start history client and history server
         if (!historyClientManager_.startup(&config, ioThread_)) return false;
-        if (!historyServer_.startup(&config, ioThread_)) return false;
+        if (!historyServerManager_.startup(&config, ioThread_)) return false;
 
 		return true;
 	}
@@ -71,7 +71,7 @@ namespace OpcUaHistory
         ioThread_.reset();
 
         // shutdown history client and history server
-        if (!historyServer_.shutdown()) return false;
+        if (!historyServerManager_.shutdown()) return false;
         if (!historyClientManager_.shutdown()) return false;
 
 		return true;
