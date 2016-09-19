@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <OpcUaClientModel xmlns="http://ASNeG.de/OpcUaClientModel.xsd">
 
+	<Endpoint>
+		<ServerUri>opc.tcp://127.0.0.1:4841</ServerUri>
+	</Endpoint>
+	
+	<NamespaceUris>
+	  	<Uri>http://xx/xx</Uri>
+	</NamespaceUris>
+	
+	<Subscription id="subscription1">
+		<PublishingInterval>0</PublishingInterval>
+		<LifetimeCount>0</LifetimeCount>
+		<MaxKeepAliveCount>0</MaxKeepAliveCount>
+		<MaxNotificationsPerPublish>0</MaxNotificationsPerPublish>
+		
+		<NodeList id="nodelist1">
+			<SamplingInterval>0</SamplingInterval>
+		  	<QueueSize>1</QueueSize>
+		  	<DataChangeFilter>status-value-timestamp</DataChangeFilter> 
+		  	 
+		  	<Node NodeId="ns=1;s=aaa" ValueName="Value1"/>
+		  	<Node NodeId="ns=1;s=bbb" ValueName="Value2"/>
+		  	
+		</NodeList>
+	</Subscription>
+	
 </OpcUaClientModel>

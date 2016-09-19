@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<OpcUaClientModel xmlns="http://ASNeG.de/OpcUaClientModel.xsd">
+<OpcUaServerModel xmlns="http://ASNeG.de/OpcUaServerModel.xsd">
 
-</OpcUaClientModel>
+	<NamespaceUris>
+	  	<Uri>http://xx/xx</Uri>
+	</NamespaceUris>
+	
+	<Node NodeId="ns=1;s=aaa" ValueName="Value1"/>
+	<Node NodeId="ns=1;s=bbb" ValueName="Value2"/>
+
+</OpcUaServerModel>
