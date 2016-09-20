@@ -15,20 +15,42 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryConfig.h"
+#ifndef __OpcUaHistory_HistoryClientConfig_h__
+#define __OpcUaHistory_HistoryClientConfig_h__
+
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
+#include "OpcUaStackCore/Utility/IOThread.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	HistoryConfig::HistoryConfig(void)
+	class ClientSubscriptionConfig
 	{
-	}
+	  public:
+		ClientSubscriptionConfig(void);
+		~ClientSubscriptionConfig(void);
+	};
 
-	HistoryConfig::~HistoryConfig(void)
+	class HistoryClientConfig
 	{
-	}
+	  public:
+		HistoryClientConfig(void);
+		~HistoryClientConfig(void);
+
+		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
+		bool decodeEndpoint(Config::SPtr& config);
+		bool decodeNamespaceUris(Config::SPtr& config);
+		bool decodeSubscription(Config::SPtr& subscription);
+
+		std::string serverUri(void);
+
+	  private:
+		std::string serverUri_;
+		std::vector<std::string> namespaceUris_;
+	};
 
 }
+
+#endif
