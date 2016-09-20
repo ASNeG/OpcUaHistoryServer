@@ -28,6 +28,9 @@ namespace OpcUaHistory
 
 	Library::Library(void)
 	: ApplicationIf()
+	, historyManager_()
+	, historyClientManager_()
+	, historyServerManager_()
 	{
 		Log(Debug, "Library::Library");
 	}
@@ -56,6 +59,7 @@ namespace OpcUaHistory
         }
 
         // start history client and history server
+        if (historyManager_.startup(&config, ioThread_)) return false;
         if (!historyClientManager_.startup(&config, ioThread_)) return false;
         if (!historyServerManager_.startup(&config, ioThread_)) return false;
 
@@ -73,6 +77,7 @@ namespace OpcUaHistory
         // shutdown history client and history server
         if (!historyServerManager_.shutdown()) return false;
         if (!historyClientManager_.shutdown()) return false;
+        if (!historyManager_.shutdown()) return false;
 
 		return true;
 	}
