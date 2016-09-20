@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryClientConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -29,13 +30,18 @@ namespace OpcUaHistory
 	class HistoryClient
 	{
 	  public:
+		typedef boost::shared_ptr<HistoryClient> SPtr;
+		typedef std::map<std::string, HistoryClient::SPtr> Map;
+		typedef std::set<HistoryClient::SPtr> Set;
+
 		HistoryClient(void);
 		~HistoryClient(void);
 
-        bool startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread);
+        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
         bool shutdown(void);
 
 	  private:
+        HistoryClientConfig historyClientConfig_;
 	};
 
 }

@@ -16,6 +16,7 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaHistory/History/HistoryClientManager.h"
 
 using namespace OpcUaStackCore;
@@ -24,6 +25,7 @@ namespace OpcUaHistory
 {
 
 	HistoryClientManager::HistoryClientManager(void)
+	: historyClientSet_()
 	{
 	}
 
@@ -32,9 +34,18 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryClientManager::startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread)
+    HistoryClientManager::startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager)
     {
-    	// FIXME: todo
+    	std::vector<std::string>::iterator it;
+    	for (it = configFiles.begin(); it != configFiles.end(); it++) {
+    		HistoryClient::SPtr historyClient = constructSPtr<HistoryClient>();
+    		historyClientSet_.insert(historyClient);
+
+    		if (!historyClient->startup(*it, configXmlManager)) {
+    			return false;
+    		}
+    	}
+
     	return true;
     }
 
