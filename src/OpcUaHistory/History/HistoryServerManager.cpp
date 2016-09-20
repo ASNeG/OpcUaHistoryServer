@@ -32,7 +32,7 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryServerManager::startup(Config* config, IOThread::SPtr ioThread)
+    HistoryServerManager::startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread)
     {
     	// FIXME: todo
     	return true;

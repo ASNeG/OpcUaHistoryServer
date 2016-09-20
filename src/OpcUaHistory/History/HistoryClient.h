@@ -32,7 +32,7 @@ namespace OpcUaHistory
 		HistoryClient(void);
 		~HistoryClient(void);
 
-        bool startup(Config* config, IOThread::SPtr ioThread);
+        bool startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread);
         bool shutdown(void);
 
 	  private:

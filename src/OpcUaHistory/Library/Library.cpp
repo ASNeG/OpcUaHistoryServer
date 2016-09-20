@@ -31,7 +31,6 @@ namespace OpcUaHistory
 	Library::Library(void)
 	: ApplicationIf()
 	, configXmlManager_()
-	, config_(constructSPtr<Config>())
 	, historyManager_()
 	, historyClientManager_()
 	, historyServerManager_()
@@ -47,33 +46,80 @@ namespace OpcUaHistory
 	bool
 	Library::startup(void)
 	{
+		bool success;
+		std::vector<Config>::iterator it1;
+		std::vector<std::string>::iterator it2;
 		Log(Debug, "Library::startup");
 
+
+		//
         // read history model configuration file
-        if (configXmlManager_.registerConfiguration(applicationInfo()->configFileName(), config_)) {
+		//
+		Config::SPtr config;
+        if (!configXmlManager_.registerConfiguration(applicationInfo()->configFileName(), config)) {
+        	return false;
+        }
+        Log(Info, "read configuration file")
+            .parameter("ConfigFileName", applicationInfo()->configFileName());
+
+
+        //
+        // read OpcUaClient configuration file
+        //
+        std::vector<Config> configVecClient;
+        std::vector<std::string> configClients;
+        config->getChilds("HistoryModel.OpcUaClients", configVecClient);
+
+        for (it1 = configVecClient.begin(); it1 != configVecClient.end(); it1++) {
+        	std::string configFileName;
+        	success = it1->getConfigParameter("OpcUaClient", configFileName);
+            if (!success) {
+             	Log(Error, "history manager configuration entry missing")
+             		.parameter("ConfigFile", applicationInfo()->configFileName())
+             		.parameter("Parameter", "HistoryModel.OpcUaClients.OpcUaClient");
+             	return false;
+             }
+            configClients.push_back(configFileName);
+        }
+
+
+        //
+        // read OpcUaServer configuration file
+        //
+        std::vector<Config> configVecServer;
+        std::vector<std::string> configServers;
+        config->getChilds("HistoryModel.OpcUaServers", configVecServer);
+
+        for (it1 = configVecServer.begin(); it1 != configVecServer.end(); it1++) {
+        	std::string configFileName;
+        	success = it1->getConfigParameter("OpcUaServer", configFileName);
+            if (!success) {
+             	Log(Error, "history manager configuration entry missing")
+             		.parameter("ConfigFile", applicationInfo()->configFileName())
+             		.parameter("Parameter", "HistoryModel.OpcUaServer.OpcUaServer");
+             	return false;
+            }
+            configServers.push_back(configFileName);
+        }
+
+
+        // read history manager configuration
+        std::string configHistory;
+        success = config->getConfigParameter("HistoryModel.HistoryManager", configHistory);
+        if (!success) {
+        	Log(Error, "history manager configuration entry missing")
+        		.parameter("ConfigFile", applicationInfo()->configFileName())
+        		.parameter("Parameter", "HistoryModel.HistoryManager");
         	return false;
         }
 
         ioThread_ = constructSPtr<IOThread>();
         if (!ioThread_->startup()) return false;
 
-
-        Config config;
-#if 0
-        ConfigXml configXml;
-        Config config;
-        if (!configXml.parse(applicationInfo()->configFileName(), &config)) {
-        	Log(Error, "parse configuration file error")
-            	.parameter("ConfigFileName", applicationInfo()->configFileName())
-                .parameter("Reason", configXml.errorMessage());
-            return false;
-        }
-#endif
-
         // start history client and history server
-        if (historyManager_.startup(&config, ioThread_)) return false;
-        if (!historyClientManager_.startup(&config, ioThread_)) return false;
-        if (!historyServerManager_.startup(&config, ioThread_)) return false;
+        if (historyManager_.startup(configHistory, ioThread_)) return false;
+        if (!historyClientManager_.startup(configClients, ioThread_)) return false;
+        if (!historyServerManager_.startup(configServers, ioThread_)) return false;
 
 		return true;
 	}

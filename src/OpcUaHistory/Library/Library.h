@@ -46,7 +46,6 @@ namespace OpcUaHistory
 	  private:
 		IOThread::SPtr ioThread_;
 		ConfigXmlManager configXmlManager_;
-		Config::SPtr config_;
 		HistoryManager historyManager_;
 		HistoryClientManager historyClientManager_;
 		HistoryServerManager historyServerManager_;
