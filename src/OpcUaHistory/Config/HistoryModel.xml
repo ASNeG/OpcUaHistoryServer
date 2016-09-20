@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<OpcUaHistory xmlns="http://ASNeG.de/OpcUaHistory.xsd">
+<HistoryModel xmlns="http://ASNeG.de/HistoryModel.xsd">
 
 	<OpcUaClients>
 		<OpcUaClient>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaClientModel.xml</OpcUaClient>
@@ -9,10 +9,6 @@
 	    <OpcUaServer>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaServerModel.xml</OpcUaServer>
 	</OpcUaServers>
 	
-	<HistoryReadManager>
-	</HistoryReadManager>
+	<HistoryManager>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryManager.xml</HistoryManager>
 	
-	<HistoryWriteManager>
-	</HistoryWriteManager>
-
-</OpcUaHistory>
+</HistoryModel>

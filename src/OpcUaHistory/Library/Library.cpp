@@ -17,17 +17,21 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaStackCore/Base/ConfigXml.h"
+#include "OpcUaStackCore/Base/ObjectPool.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
 #include "OpcUaHistory/Library/Library.h"
 #include <iostream>
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
 	Library::Library(void)
 	: ApplicationIf()
+	, configXmlManager_()
+	, config_(constructSPtr<Config>())
 	, historyManager_()
 	, historyClientManager_()
 	, historyServerManager_()
@@ -45,10 +49,17 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::startup");
 
+        // read history model configuration file
+        if (configXmlManager_.registerConfiguration(applicationInfo()->configFileName(), config_)) {
+        	return false;
+        }
+
         ioThread_ = constructSPtr<IOThread>();
         if (!ioThread_->startup()) return false;
 
-        // read history model configuration file
+
+        Config config;
+#if 0
         ConfigXml configXml;
         Config config;
         if (!configXml.parse(applicationInfo()->configFileName(), &config)) {
@@ -57,6 +68,7 @@ namespace OpcUaHistory
                 .parameter("Reason", configXml.errorMessage());
             return false;
         }
+#endif
 
         // start history client and history server
         if (historyManager_.startup(&config, ioThread_)) return false;

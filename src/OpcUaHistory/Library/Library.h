@@ -18,6 +18,7 @@
 #ifndef __OpcUaHistory_Library_h__
 #define __OpcUaHistory_Library_h__
 
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaHistory/History/HistoryManager.h"
@@ -44,6 +45,8 @@ namespace OpcUaHistory
 
 	  private:
 		IOThread::SPtr ioThread_;
+		ConfigXmlManager configXmlManager_;
+		Config::SPtr config_;
 		HistoryManager historyManager_;
 		HistoryClientManager historyClientManager_;
 		HistoryServerManager historyServerManager_;

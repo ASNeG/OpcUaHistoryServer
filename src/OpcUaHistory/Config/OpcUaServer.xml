@@ -83,7 +83,7 @@
     <Application>
       <Name>OpcUaHistory</Name>  
       <Library>OpcUaHistory</Library>
-      <Config>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaHistoryModel.xml</Config>
+      <Config>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryModel.xml</Config>
     </Application>
   </Applications>
  
