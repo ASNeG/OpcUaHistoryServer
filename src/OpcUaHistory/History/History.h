@@ -18,9 +18,11 @@
 #ifndef __OpcUaHistory_History_h__
 #define __OpcUaHistory_History_h__
 
-#include <istream>
-#include <map>
-#include <stdint.h>
+#include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryConfig.h"
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
@@ -28,13 +30,18 @@ namespace OpcUaHistory
 	class History
 	{
 	  public:
+		typedef boost::shared_ptr<History> SPtr;
+		typedef std::map<std::string, History::SPtr> Map;
+		typedef std::set<History::SPtr> Set;
+
 		History(void);
 		~History(void);
 
-		bool startup(void);
-		bool shutdown(void);
+        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
+        bool shutdown(void);
 
 	  private:
+        HistoryConfig historyConfig_;
 	};
 
 }

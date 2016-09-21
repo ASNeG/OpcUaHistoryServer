@@ -15,8 +15,6 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include <iostream>
-
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaHistory/History/History.h"
 
@@ -26,6 +24,7 @@ namespace OpcUaHistory
 {
 
 	History::History(void)
+	: historyConfig_()
 	{
 	}
 
@@ -33,16 +32,21 @@ namespace OpcUaHistory
 	{
 	}
 
-	bool
-	History::startup(void)
-	{
-		return true;
-	}
+    bool
+    History::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
+    {
+    	if (!historyConfig_.decode(fileName, configXmlManager)) {
+    		return false;
+    	}
 
-	bool
-	History::shutdown(void)
-	{
-		return true;
-	}
+    	return true;
+    }
+
+    bool
+    History::shutdown(void)
+    {
+    	// FIXME: todo
+    	return true;
+    }
 
 }
