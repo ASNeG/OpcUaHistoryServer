@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <HistoryManager xmlns="http://ASNeG.de/HistoryManager.xsd">
 
+	<HistoryAccessMode>HistoryFileAccess</HistoryAccessMode>HistoryAccessMode>
+	
+	<HistoryFileAccess>
+	
+		<BaseFolder>@INSTALL_DIR@/@WORK_DIR@/OpcUaHistory/</BaseFolder>
+		
+		<ReadFileAccess>
+		  	<VerboseLogging>off</VerboseLogging>
+		  	
+		  	<MaxConcurrentValues>500</MaxConcurrentValues>
+		  	<AgeCounter>10</AgeCounter>
+		  	
+		  	<MaxContinousPoint>100</MaxContinousPoint>
+		  	<ContinousPointIdleTime>60000</ContinousPointIdleTime>
+		  	<MaxDeleteTimeoutentries>20</MaxDeleteTimeoutentries>
+		</ReadFileAccess>
+		
+		<WriteFileAccess>
+			<VerboseLogging>off</VerboseLogging>
+			
+			<MaxDataFolderInValueFolder>1000</MaxDataFolderInValueFolder>
+			<MaxDataFilesInDataFolder>1000</MaxDataFilesInDataFolder>
+			<MaxEntriesInDataFile>1000</MaxEntriesInDataFile>
+			<MaxConcurrentValues>500</MaxConcurrentValues>
+			<AgeCounter>10</AgeCounter>
+		</WriteFileAccess>
+	
+	</HistoryFileAccess>
+
 </HistoryManager>

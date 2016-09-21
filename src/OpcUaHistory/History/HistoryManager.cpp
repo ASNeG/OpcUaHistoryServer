@@ -24,6 +24,7 @@ namespace OpcUaHistory
 {
 
 	HistoryManager::HistoryManager(void)
+	: history_()
 	{
 	}
 
@@ -32,9 +33,11 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryManager::startup(std::string& configFile, IOThread::SPtr ioThread)
+    HistoryManager::startup(std::string& configFile, ConfigXmlManager& configXmlManager)
     {
-    	// FIXME: todo
+    	if (!history_.startup(configFile, configXmlManager)) {
+    	    return false;
+    	}
     	return true;
     }
 
