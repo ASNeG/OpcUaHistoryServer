@@ -20,7 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/History/History.h"
+#include "OpcUaHistory/History/FileHistory.h"
 
 using namespace OpcUaStackCore;
 
@@ -37,7 +37,7 @@ namespace OpcUaHistory
 	    bool shutdown(void);
 
 	  private:
-	    History history_;
+	    FileHistory fileHistory_;
 	};
 
 }

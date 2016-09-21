@@ -15,38 +15,35 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/History.h"
+#ifndef __OpcUaHistory_History_h__
+#define __OpcUaHistory_History_h__
+
+#include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryConfig.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	History::History(void)
-	: historyConfig_()
+	class FileHistory
 	{
-	}
+	  public:
+		typedef boost::shared_ptr<FileHistory> SPtr;
+		typedef std::map<std::string, FileHistory::SPtr> Map;
+		typedef std::set<FileHistory::SPtr> Set;
 
-	History::~History(void)
-	{
-	}
+		FileHistory(void);
+		~FileHistory(void);
 
-    bool
-    History::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
-    {
-    	if (!historyConfig_.decode(fileName, configXmlManager)) {
-    		return false;
-    	}
+        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
+        bool shutdown(void);
 
-    	return true;
-    }
-
-    bool
-    History::shutdown(void)
-    {
-    	// FIXME: todo
-    	return true;
-    }
+	  private:
+        HistoryConfig historyConfig_;
+	};
 
 }
+
+#endif
