@@ -25,11 +25,11 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class HistoryConfig
+	class FileHistoryConfig
 	{
 	  public:
-		HistoryConfig(void);
-		~HistoryConfig(void);
+		FileHistoryConfig(void);
+		~FileHistoryConfig(void);
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 	};

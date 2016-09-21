@@ -16,7 +16,7 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryConfig.h"
+#include "OpcUaHistory/History/FileHistoryConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -30,16 +30,16 @@ namespace OpcUaHistory
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
-	HistoryConfig::HistoryConfig(void)
+	FileHistoryConfig::FileHistoryConfig(void)
 	{
 	}
 
-	HistoryConfig::~HistoryConfig(void)
+	FileHistoryConfig::~FileHistoryConfig(void)
 	{
 	}
 
 	bool
-	HistoryConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
+	FileHistoryConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
 	{
 		return true;
 	}

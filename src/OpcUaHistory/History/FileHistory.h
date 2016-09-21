@@ -15,12 +15,12 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_History_h__
-#define __OpcUaHistory_History_h__
+#ifndef __OpcUaHistory_FileHistory_h__
+#define __OpcUaHistory_FileHistory_h__
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/History/HistoryConfig.h"
+#include "OpcUaHistory/History/FileHistoryConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -41,7 +41,7 @@ namespace OpcUaHistory
         bool shutdown(void);
 
 	  private:
-        HistoryConfig historyConfig_;
+        FileHistoryConfig fileHistoryConfig_;
 	};
 
 }

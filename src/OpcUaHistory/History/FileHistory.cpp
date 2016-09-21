@@ -24,7 +24,7 @@ namespace OpcUaHistory
 {
 
 	FileHistory::FileHistory(void)
-	: historyConfig_()
+	: fileHistoryConfig_()
 	{
 	}
 
@@ -35,7 +35,7 @@ namespace OpcUaHistory
     bool
     FileHistory::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
     {
-    	if (!historyConfig_.decode(fileName, configXmlManager)) {
+    	if (!fileHistoryConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
 
