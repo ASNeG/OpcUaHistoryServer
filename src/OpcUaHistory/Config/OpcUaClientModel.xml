@@ -9,13 +9,13 @@
 	  	<Uri>http://xx/xx</Uri>
 	</NamespaceUris>
 	
-	<Subscription id="subscription1">
+	<Subscription Id="subscription1">
 		<PublishingInterval>0</PublishingInterval>
 		<LifetimeCount>0</LifetimeCount>
 		<MaxKeepAliveCount>0</MaxKeepAliveCount>
 		<MaxNotificationsPerPublish>0</MaxNotificationsPerPublish>
 		
-		<NodeList id="nodelist1">
+		<NodeList Id="nodelist1">
 			<SamplingInterval>0</SamplingInterval>
 		  	<QueueSize>1</QueueSize>
 		  	<DataChangeFilter>status-value-timestamp</DataChangeFilter> 
