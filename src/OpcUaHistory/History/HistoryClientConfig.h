@@ -29,8 +29,31 @@ namespace OpcUaHistory
 	class ClientSubscriptionConfig
 	{
 	  public:
+		typedef boost::shared_ptr<ClientSubscriptionConfig> SPtr;
+		typedef std::map<std::string, ClientSubscriptionConfig> Map;
+
 		ClientSubscriptionConfig(void);
 		~ClientSubscriptionConfig(void);
+
+		std::string id(void);
+		void id(const std::string& id);
+
+		uint32_t publishingInterval(void);
+		void publisingInterval(uint32_t publishingInterval);
+		uint32_t livetimeCount(void);
+		void livetimeCount(uint32_t livetimeCount);
+		uint32_t maxKeepaliveCount(void);
+		void maxKeepaliveCount(uint32_t maxKeepaliveCount);
+		uint32_t maxNotificationPerPublish(void);
+		void maxNotificationPerPublish(uint32_t maxNotificationPerPublish);
+
+	  private:
+		std::string id_;
+
+		uint32_t publishingInterval_;
+		uint32_t livetimeCount_;
+		uint32_t maxKeepaliveCount_;
+		uint32_t maxNotificationPerPublish_;
 	};
 
 	class HistoryClientConfig

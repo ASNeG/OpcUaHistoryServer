@@ -31,11 +31,76 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	ClientSubscriptionConfig::ClientSubscriptionConfig(void)
+	: id_("")
+	, publishingInterval_(0)
+	, livetimeCount_(0)
+	, maxKeepaliveCount_(0)
+	, maxNotificationPerPublish_(0)
 	{
 	}
 
 	ClientSubscriptionConfig::~ClientSubscriptionConfig(void)
 	{
+	}
+
+	std::string
+	ClientSubscriptionConfig::id(void)
+	{
+		return id_;
+	}
+
+	void
+	ClientSubscriptionConfig::id(const std::string& id)
+	{
+		id_ = id;
+	}
+
+	uint32_t
+	ClientSubscriptionConfig::publishingInterval(void)
+	{
+		return publishingInterval_;
+	}
+
+	void
+	ClientSubscriptionConfig::publisingInterval(uint32_t publishingInterval)
+	{
+		publishingInterval_ =publishingInterval;
+	}
+
+	uint32_t
+	ClientSubscriptionConfig::livetimeCount(void)
+	{
+		return livetimeCount_;
+	}
+
+	void
+	ClientSubscriptionConfig::livetimeCount(uint32_t livetimeCount)
+	{
+		livetimeCount_ = livetimeCount;
+	}
+
+	uint32_t
+	ClientSubscriptionConfig::maxKeepaliveCount(void)
+	{
+		return maxKeepaliveCount_;
+	}
+
+	void
+	ClientSubscriptionConfig::maxKeepaliveCount(uint32_t maxKeepaliveCount)
+	{
+		maxKeepaliveCount_ = maxKeepaliveCount;
+	}
+
+	uint32_t
+	ClientSubscriptionConfig::maxNotificationPerPublish(void)
+	{
+		return maxNotificationPerPublish_;
+	}
+
+	void
+	ClientSubscriptionConfig::maxNotificationPerPublish(uint32_t maxNotificationPerPublish)
+	{
+		maxNotificationPerPublish_ = maxNotificationPerPublish;
 	}
 
 	// ------------------------------------------------------------------------
