@@ -15,37 +15,31 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryManager.h"
+#ifndef __OpcUaHistory_HistoryManager_h__
+#define __OpcUaHistory_HistoryManager_h__
+
+#include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/FileHistory.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	HistoryManager::HistoryManager(void)
-	: fileHistory_()
+	class HistoryStore
 	{
-	}
+	  public:
+		HistoryStore(void);
+		~HistoryStore(void);
 
-	HistoryManager::~HistoryManager(void)
-	{
-	}
+	    bool startup(std::string& configFile, ConfigXmlManager& configXmlManager);
+	    bool shutdown(void);
 
-    bool
-    HistoryManager::startup(std::string& configFile, ConfigXmlManager& configXmlManager)
-    {
-    	if (!fileHistory_.startup(configFile, configXmlManager)) {
-    	    return false;
-    	}
-    	return true;
-    }
-
-    bool
-    HistoryManager::shutdown(void)
-    {
-    	// FIXME: todo
-    	return true;
-    }
+	  private:
+	    FileHistory fileHistory_;
+	};
 
 }
+
+#endif

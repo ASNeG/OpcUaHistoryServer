@@ -9,6 +9,6 @@
 	    <OpcUaServer>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaServerModel.xml</OpcUaServer>
 	</OpcUaServers>
 	
-	<HistoryManager>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryManager.xml</HistoryManager>
+	<HistoryStore>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryStore.xml</HistoryStore>
 	
 </HistoryModel>

@@ -31,7 +31,7 @@ namespace OpcUaHistory
 	Library::Library(void)
 	: ApplicationIf()
 	, configXmlManager_()
-	, historyManager_()
+	, historyStore_()
 	, historyClientManager_()
 	, historyServerManager_()
 	{
@@ -105,11 +105,11 @@ namespace OpcUaHistory
 
         // read history manager configuration
         std::string configHistory;
-        success = config->getConfigParameter("HistoryModel.HistoryManager", configHistory);
+        success = config->getConfigParameter("HistoryModel.HistoryStore", configHistory);
         if (!success) {
-        	Log(Error, "history manager configuration entry missing")
+        	Log(Error, "history store configuration entry missing")
         		.parameter("ConfigFile", applicationInfo()->configFileName())
-        		.parameter("Parameter", "HistoryModel.HistoryManager");
+        		.parameter("Parameter", "HistoryModel.HistoryStore");
         	return false;
         }
 
@@ -117,7 +117,7 @@ namespace OpcUaHistory
         if (!ioThread_->startup()) return false;
 
         // start history client and history server
-        if (!historyManager_.startup(configHistory, configXmlManager_)) return false;
+        if (!historyStore_.startup(configHistory, configXmlManager_)) return false;
         if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
         if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
 
@@ -135,7 +135,7 @@ namespace OpcUaHistory
         // shutdown history client and history server
         if (!historyServerManager_.shutdown()) return false;
         if (!historyClientManager_.shutdown()) return false;
-        if (!historyManager_.shutdown()) return false;
+        if (!historyStore_.shutdown()) return false;
 
 		return true;
 	}

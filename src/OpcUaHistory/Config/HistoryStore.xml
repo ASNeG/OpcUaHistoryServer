@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HistoryManager xmlns="http://ASNeG.de/HistoryManager.xsd">
+<HistoryStore xmlns="http://ASNeG.de/HistoryManager.xsd">
 
-	<HistoryAccessMode>HistoryFileAccess</HistoryAccessMode>HistoryAccessMode>
+	<HistoryStoreModel>FileHistory</HistoryStoreModel>
 	
-	<HistoryFileAccess>
+	<FileHistory>
 	
 		<BaseFolder>@INSTALL_DIR@/@WORK_DIR@/OpcUaHistory/</BaseFolder>
 		
@@ -28,6 +28,6 @@
 			<AgeCounter>10</AgeCounter>
 		</WriteFileAccess>
 	
-	</HistoryFileAccess>
+	</FileHistory>
 
-</HistoryManager>
+</HistoryStore>
