@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryServer.h"
 
 using namespace OpcUaStackCore;
 
@@ -32,10 +33,11 @@ namespace OpcUaHistory
 		HistoryServerManager(void);
 		~HistoryServerManager(void);
 
-	    bool startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread);
+	    bool startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
 
 	  private:
+	    HistoryServer::Set historyServerSet_;
 	};
 
 }

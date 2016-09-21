@@ -119,7 +119,7 @@ namespace OpcUaHistory
         // start history client and history server
         //if (historyManager_.startup(configHistory, ioThread_)) return false;
         if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
-        //if (!historyServerManager_.startup(configServers, ioThread_)) return false;
+        if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
 
 		return true;
 	}

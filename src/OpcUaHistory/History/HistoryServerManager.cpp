@@ -24,6 +24,7 @@ namespace OpcUaHistory
 {
 
 	HistoryServerManager::HistoryServerManager(void)
+	: historyServerSet_()
 	{
 	}
 
@@ -32,9 +33,17 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryServerManager::startup(std::vector<std::string>& configFiles, IOThread::SPtr ioThread)
+    HistoryServerManager::startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager)
     {
-    	// FIXME: todo
+    	std::vector<std::string>::iterator it;
+    	for (it = configFiles.begin(); it != configFiles.end(); it++) {
+    		HistoryServer::SPtr historyServer = constructSPtr<HistoryServer>();
+    		historyServerSet_.insert(historyServer);
+
+    		if (!historyServer->startup(*it, configXmlManager)) {
+    			return false;
+    		}
+    	}
     	return true;
     }
 
