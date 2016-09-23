@@ -16,32 +16,37 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/FileHistoryConfig.h"
+#include "OpcUaHistory/History/FileHistoryStore.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	// ------------------------------------------------------------------------
-	// ------------------------------------------------------------------------
-	//
-	// class HistoryConfig
-	//
-	// ------------------------------------------------------------------------
-	// ------------------------------------------------------------------------
-	FileHistoryConfig::FileHistoryConfig(void)
+	FileHistoryStore::FileHistoryStore(void)
+	: fileHistoryConfig_()
 	{
 	}
 
-	FileHistoryConfig::~FileHistoryConfig(void)
+	FileHistoryStore::~FileHistoryStore(void)
 	{
 	}
 
-	bool
-	FileHistoryConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
-	{
-		return true;
-	}
+    bool
+    FileHistoryStore::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
+    {
+    	if (!fileHistoryConfig_.decode(fileName, configXmlManager)) {
+    		return false;
+    	}
+
+    	return true;
+    }
+
+    bool
+    FileHistoryStore::shutdown(void)
+    {
+    	// FIXME: todo
+    	return true;
+    }
 
 }

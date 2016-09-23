@@ -25,13 +25,55 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class FileHistoryConfig
+	class FileHistoryStoreReadConfig
 	{
 	  public:
-		FileHistoryConfig(void);
-		~FileHistoryConfig(void);
+		FileHistoryStoreReadConfig(void);
+		~FileHistoryStoreReadConfig(void);
+
+		bool verboseLogging_;
+
+		uint32_t maxConcurrentValues_;
+		uint32_t ageCounter_;
+
+		uint32_t maxContinousPoint_;
+		uint32_t continousPointIdleTimeout_;
+		uint32_t maxDeleteTimeoutEntries_;
+	};
+
+	class FileHistoryStoreWriteConfig
+	{
+	  public:
+		FileHistoryStoreWriteConfig(void);
+		~FileHistoryStoreWriteConfig(void);
+
+		bool verboseLogging_;
+
+		uint32_t maxDataFilderInValueFolder_;
+		uint32_t maxDataFilesInDataFolder_;
+		uint32_t maxEntriesInDataFile_;
+		uint32_t maxConcurrentValues_;
+		uint32_t ageCounter_;
+	};
+
+	class FileHistoryStoreConfig
+	{
+	  public:
+		FileHistoryStoreConfig(void);
+		~FileHistoryStoreConfig(void);
+
+		std::string& baseFolder(void);
+		FileHistoryStoreReadConfig& historyStoreFileReadConfig(void);
+		FileHistoryStoreWriteConfig& historyStoreFileWriteConfig(void);
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
+
+	  private:
+
+		std::string baseFolder_;
+		FileHistoryStoreReadConfig readConfig_;
+		FileHistoryStoreWriteConfig writeConfig_;
+
 	};
 
 }

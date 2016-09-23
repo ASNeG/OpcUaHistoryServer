@@ -15,33 +15,33 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_FileHistory_h__
-#define __OpcUaHistory_FileHistory_h__
+#ifndef __OpcUaHistory_FileHistoryStore_h__
+#define __OpcUaHistory_FileHistoryStore_h__
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/History/FileHistoryConfig.h"
+#include "OpcUaHistory/History/FileHistoryStoreConfig.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	class FileHistory
+	class FileHistoryStore
 	{
 	  public:
-		typedef boost::shared_ptr<FileHistory> SPtr;
-		typedef std::map<std::string, FileHistory::SPtr> Map;
-		typedef std::set<FileHistory::SPtr> Set;
+		typedef boost::shared_ptr<FileHistoryStore> SPtr;
+		typedef std::map<std::string, FileHistoryStore::SPtr> Map;
+		typedef std::set<FileHistoryStore::SPtr> Set;
 
-		FileHistory(void);
-		~FileHistory(void);
+		FileHistoryStore(void);
+		~FileHistoryStore(void);
 
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
         bool shutdown(void);
 
 	  private:
-        FileHistoryConfig fileHistoryConfig_;
+        FileHistoryStoreConfig fileHistoryConfig_;
 	};
 
 }
