@@ -35,9 +35,16 @@ namespace OpcUaHistory
     bool
     HistoryStore::startup(std::string& configFile, ConfigXmlManager& configXmlManager)
     {
+    	// startup file history store interface
     	if (!fileHistoryStore_.startup(configFile, configXmlManager)) {
     	    return false;
     	}
+
+    	// get interface
+    	if (fileHistoryStore_.activate()) {
+    		// FIXME: todo get interface ....
+    	}
+
     	return true;
     }
 

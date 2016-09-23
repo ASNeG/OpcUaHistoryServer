@@ -25,6 +25,8 @@ namespace OpcUaHistory
 
 	FileHistoryStore::FileHistoryStore(void)
 	: fileHistoryConfig_()
+	, fileReadManager_()
+	, fileWriteManager_()
 	{
 	}
 
@@ -39,13 +41,51 @@ namespace OpcUaHistory
     		return false;
     	}
 
-    	return true;
+    	if (!fileHistoryConfig_.activate()) {
+    		return true;
+    	}
+
+    	// startup reader and writer
+    	return startupFileStore();
     }
 
     bool
     FileHistoryStore::shutdown(void)
     {
-    	// FIXME: todo
+    	return true;
+    }
+
+    bool
+    FileHistoryStore::activate(void)
+    {
+    	return fileHistoryConfig_.activate();
+    }
+
+    bool
+    FileHistoryStore::startupFileStore(void)
+    {
+    	// init file read manager
+    	fileReadManager_.baseFolder(fileHistoryConfig_.baseFolder());
+    	fileReadManager_.verbose(fileHistoryConfig_.historyStoreFileReadConfig().verboseLogging_);
+
+    	fileReadManager_.maxConcurrentValues(fileHistoryConfig_.historyStoreFileReadConfig().maxConcurrentValues_);
+    	fileReadManager_.ageCounter(fileHistoryConfig_.historyStoreFileReadConfig().ageCounter_);
+
+    	fileReadManager_.maxContinousPoint(fileHistoryConfig_.historyStoreFileReadConfig().maxContinousPoint_);
+    	fileReadManager_.continousPointIdleTimeout(fileHistoryConfig_.historyStoreFileReadConfig().continousPointIdleTimeout_);
+    	fileReadManager_.maxDeleteTimeoutEntries(fileHistoryConfig_.historyStoreFileReadConfig().maxDeleteTimeoutEntries_);
+
+
+    	// init file write manager
+    	fileWriteManager_.baseFolder(fileHistoryConfig_.baseFolder());
+    	fileWriteManager_.verbose(fileHistoryConfig_.historyStoreFileWriteConfig().verboseLogging_);
+
+    	fileWriteManager_.maxDataFolderInValueFolder(fileHistoryConfig_.historyStoreFileWriteConfig().maxDataFolderInValueFolder_);
+    	fileWriteManager_.maxDataFilesInDataFolder(fileHistoryConfig_.historyStoreFileWriteConfig().maxDataFilesInDataFolder_);
+    	fileWriteManager_.maxEntriesInDataFile(fileHistoryConfig_.historyStoreFileWriteConfig().maxEntriesInDataFile_);
+    	fileWriteManager_.maxConcurrentValues(fileHistoryConfig_.historyStoreFileWriteConfig().maxConcurrentValues_);
+    	fileWriteManager_.ageCounter(fileHistoryConfig_.historyStoreFileWriteConfig().ageCounter_);
+
     	return true;
     }
 

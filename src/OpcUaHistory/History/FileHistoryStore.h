@@ -21,6 +21,8 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaHistory/History/FileHistoryStoreConfig.h"
+#include "OpcUaHistory/HistoryAccessFile/FileReadManager.h"
+#include "OpcUaHistory/HistoryAccessFile/FileWriteManager.h"
 
 using namespace OpcUaStackCore;
 
@@ -40,8 +42,15 @@ namespace OpcUaHistory
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
         bool shutdown(void);
 
+        bool activate(void);
+
 	  private:
+        bool startupFileStore(void);
+
         FileHistoryStoreConfig fileHistoryConfig_;
+
+        FileReadManager fileReadManager_;
+        FileWriteManager fileWriteManager_;
 	};
 
 }

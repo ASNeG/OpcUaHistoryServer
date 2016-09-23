@@ -85,6 +85,12 @@ namespace OpcUaHistory
 	{
 	}
 
+	bool
+	FileHistoryStoreConfig::activate(void)
+	{
+		return activate_;
+	}
+
 	std::string&
 	FileHistoryStoreConfig::baseFolder(void)
 	{
@@ -130,6 +136,7 @@ namespace OpcUaHistory
 			return false;
 		}
 		if (historyStoreModel != "FileHistoryStore") {
+			activate_ = false;
 			return true;
 		}
 		activate_ = true;

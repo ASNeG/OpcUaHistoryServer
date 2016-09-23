@@ -62,6 +62,7 @@ namespace OpcUaHistory
 		FileHistoryStoreConfig(void);
 		~FileHistoryStoreConfig(void);
 
+		bool activate(void);
 		std::string& baseFolder(void);
 		FileHistoryStoreReadConfig& historyStoreFileReadConfig(void);
 		FileHistoryStoreWriteConfig& historyStoreFileWriteConfig(void);
