@@ -15,6 +15,7 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
+#include <boost/algorithm/string.hpp>
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaHistory/History/FileHistoryStoreConfig.h"
 
@@ -53,7 +54,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	FileHistoryStoreWriteConfig::FileHistoryStoreWriteConfig(void)
 	: verboseLogging_(false)
-	, maxDataFilderInValueFolder_(1000)
+	, maxDataFolderInValueFolder_(1000)
 	, maxDataFilesInDataFolder_(1000)
 	, maxEntriesInDataFile_(1000)
 	, maxConcurrentValues_(500)
@@ -73,7 +74,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	FileHistoryStoreConfig::FileHistoryStoreConfig(void)
-	: baseFolder_("")
+	: activate_(false)
+	, baseFolder_("")
 	, readConfig_()
 	, writeConfig_()
 	{
@@ -104,6 +106,236 @@ namespace OpcUaHistory
 	bool
 	FileHistoryStoreConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
 	{
+		bool success;
+
+		//
+		// read configuration file
+		//
+        Log(Info, "read configuration file")
+            .parameter("ConfigFileName", configFileName);
+		Config::SPtr config;
+		success = configXmlManager.registerConfiguration(configFileName, config);
+		if (!success) {
+			Log(Error, "read configuration file error")
+			   .parameter("ConfigFile", configFileName);
+			   return false;
+		}
+
+		// read history model information
+		std::string historyStoreModel = "";
+		if (!config->getConfigParameter("HistoryStore.HistoryStoreModel", historyStoreModel)) {
+			Log(Error, "parameter missing config file")
+				.parameter("Parameter", "HistoryStore.HistoryStoreModel")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+		if (historyStoreModel != "FileHistoryStore") {
+			return true;
+		}
+		activate_ = true;
+
+		// get file history store
+		boost::optional<Config> child = config->getChild("HistoryStore.FileHistoryStore");
+		if (!child) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+
+		// get base configuration
+		if (!decodeFileStoreBase(*child)) {
+			Log(Error, "read configuration file error")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+
+		// parse read configuration
+		boost::optional<Config> childRead = child->getChild("ReadFileAccess");
+		if (!child) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+		if (!decodeFileStoreRead(*childRead)) {
+			Log(Error, "read configuration file error")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+
+		// parse write configuration
+		boost::optional<Config> childWrite = child->getChild("WriteFileAccess");
+		if (!child) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+		if (!decodeFileStoreWrite(*childWrite)) {
+			Log(Error, "read configuration file error")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	FileHistoryStoreConfig::decodeFileStoreBase(Config& config)
+	{
+		bool success;
+
+		// get base folder
+		success = config.getConfigParameter("BaseFolder", baseFolder_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.BaseFolder");
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	FileHistoryStoreConfig::decodeFileStoreRead(Config& config)
+	{
+		bool success;
+
+		// get verbose logging
+		std::string verboseLogging;
+		success = config.getConfigParameter("VerboseLogging", verboseLogging);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.VerboseLogging");
+			return false;
+		}
+		boost::to_upper(verboseLogging);
+		if (verboseLogging == "ON") {
+			readConfig_.verboseLogging_ = true;
+		}
+		else if (verboseLogging == "OFF") {
+			readConfig_.verboseLogging_ = false;
+		}
+		else {
+			Log(Error, "parameter invalid in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.VerboseLogging")
+				.parameter("VerboseLogging", verboseLogging);
+			return false;
+		}
+
+
+		// get max concurrent values
+		success = config.getConfigParameter("MaxConcurrentValues", readConfig_.maxConcurrentValues_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.MaxConcurrentValues");
+			return false;
+		}
+
+		// get age counter
+		success = config.getConfigParameter("AgeCounter", readConfig_.ageCounter_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.AgeCounter");
+			return false;
+		}
+
+		// get max continous point
+		success = config.getConfigParameter("MaxContinousPoint", readConfig_.maxContinousPoint_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.MaxContinousPoint");
+			return false;
+		}
+
+		// get continous point idle timeout
+		success = config.getConfigParameter("ContinousPointIdleTimeout", readConfig_.continousPointIdleTimeout_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.ContinousPointIdleTimeout");
+			return false;
+		}
+
+		// get max delete timeout entries
+		success = config.getConfigParameter("MaxDeleteTimeoutEntries", readConfig_.maxDeleteTimeoutEntries_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.MaxDeleteTimeoutEntries");
+			return false;
+		}
+
+
+		return true;
+	}
+
+	bool
+	FileHistoryStoreConfig::decodeFileStoreWrite(Config& config)
+	{
+		bool success;
+
+		// get verbose logging
+		std::string verboseLogging;
+		success = config.getConfigParameter("VerboseLogging", verboseLogging);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.VerboseLogging");
+			return false;
+		}
+		boost::to_upper(verboseLogging);
+		if (verboseLogging == "ON") {
+			writeConfig_.verboseLogging_ = true;
+		}
+		else if (verboseLogging == "OFF") {
+			writeConfig_.verboseLogging_ = false;
+		}
+		else {
+			Log(Error, "parameter invalid in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.VerboseLogging")
+				.parameter("VerboseLogging", verboseLogging);
+			return false;
+		}
+
+		// get MaxDataFolderInValueFolder
+		success = config.getConfigParameter("MaxDataFolderInValueFolder", writeConfig_.maxDataFolderInValueFolder_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.MaxDataFolderInValueFolder");
+			return false;
+		}
+
+		// get MaxDataFilesInDataFolder
+		success = config.getConfigParameter("MaxDataFilesInDataFolder", writeConfig_.maxDataFilesInDataFolder_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.MaxDataFilesInDataFolder");
+			return false;
+		}
+
+		// get MaxEntriesInDataFile
+		success = config.getConfigParameter("MaxEntriesInDataFile", writeConfig_.maxEntriesInDataFile_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.MaxEntriesInDataFile");
+			return false;
+		}
+
+		// get MaxConcurrentValues
+		success = config.getConfigParameter("MaxConcurrentValues", writeConfig_.maxConcurrentValues_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.MaxConcurrentValues");
+			return false;
+		}
+
+		// get AgeCounter
+		success = config.getConfigParameter("AgeCounter", writeConfig_.ageCounter_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess.AgeCounter");
+			return false;
+		}
+
 		return true;
 	}
 

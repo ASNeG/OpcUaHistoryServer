@@ -49,7 +49,7 @@ namespace OpcUaHistory
 
 		bool verboseLogging_;
 
-		uint32_t maxDataFilderInValueFolder_;
+		uint32_t maxDataFolderInValueFolder_;
 		uint32_t maxDataFilesInDataFolder_;
 		uint32_t maxEntriesInDataFile_;
 		uint32_t maxConcurrentValues_;
@@ -69,7 +69,11 @@ namespace OpcUaHistory
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
 	  private:
+		bool decodeFileStoreBase(Config& config);
+		bool decodeFileStoreRead(Config& config);
+		bool decodeFileStoreWrite(Config& config);
 
+		bool activate_;
 		std::string baseFolder_;
 		FileHistoryStoreReadConfig readConfig_;
 		FileHistoryStoreWriteConfig writeConfig_;

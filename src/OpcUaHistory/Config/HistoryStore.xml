@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <HistoryStore xmlns="http://ASNeG.de/HistoryManager.xsd">
 
-	<HistoryStoreModel>FileHistory</HistoryStoreModel>
+	<HistoryStoreModel>FileHistoryStore</HistoryStoreModel>
 	
-	<FileHistory>
+	<FileHistoryStore>
 	
 		<BaseFolder>@INSTALL_DIR@/@WORK_DIR@/OpcUaHistory/</BaseFolder>
 		
@@ -14,7 +14,7 @@
 		  	<AgeCounter>10</AgeCounter>
 		  	
 		  	<MaxContinousPoint>100</MaxContinousPoint>
-		  	<ContinousPointIdleTime>60000</ContinousPointIdleTime>
+		  	<ContinousPointIdleTimeout>60000</ContinousPointIdleTimeout>
 		  	<MaxDeleteTimeoutEntries>20</MaxDeleteTimeoutEntries>
 		</ReadFileAccess>
 		
@@ -28,6 +28,6 @@
 			<AgeCounter>10</AgeCounter>
 		</WriteFileAccess>
 	
-	</FileHistory>
+	</FileHistoryStore>
 
 </HistoryStore>
