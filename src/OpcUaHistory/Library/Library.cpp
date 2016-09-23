@@ -51,6 +51,12 @@ namespace OpcUaHistory
 		std::vector<std::string>::iterator it2;
 		Log(Debug, "Library::startup");
 
+		//
+		// create own thread
+		//
+		ioThread_ = constructSPtr<IOThread>();
+		if (!ioThread_->startup()) return false;
+
 
 		//
         // read history model configuration file
@@ -118,7 +124,7 @@ namespace OpcUaHistory
 
         // start history client and history server
         if (!historyStore_.startup(configHistory, configXmlManager_)) return false;
-        if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
+        if (!historyClientManager_.startup(configClients, configXmlManager_, ioThread_)) return false;
         if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
 
 		return true;

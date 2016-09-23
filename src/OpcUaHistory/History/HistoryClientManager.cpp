@@ -34,14 +34,18 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryClientManager::startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager)
+    HistoryClientManager::startup(
+    	std::vector<std::string>& configFiles,
+    	ConfigXmlManager& configXmlManager,
+    	IOThread::SPtr ioThread
+    )
     {
     	std::vector<std::string>::iterator it;
     	for (it = configFiles.begin(); it != configFiles.end(); it++) {
     		HistoryClient::SPtr historyClient = constructSPtr<HistoryClient>();
     		historyClientSet_.insert(historyClient);
 
-    		if (!historyClient->startup(*it, configXmlManager)) {
+    		if (!historyClient->startup(*it, configXmlManager, ioThread)) {
     			return false;
     		}
     	}

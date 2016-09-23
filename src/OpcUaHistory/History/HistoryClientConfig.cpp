@@ -199,6 +199,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	HistoryClientConfig::HistoryClientConfig(void)
 	: serverUri_("")
+	, reconnectTimeout_(5000)
 	, namespaceUris_()
 	, clientSubscriptionConfigMap_()
 	{
@@ -273,7 +274,15 @@ namespace OpcUaHistory
 		success = child->getConfigParameter("ServerUri", serverUri_);
 		if (!success) {
 			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Endpoint.ServerUri");
+				.parameter("Parameter", "OpcUaClientModel.Endpoint.ServerUri");
+			return false;
+		}
+
+		// sampling interval
+		success = child->getConfigParameter("ReconnectTimeout", reconnectTimeout_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "OpcUaClientModel.Endpoint.ReconnectTimeout");
 			return false;
 		}
 
@@ -509,16 +518,16 @@ namespace OpcUaHistory
 		return true;
 	}
 
-
-#if 0
-			  	<Node NodeId="ns=1;s=aaa" ValueName="Value1"/>
-			  	<Node NodeId="ns=1;s=bbb" ValueName="Value2"/>
-#endif
-
 	std::string
 	HistoryClientConfig::serverUri(void)
 	{
 		return serverUri_;
+	}
+
+	uint32_t
+	HistoryClientConfig::reconnectTimeout(void)
+	{
+		return reconnectTimeout_;
 	}
 
 	std::vector<std::string>&

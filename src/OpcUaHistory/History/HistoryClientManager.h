@@ -33,7 +33,11 @@ namespace OpcUaHistory
 		HistoryClientManager(void);
 		~HistoryClientManager(void);
 
-        bool startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager);
+        bool startup(
+        	std::vector<std::string>& configFiles,
+        	ConfigXmlManager& configXmlManager,
+        	IOThread::SPtr ioThread
+        );
         bool shutdown(void);
 
 	  private:

@@ -25,6 +25,8 @@ namespace OpcUaHistory
 
 	HistoryClient::HistoryClient(void)
 	: historyClientConfig_()
+
+	, serviceSetManager_()
 	{
 	}
 
@@ -33,11 +35,32 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryClient::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
+    HistoryClient::startup(
+    	const std::string& fileName,
+    	ConfigXmlManager& configXmlManager,
+    	IOThread::SPtr ioThread
+    )
     {
+    	ioThread_ = ioThread;
+
     	if (!historyClientConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
+
+		// init service sets
+		serviceSetManager_.registerIOThread("GlobalIOThread", ioThread);
+
+#if 0
+		// create session service
+		SessionServiceConfig sessionServiceConfig;
+		sessionServiceConfig.ioThreadName("GlobalIOThread");
+		sessionServiceConfig.sessionServiceIf_ = this;
+		sessionServiceConfig.secureChannelClient_->endpointUrl(opcUaClientConfig_->opcUaClientEndpoint_.serverUri_);
+		sessionServiceConfig.session_->sessionName("ASNeGWebServer");
+		sessionServiceConfig.session_->reconnectTimeout(5000);
+		serviceSetManager_.sessionService(sessionServiceConfig);
+		sessionService_ = serviceSetManager_.sessionService(sessionServiceConfig);
+#endif
 
     	return true;
     }
@@ -45,7 +68,6 @@ namespace OpcUaHistory
     bool
     HistoryClient::shutdown(void)
     {
-    	// FIXME: todo
     	return true;
     }
 

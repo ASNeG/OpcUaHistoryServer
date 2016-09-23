@@ -3,6 +3,7 @@
 
 	<Endpoint>
 		<ServerUri>opc.tcp://127.0.0.1:4841</ServerUri>
+		<ReconnectTimeout>5000</ReconnectTimeout>
 	</Endpoint>
 	
 	<NamespaceUris>

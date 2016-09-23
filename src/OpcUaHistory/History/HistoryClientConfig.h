@@ -103,6 +103,7 @@ namespace OpcUaHistory
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
 		std::string serverUri(void);
+		uint32_t reconnectTimeout(void);
 		std::vector<std::string>& namespaceUris(void);
 		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
 
@@ -115,6 +116,7 @@ namespace OpcUaHistory
 		bool decodeNode(Config& config, ClientNodeConfig& clientNodeConfig);
 
 		std::string serverUri_;
+		uint32_t reconnectTimeout_;
 		std::vector<std::string> namespaceUris_;
 		ClientSubscriptionConfig::Map clientSubscriptionConfigMap_;
 	};

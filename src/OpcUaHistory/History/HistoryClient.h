@@ -20,9 +20,11 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaHistory/History/HistoryClientConfig.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
@@ -37,11 +39,14 @@ namespace OpcUaHistory
 		HistoryClient(void);
 		~HistoryClient(void);
 
-        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
+        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager, IOThread::SPtr ioThread);
         bool shutdown(void);
 
 	  private:
         HistoryClientConfig historyClientConfig_;
+
+        IOThread::SPtr ioThread_;
+        ServiceSetManager serviceSetManager_;
 	};
 
 }
