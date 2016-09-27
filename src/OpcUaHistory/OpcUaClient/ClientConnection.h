@@ -21,6 +21,8 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <set>
+#include <vector>
+#include <stdint.h>
 
 namespace OpcUaHistory
 {
@@ -31,6 +33,7 @@ namespace OpcUaHistory
 		typedef boost::shared_ptr<ClientConnection> SPtr;
 		typedef std::map<std::string, ClientConnection::SPtr> Map;
 		typedef std::set<ClientConnection::SPtr> Set;
+		typedef std::vector<std::string> NamespaceUris;
 
 		typedef enum {
 			S_Connecting,
@@ -43,11 +46,23 @@ namespace OpcUaHistory
 		ClientConnection(void);
 		~ClientConnection(void);
 
+		void serverUri(const std::string& serverUri);
+		std::string serverUri(void);
+		void reconnectTimeout(uint32_t reconnectTimeout);
+		uint32_t reconnectTimeout(void);
+
 		void state(State state);
 		State state(void);
+		NamespaceUris& namespaceUris(void);
 
 	  private:
+		// configuration parameters
+		std::string serverUri_;
+		uint32_t reconnectTimeout_;
+
+		// runtime parameters
 		State state_;
+		NamespaceUris namespaceUris_;
 	};
 
 }

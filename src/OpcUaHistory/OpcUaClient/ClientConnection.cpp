@@ -29,6 +29,30 @@ namespace OpcUaHistory
 	}
 
 	void
+	ClientConnection::serverUri(const std::string& serverUri)
+	{
+		serverUri_ = serverUri;
+	}
+
+	std::string
+	ClientConnection::serverUri(void)
+	{
+		return serverUri_;
+	}
+
+	void
+	ClientConnection::reconnectTimeout(uint32_t reconnectTimeout)
+	{
+		reconnectTimeout_ = reconnectTimeout;
+	}
+
+	uint32_t
+	ClientConnection::reconnectTimeout(void)
+	{
+		return reconnectTimeout_;
+	}
+
+	void
 	ClientConnection::state(State state)
 	{
 		state_ = state;
@@ -38,6 +62,12 @@ namespace OpcUaHistory
 	ClientConnection::state(void)
 	{
 		return state_;
+	}
+
+	ClientConnection::NamespaceUris&
+	ClientConnection::namespaceUris(void)
+	{
+		return namespaceUris_;
 	}
 
 }
