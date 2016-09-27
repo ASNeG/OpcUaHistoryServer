@@ -2,7 +2,7 @@
 <OpcUaClientModel xmlns="http://ASNeG.de/OpcUaClientModel.xsd">
 
 	<Endpoint>
-		<ServerUri>opc.tcp://127.0.0.1:4841</ServerUri>
+		<ServerUri>opc.tcp://127.0.0.1:8889</ServerUri>
 		<ReconnectTimeout>5000</ReconnectTimeout>
 	</Endpoint>
 	

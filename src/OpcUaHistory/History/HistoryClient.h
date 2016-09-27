@@ -30,6 +30,9 @@ namespace OpcUaHistory
 {
 
 	class HistoryClient
+	: public SessionServiceIf
+	, public SubscriptionServiceIf
+	, public MonitoredItemServiceIf
 	{
 	  public:
 		typedef boost::shared_ptr<HistoryClient> SPtr;
@@ -42,11 +45,36 @@ namespace OpcUaHistory
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager, IOThread::SPtr ioThread);
         bool shutdown(void);
 
+		//- SessionServiceIf --------------------------------------------------
+		virtual void sessionStateUpdate(SessionBase& session, SessionState sessionState);
+		//- SessionServiceIf --------------------------------------------------
+
+		//- SubscriptionServiceIf ---------------------------------------------
+	    virtual void subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription);
+	    virtual void subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription);
+	    virtual void subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions);
+	    virtual void subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions);
+
+		virtual void dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem);
+		virtual void subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId);
+		//- SubscriptionServiceIf ---------------------------------------------
+
+		//- MonitoredItemServiceIf --------------------------------------------
+	    virtual void monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems);
+	    virtual void monitoredItemServiceDeleteMonitoredItemsResponse(ServiceTransactionDeleteMonitoredItems::SPtr serviceTransactionDeleteMonitoredItems);
+	    virtual void monitoredItemServiceModifyMonitoredItemsResponse(ServiceTransactionModifyMonitoredItems::SPtr serviceTransactionModifyMonitoredItems);
+	    virtual void monitoredItemServiceSetMonitoringModeResponse(ServiceTransactionSetMonitoringMode::SPtr serviceTransactionSetMonitoringMode);
+	    virtual void monitoredItemServiceSetTriggeringResponse(ServiceTransactionSetTriggering::SPtr serviceTransactionSetTriggering);
+		//- MonitoredItemServiceIf --------------------------------------------
+
 	  private:
         HistoryClientConfig historyClientConfig_;
 
         IOThread::SPtr ioThread_;
         ServiceSetManager serviceSetManager_;
+        SessionService::SPtr sessionService_;
+		SubscriptionService::SPtr subscriptionService_;
+		MonitoredItemService::SPtr monitoredItemService_;
 	};
 
 }
