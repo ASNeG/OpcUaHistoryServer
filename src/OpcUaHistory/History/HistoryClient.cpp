@@ -28,8 +28,13 @@ namespace OpcUaHistory
 
 	, serviceSetManager_()
 	, sessionService_()
+	, attributeService_()
 	, subscriptionService_()
 	, monitoredItemService_()
+
+	, state_(S_Close)
+	, namespaceMap_()
+
 	{
 	}
 
@@ -62,6 +67,12 @@ namespace OpcUaHistory
 		sessionServiceConfig.session_->reconnectTimeout(historyClientConfig_.reconnectTimeout());
 		serviceSetManager_.sessionService(sessionServiceConfig);
 		sessionService_ = serviceSetManager_.sessionService(sessionServiceConfig);
+
+		// create attribute service
+		AttributeServiceConfig attributeServiceConfig;
+		attributeServiceConfig.ioThreadName("GlobalIOThread");
+		attributeServiceConfig.attributeServiceIf_ = this;
+		attributeService_ = serviceSetManager_.attributeService(sessionService_, attributeServiceConfig);
 
 		// create subscriptions service
 		SubscriptionServiceConfig subscriptionServiceConfig;
@@ -109,21 +120,48 @@ namespace OpcUaHistory
 		{
 			case SS_Connect:
 				Log(Debug, "session state changed to connect");
-				//readNamespaceArray();
+				readNamespaceArray();
 				break;
 			case SS_Disconnect:
 				Log(Debug, "session state changed to disconnect/close");
-#if 0
 				state_ = S_Close;
-				if (!polling_) {
-					deleteSubscription();
-				}
-#endif
+				//deleteSubscription();
 				break;
 			case SS_Reactivate:
 				Log(Debug, "session state changed to reactivate");
 				break;
 		}
+	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// AttributeServiceIf
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	void
+	HistoryClient::attributeServiceReadResponse(ServiceTransactionRead::SPtr serviceTransactionRead)
+	{
+		handleNamespaceArray(serviceTransactionRead);
+	}
+
+	void
+	HistoryClient::attributeServiceWriteResponse(ServiceTransactionWrite::SPtr serviceTransactionWrite)
+	{
+		// nothing to do
+	}
+
+	void
+	HistoryClient::attributeServiceHistoryReadResponse(ServiceTransactionHistoryRead::SPtr serviceTransactionHistoryRead)
+	{
+		// nothing to do
+	}
+
+	void
+	HistoryClient::attributeServiceHistoryUpdateResponse(ServiceTransactionHistoryUpdate::SPtr serviceTransactionHistoryUpdate)
+	{
+		// nothing to do
 	}
 
 
@@ -196,5 +234,94 @@ namespace OpcUaHistory
     HistoryClient::monitoredItemServiceSetTriggeringResponse(ServiceTransactionSetTriggering::SPtr serviceTransactionSetTriggering)
     {
     }
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// handle namespace array
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	void
+	HistoryClient::readNamespaceArray(void)
+	{
+		ServiceTransactionRead::SPtr readTrx = constructSPtr<ServiceTransactionRead>();
+		ReadRequest::SPtr req = readTrx->request();
+		req->maxAge(0);
+		req->timestampsToReturn(2);
+
+		ReadValueId::SPtr readValueId = ReadValueId::construct();
+		readValueId->nodeId((OpcUaInt16)0, (OpcUaInt32)2255);
+		readValueId->attributeId((OpcUaInt32) 13);
+		readValueId->dataEncoding().namespaceIndex((OpcUaInt16) 0);
+		req->readValueIdArray()->set(readValueId);
+
+		attributeService_->asyncSend(readTrx);
+	}
+
+	void
+	HistoryClient::handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead)
+	{
+		ReadRequest::SPtr req = serviceTransactionRead->request();
+		ReadResponse::SPtr res = serviceTransactionRead->response();
+
+		// error handling
+		OpcUaStatusCode statusCode = serviceTransactionRead->statusCode();
+		if (statusCode != Success) {
+			Log(Error, "read namespace array transaction error")
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+			return;
+		}
+		if (res->dataValueArray()->size() != 1) {
+			Log(Error, "read namespace array response error, because data array size error");
+			return;
+		}
+
+		// get data value
+		OpcUaDataValue::SPtr dataValue;
+		res->dataValueArray()->get(0, dataValue);
+
+		if (dataValue->statusCode() != Success) {
+			Log(Error, "read namespace array data value error")
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+			return;
+		}
+		OpcUaVariant::SPtr variant = dataValue->variant();
+
+		// get namespace array
+		std::map<std::string, uint32_t> namespaceMap;
+		std::map<std::string, uint32_t>::iterator it;
+		Log(Debug, "read namespace array from server")
+		    .parameter("ServerUri", historyClientConfig_.serverUri());
+		for (int32_t idx=0; idx < variant->arrayLength(); idx++) {
+			std::string uri = variant->variant()[idx].variantSPtr<OpcUaString>()->value();
+			Log(Debug, "")
+				.parameter("Uri", uri)
+				.parameter("NamespaceIndex", idx);
+			namespaceMap.insert(std::make_pair(uri, idx));
+		}
+
+		// create namespace mapping
+		namespaceMap_.clear();
+		for (uint32_t idx=0; idx<historyClientConfig_.namespaceUris().size(); idx++) {
+			uint32_t namespaceIndex = idx+1;
+			std::string namespaceName = historyClientConfig_.namespaceUris()[idx];
+
+			it = namespaceMap.find(namespaceName);
+			if (it == namespaceMap.end()) {
+				Log(Error, "namespace name not exist on server")
+				    .parameter("ServerUri", historyClientConfig_.serverUri())
+				    .parameter("NamespaceName", namespaceName);
+				return;
+			}
+
+			namespaceMap_.insert(std::make_pair(namespaceIndex, it->second));
+		}
+
+		Log(Debug, "session state changed to open");
+		state_ = S_Open;
+
+		//openSubscription();
+	}
 
 }

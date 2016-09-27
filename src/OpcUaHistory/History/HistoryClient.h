@@ -31,6 +31,7 @@ namespace OpcUaHistory
 
 	class HistoryClient
 	: public SessionServiceIf
+	, public AttributeServiceIf
 	, public SubscriptionServiceIf
 	, public MonitoredItemServiceIf
 	{
@@ -38,6 +39,11 @@ namespace OpcUaHistory
 		typedef boost::shared_ptr<HistoryClient> SPtr;
 		typedef std::map<std::string, HistoryClient::SPtr> Map;
 		typedef std::set<HistoryClient::SPtr> Set;
+
+		typedef enum {
+			S_Open,
+			S_Close
+		} State;
 
 		HistoryClient(void);
 		~HistoryClient(void);
@@ -48,6 +54,13 @@ namespace OpcUaHistory
 		//- SessionServiceIf --------------------------------------------------
 		virtual void sessionStateUpdate(SessionBase& session, SessionState sessionState);
 		//- SessionServiceIf --------------------------------------------------
+
+		//- AttributeServiceIf ------------------------------------------------
+		virtual void attributeServiceReadResponse(ServiceTransactionRead::SPtr serviceTransactionRead);
+		virtual void attributeServiceWriteResponse(ServiceTransactionWrite::SPtr serviceTransactionWrite);
+		virtual void attributeServiceHistoryReadResponse(ServiceTransactionHistoryRead::SPtr serviceTransactionHistoryRead);
+		virtual void attributeServiceHistoryUpdateResponse(ServiceTransactionHistoryUpdate::SPtr serviceTransactionHistoryUpdate);
+		//- AttributeServuceIf ------------------------------------------------
 
 		//- SubscriptionServiceIf ---------------------------------------------
 	    virtual void subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription);
@@ -68,13 +81,21 @@ namespace OpcUaHistory
 		//- MonitoredItemServiceIf --------------------------------------------
 
 	  private:
+	    void readNamespaceArray(void);
+	    void handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead);
+
         HistoryClientConfig historyClientConfig_;
 
         IOThread::SPtr ioThread_;
         ServiceSetManager serviceSetManager_;
         SessionService::SPtr sessionService_;
+        AttributeService::SPtr attributeService_;
 		SubscriptionService::SPtr subscriptionService_;
 		MonitoredItemService::SPtr monitoredItemService_;
+
+		State state_;
+		typedef std::map<uint32_t, uint32_t> NamespaceMap;
+		NamespaceMap namespaceMap_;
 	};
 
 }
