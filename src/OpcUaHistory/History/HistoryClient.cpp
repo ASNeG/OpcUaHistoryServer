@@ -35,6 +35,8 @@ namespace OpcUaHistory
 	, state_(S_Close)
 	, namespaceMap_()
 
+	, subscriptionId_(0)
+
 	{
 	}
 
@@ -125,7 +127,7 @@ namespace OpcUaHistory
 			case SS_Disconnect:
 				Log(Debug, "session state changed to disconnect/close");
 				state_ = S_Close;
-				//deleteSubscription();
+				closeSubscriptions();
 				break;
 			case SS_Reactivate:
 				Log(Debug, "session state changed to reactivate");
@@ -173,23 +175,60 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
     void
-    HistoryClient::subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription)
+    HistoryClient::openSubscriptions(void)
     {
+    	// FIXME: actual only one subscription is allowed
+		ServiceTransactionCreateSubscription::SPtr trx = ServiceTransactionCreateSubscription::construct();
+		subscriptionService_->asyncSend(trx);
+    }
+
+    void
+    HistoryClient::closeSubscriptions(void)
+    {
+		ServiceTransactionDeleteSubscriptions::SPtr trx = constructSPtr<ServiceTransactionDeleteSubscriptions>();
+		DeleteSubscriptionsRequest::SPtr req = trx->request();
+		req->subscriptionIds()->resize(1);
+		req->subscriptionIds()->set(0, subscriptionId_);
+
+		subscriptionService_->asyncSend(trx);
+    }
+
+    void
+    HistoryClient::subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr trx)
+    {
+		CreateSubscriptionResponse::SPtr res = trx->response();
+		if (trx->responseHeader()->serviceResult() != Success) {
+			Log(Error, "create subscription response error")
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(trx->responseHeader()->serviceResult()));
+			return;
+		}
+
+		subscriptionId_ = res->subscriptionId();
+		Log(Debug, "open subscription")
+		    .parameter("SubscriptionId", subscriptionId_);
+
+		createMonitoredItems();
     }
 
     void
     HistoryClient::subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription)
     {
+    	// nothing to do
     }
 
     void
     HistoryClient::subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions)
     {
+    	// nothing to do
     }
 
     void
     HistoryClient::subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions)
     {
+		Log(Debug, "close subscription")
+		    .parameter("SubscriptionId", subscriptionId_);
+
+    	subscriptionId_ = 0;
     }
 
     void
@@ -210,6 +249,11 @@ namespace OpcUaHistory
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
+    void
+    HistoryClient::createMonitoredItems(void)
+    {
+    }
+
     void
     HistoryClient::monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems)
     {
@@ -321,7 +365,7 @@ namespace OpcUaHistory
 		Log(Debug, "session state changed to open");
 		state_ = S_Open;
 
-		//openSubscription();
+		openSubscriptions();
 	}
 
 }

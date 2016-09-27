@@ -83,6 +83,9 @@ namespace OpcUaHistory
 	  private:
 	    void readNamespaceArray(void);
 	    void handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead);
+	    void openSubscriptions(void);
+	    void closeSubscriptions(void);
+	    void createMonitoredItems(void);
 
         HistoryClientConfig historyClientConfig_;
 
@@ -96,6 +99,8 @@ namespace OpcUaHistory
 		State state_;
 		typedef std::map<uint32_t, uint32_t> NamespaceMap;
 		NamespaceMap namespaceMap_;
+
+		uint32_t subscriptionId_;
 	};
 
 }

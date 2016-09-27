@@ -7,7 +7,7 @@
 	</Endpoint>
 	
 	<NamespaceUris>
-	  	<Uri>http://xx/xx</Uri>
+	  	<Uri>http://yourorganisation.org/Test-Server-Lib/</Uri>
 	</NamespaceUris>
 	
 	<Subscription Id="subscription1">
