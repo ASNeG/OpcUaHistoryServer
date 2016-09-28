@@ -68,6 +68,7 @@ namespace OpcUaHistory
 		State state(void);
 		NamespaceUris& namespaceUris(void);
 
+		void startup(void);
 		bool connect(void);
 		bool disconnect(void);
 

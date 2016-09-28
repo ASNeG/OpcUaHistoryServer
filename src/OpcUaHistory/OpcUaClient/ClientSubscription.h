@@ -20,17 +20,20 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include <map>
 #include <set>
 #include <vector>
 #include <stdint.h>
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
 
 	class ClientSubscription
+	: public SubscriptionServiceIf
 	{
 	  public:
 		typedef boost::shared_ptr<ClientSubscription> SPtr;
@@ -38,9 +41,11 @@ namespace OpcUaHistory
 		typedef std::set<ClientSubscription::SPtr> Set;
 
 		typedef enum {
+			S_Error,
 			S_Close,
 			S_Opening,
 			S_Open,
+			S_Closing,
 		} State;
 
 		ClientSubscription(void);
@@ -51,7 +56,7 @@ namespace OpcUaHistory
 		std::string id(void);
 		void id(const std::string& id);
 		uint32_t publishingInterval(void);
-		void publisingInterval(uint32_t publishingInterval);
+		void publishingInterval(uint32_t publishingInterval);
 		uint32_t livetimeCount(void);
 		void livetimeCount(uint32_t livetimeCount);
 		uint32_t maxKeepAliveCount(void);
@@ -59,11 +64,24 @@ namespace OpcUaHistory
 		uint32_t maxNotificationsPerPublish(void);
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
 
+
 		void state(State state);
 		State state(void);
 
+		void startup(ServiceSetManager& serviceSetManager, SessionService::SPtr& sessionService);
 		void open(void);
 		void close(void);
+
+		//- SubscriptionServiceIf ---------------------------------------------
+	    virtual void subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription);
+	    virtual void subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription);
+	    virtual void subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions);
+	    virtual void subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions);
+
+		virtual void dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem);
+		virtual void subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId);
+		//- SubscriptionServiceIf ---------------------------------------------
+
 
 	  private:
 
@@ -76,7 +94,11 @@ namespace OpcUaHistory
 		uint32_t maxNotificationsPerPublish_;
 
 		// runtime parameters
+		bool active_;
 		State state_;
+		uint32_t subscriptionId_;
+
+		SubscriptionService::SPtr subscriptionService_;
 	};
 
 }

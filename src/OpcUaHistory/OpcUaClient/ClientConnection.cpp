@@ -81,6 +81,7 @@ namespace OpcUaHistory
 				.parameter("SubscriptionId", id);
 			return false;
 		}
+		clientSubscription->startup(serviceSetManager_, sessionService_);
 		clientSubscriptionMap_.insert(std::make_pair(id, clientSubscription));
 
 		return true;
@@ -116,8 +117,8 @@ namespace OpcUaHistory
 		return namespaceUris_;
 	}
 
-	bool
-	ClientConnection::connect(void)
+	void
+	ClientConnection::startup(void)
 	{
 		// init service sets
 		serviceSetManager_.registerIOThread("GlobalIOThread", ioThread_);
@@ -137,7 +138,11 @@ namespace OpcUaHistory
 		attributeServiceConfig.ioThreadName("GlobalIOThread");
 		attributeServiceConfig.attributeServiceIf_ = this;
 		attributeService_ = serviceSetManager_.attributeService(sessionService_, attributeServiceConfig);
+	}
 
+	bool
+	ClientConnection::connect(void)
+	{
 		// create session
 		state_ = S_Connecting;
 		sessionService_->asyncConnect();

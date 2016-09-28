@@ -25,12 +25,15 @@ namespace OpcUaHistory
 
 	ClientSubscription::ClientSubscription(void)
 	: state_(S_Close)
+	, active_(false)
 	, ioThread_()
 	, id_("")
+	, subscriptionId_(0)
 	, publishingInterval_(0)
 	, livetimeCount_(0)
 	, maxKeepAliveCount_(0)
 	, maxNotificationsPerPublish_(0)
+	, subscriptionService_()
 	{
 	}
 
@@ -69,7 +72,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientSubscription::publisingInterval(uint32_t publishingInterval)
+	ClientSubscription::publishingInterval(uint32_t publishingInterval)
 	{
 		publishingInterval_ =publishingInterval;
 	}
@@ -123,12 +126,80 @@ namespace OpcUaHistory
 	}
 
 	void
+	ClientSubscription::startup(ServiceSetManager& serviceSetManager, SessionService::SPtr& sessionService)
+	{
+		if (subscriptionService_.get() != nullptr) return;
+
+		// create subscriptions service
+		SubscriptionServiceConfig subscriptionServiceConfig;
+		subscriptionServiceConfig.ioThreadName("GlobalIOThread");
+		subscriptionServiceConfig.subscriptionServiceIf_ = this;
+		subscriptionService_ = serviceSetManager.subscriptionService(sessionService, subscriptionServiceConfig);
+	}
+	void
 	ClientSubscription::open(void)
 	{
+		active_ = true;
+		state_ = S_Opening;
+		ServiceTransactionCreateSubscription::SPtr trx = ServiceTransactionCreateSubscription::construct();
+		subscriptionService_->asyncSend(trx);
 	}
 
 	void
 	ClientSubscription::close(void)
+	{
+		active_ = false;
+	}
+
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// SubscriptionServiceIf
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+    void
+    ClientSubscription::subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr trx)
+    {
+		CreateSubscriptionResponse::SPtr res = trx->response();
+		if (trx->responseHeader()->serviceResult() != Success) {
+			Log(Error, "create subscription response error")
+				.parameter("Id", id_)
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(trx->responseHeader()->serviceResult()));
+			state_ = S_Error;
+			return;
+		}
+
+		subscriptionId_ = res->subscriptionId();
+		state_ = S_Open;
+		Log(Debug, "open subscription")
+			.parameter("Id", id_)
+		    .parameter("SubscriptionId", subscriptionId_);
+    }
+
+    void
+    ClientSubscription::subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription)
+    {
+    }
+
+    void
+    ClientSubscription::subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions)
+    {
+    }
+
+    void
+    ClientSubscription::subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions)
+    {
+    }
+
+    void
+    ClientSubscription::dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem)
+    {
+    }
+
+	void
+	ClientSubscription::subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId)
 	{
 	}
 

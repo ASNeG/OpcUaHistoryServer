@@ -47,6 +47,25 @@ namespace OpcUaHistory
     	clientConnection_.serverUri(historyClientConfig_.serverUri());
     	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
     	clientConnection_.ioThread(ioThread);
+    	clientConnection_.startup();
+
+    	// create subscriptions
+    	ClientSubscriptionConfig::Map::iterator it;
+    	for (it = historyClientConfig_.clientSubscriptionMap().begin();
+    		 it != historyClientConfig_.clientSubscriptionMap().end();
+    		 it++) {
+
+    		ClientSubscriptionConfig::SPtr csc = it->second;
+    		ClientSubscription::SPtr cs = constructSPtr<ClientSubscription>();
+
+    		cs->id(csc->id());
+    		cs->publishingInterval(csc->publishingInterval());
+    		cs->livetimeCount(csc->livetimeCount());
+    		cs->maxKeepAliveCount(csc->maxKeepAliveCount());
+    		cs->maxNotificationsPerPublish(csc->maxNotificationsPerPublish());
+
+    		clientConnection_.clientSubscription(csc->id(), cs);
+    	}
 
     	// open connection to server
     	return clientConnection_.connect();
