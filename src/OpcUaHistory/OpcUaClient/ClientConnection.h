@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
+#include "OpcUaHistory/OpcUaClient/ClientSubscription.h"
 #include <map>
 #include <set>
 #include <vector>
@@ -59,6 +60,7 @@ namespace OpcUaHistory
 		std::string serverUri(void);
 		void reconnectTimeout(uint32_t reconnectTimeout);
 		uint32_t reconnectTimeout(void);
+		bool clientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription);
 		void ioThread(IOThread::SPtr& ioThread);
 		IOThread::SPtr& ioThread(void);
 
@@ -100,6 +102,10 @@ namespace OpcUaHistory
 		void timerLoop(void);
 	    void readNamespaceArray(void);
 	    void handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead);
+	    void handleConnect(void);
+	    void handleDisconnect(void);
+
+	    ClientSubscription::Map clientSubscriptionMap_;
 	};
 
 }

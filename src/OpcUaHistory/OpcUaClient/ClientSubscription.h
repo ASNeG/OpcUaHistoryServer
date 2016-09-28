@@ -38,8 +38,9 @@ namespace OpcUaHistory
 		typedef std::set<ClientSubscription::SPtr> Set;
 
 		typedef enum {
-			S_Active,
-			S_Deactive,
+			S_Close,
+			S_Opening,
+			S_Open,
 		} State;
 
 		ClientSubscription(void);
@@ -47,12 +48,32 @@ namespace OpcUaHistory
 
 		void ioThread(IOThread::SPtr& ioThread);
 		IOThread::SPtr& ioThread(void);
+		std::string id(void);
+		void id(const std::string& id);
+		uint32_t publishingInterval(void);
+		void publisingInterval(uint32_t publishingInterval);
+		uint32_t livetimeCount(void);
+		void livetimeCount(uint32_t livetimeCount);
+		uint32_t maxKeepAliveCount(void);
+		void maxKeepAliveCount(uint32_t maxKeepAliveCount);
+		uint32_t maxNotificationsPerPublish(void);
+		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
 
 		void state(State state);
 		State state(void);
 
+		void open(void);
+		void close(void);
+
 	  private:
+
+		// configuration parameters
 		IOThread::SPtr ioThread_;
+		std::string id_;
+		uint32_t publishingInterval_;
+		uint32_t livetimeCount_;
+		uint32_t maxKeepAliveCount_;
+		uint32_t maxNotificationsPerPublish_;
 
 		// runtime parameters
 		State state_;

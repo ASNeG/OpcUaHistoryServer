@@ -38,6 +38,7 @@ namespace OpcUaHistory
 	, attributeService_()
 
 	, namespaceMap_()
+	, clientSubscriptionMap_()
 	{
 	}
 
@@ -67,6 +68,22 @@ namespace OpcUaHistory
 	ClientConnection::reconnectTimeout(void)
 	{
 		return reconnectTimeout_;
+	}
+
+	bool
+	ClientConnection::clientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription)
+	{
+		ClientSubscription::Map::iterator it;
+		it = clientSubscriptionMap_.find(id);
+		if (it != clientSubscriptionMap_.end()) {
+			Log(Error, "client subscription already exist in connection")
+				.parameter("ServerUri", serverUri_)
+				.parameter("SubscriptionId", id);
+			return false;
+		}
+		clientSubscriptionMap_.insert(std::make_pair(id, clientSubscription));
+
+		return true;
 	}
 
 	void
@@ -131,7 +148,7 @@ namespace OpcUaHistory
 	ClientConnection::disconnect(void)
 	{
 		// disconnect session
-		state_ = S_Disconnected;
+		handleDisconnect();
 		sessionService_->asyncDisconnect(true);
 		return true;
 	}
@@ -157,8 +174,7 @@ namespace OpcUaHistory
 			case SS_Disconnect:
 				Log(Debug, "session state changed to disconnect/close")
 					.parameter("ServerUri", serverUri_);
-				state_ = S_Disconnected;
-				//closeSubscriptions();
+				handleDisconnect();
 				break;
 			case SS_Reactivate:
 				Log(Debug, "session state changed to reactivate")
@@ -289,7 +305,32 @@ namespace OpcUaHistory
 			namespaceMap_.insert(std::make_pair(namespaceIndex, it->second));
 		}
 
-		state_ = S_Established;
+		handleConnect();
+
 	}
+
+    void
+    ClientConnection::handleConnect(void)
+    {
+    	state_ = S_Established;
+
+    	ClientSubscription::Map::iterator it;
+    	for (it = clientSubscriptionMap_.begin(); it != clientSubscriptionMap_.end(); it++) {
+    		ClientSubscription::SPtr clientSubscription = it->second;
+    		clientSubscription->open();
+    	}
+    }
+
+    void
+    ClientConnection::handleDisconnect(void)
+    {
+    	state_ = S_Disconnected;
+
+    	ClientSubscription::Map::iterator it;
+    	for (it = clientSubscriptionMap_.begin(); it != clientSubscriptionMap_.end(); it++) {
+    		ClientSubscription::SPtr clientSubscription = it->second;
+    		clientSubscription->close();
+    	}
+    }
 
 }

@@ -24,8 +24,13 @@ namespace OpcUaHistory
 {
 
 	ClientSubscription::ClientSubscription(void)
-	: state_(S_Deactive)
+	: state_(S_Close)
 	, ioThread_()
+	, id_("")
+	, publishingInterval_(0)
+	, livetimeCount_(0)
+	, maxKeepAliveCount_(0)
+	, maxNotificationsPerPublish_(0)
 	{
 	}
 
@@ -45,6 +50,66 @@ namespace OpcUaHistory
 		return ioThread_;
 	}
 
+	std::string
+	ClientSubscription::id(void)
+	{
+		return id_;
+	}
+
+	void
+	ClientSubscription::id(const std::string& id)
+	{
+		id_ = id;
+	}
+
+	uint32_t
+	ClientSubscription::publishingInterval(void)
+	{
+		return publishingInterval_;
+	}
+
+	void
+	ClientSubscription::publisingInterval(uint32_t publishingInterval)
+	{
+		publishingInterval_ =publishingInterval;
+	}
+
+	uint32_t
+	ClientSubscription::livetimeCount(void)
+	{
+		return livetimeCount_;
+	}
+
+	void
+	ClientSubscription::livetimeCount(uint32_t livetimeCount)
+	{
+		livetimeCount_ = livetimeCount;
+	}
+
+	uint32_t
+	ClientSubscription::maxKeepAliveCount(void)
+	{
+		return maxKeepAliveCount_;
+	}
+
+	void
+	ClientSubscription::maxKeepAliveCount(uint32_t maxKeepAliveCount)
+	{
+		maxKeepAliveCount_ = maxKeepAliveCount;
+	}
+
+	uint32_t
+	ClientSubscription::maxNotificationsPerPublish(void)
+	{
+		return maxNotificationsPerPublish_;
+	}
+
+	void
+	ClientSubscription::maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish)
+	{
+		maxNotificationsPerPublish_ = maxNotificationsPerPublish;
+	}
+
 	void
 	ClientSubscription::state(State state)
 	{
@@ -55,6 +120,16 @@ namespace OpcUaHistory
 	ClientSubscription::state(void)
 	{
 		return state_;
+	}
+
+	void
+	ClientSubscription::open(void)
+	{
+	}
+
+	void
+	ClientSubscription::close(void)
+	{
 	}
 
 }
