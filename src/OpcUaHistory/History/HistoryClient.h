@@ -22,18 +22,12 @@
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaHistory/History/HistoryClientConfig.h"
-
-using namespace OpcUaStackCore;
-using namespace OpcUaStackClient;
+#include "OpcUaHistory/OpcUaClient/ClientConnection.h"
 
 namespace OpcUaHistory
 {
 
 	class HistoryClient
-	: public SessionServiceIf
-	, public AttributeServiceIf
-	, public SubscriptionServiceIf
-	, public MonitoredItemServiceIf
 	{
 	  public:
 		typedef boost::shared_ptr<HistoryClient> SPtr;
@@ -51,56 +45,11 @@ namespace OpcUaHistory
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager, IOThread::SPtr ioThread);
         bool shutdown(void);
 
-		//- SessionServiceIf --------------------------------------------------
-		virtual void sessionStateUpdate(SessionBase& session, SessionState sessionState);
-		//- SessionServiceIf --------------------------------------------------
 
-		//- AttributeServiceIf ------------------------------------------------
-		virtual void attributeServiceReadResponse(ServiceTransactionRead::SPtr serviceTransactionRead);
-		virtual void attributeServiceWriteResponse(ServiceTransactionWrite::SPtr serviceTransactionWrite);
-		virtual void attributeServiceHistoryReadResponse(ServiceTransactionHistoryRead::SPtr serviceTransactionHistoryRead);
-		virtual void attributeServiceHistoryUpdateResponse(ServiceTransactionHistoryUpdate::SPtr serviceTransactionHistoryUpdate);
-		//- AttributeServuceIf ------------------------------------------------
-
-		//- SubscriptionServiceIf ---------------------------------------------
-	    virtual void subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription);
-	    virtual void subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription);
-	    virtual void subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions);
-	    virtual void subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions);
-
-		virtual void dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem);
-		virtual void subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId);
-		//- SubscriptionServiceIf ---------------------------------------------
-
-		//- MonitoredItemServiceIf --------------------------------------------
-	    virtual void monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems);
-	    virtual void monitoredItemServiceDeleteMonitoredItemsResponse(ServiceTransactionDeleteMonitoredItems::SPtr serviceTransactionDeleteMonitoredItems);
-	    virtual void monitoredItemServiceModifyMonitoredItemsResponse(ServiceTransactionModifyMonitoredItems::SPtr serviceTransactionModifyMonitoredItems);
-	    virtual void monitoredItemServiceSetMonitoringModeResponse(ServiceTransactionSetMonitoringMode::SPtr serviceTransactionSetMonitoringMode);
-	    virtual void monitoredItemServiceSetTriggeringResponse(ServiceTransactionSetTriggering::SPtr serviceTransactionSetTriggering);
-		//- MonitoredItemServiceIf --------------------------------------------
 
 	  private:
-	    void readNamespaceArray(void);
-	    void handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead);
-	    void openSubscriptions(void);
-	    void closeSubscriptions(void);
-	    void createMonitoredItems(void);
-
         HistoryClientConfig historyClientConfig_;
-
-        IOThread::SPtr ioThread_;
-        ServiceSetManager serviceSetManager_;
-        SessionService::SPtr sessionService_;
-        AttributeService::SPtr attributeService_;
-		SubscriptionService::SPtr subscriptionService_;
-		MonitoredItemService::SPtr monitoredItemService_;
-
-		State state_;
-		typedef std::map<uint32_t, uint32_t> NamespaceMap;
-		NamespaceMap namespaceMap_;
-
-		uint32_t subscriptionId_;
+        ClientConnection clientConnection_;
 	};
 
 }
