@@ -47,15 +47,17 @@ namespace OpcUaHistory
     	clientConnection_.serverUri(historyClientConfig_.serverUri());
     	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
     	clientConnection_.ioThread(ioThread);
-    	clientConnection_.startup();
 
     	// create subscriptions
-    	ClientSubscriptionConfig::Map::iterator it;
-    	for (it = historyClientConfig_.clientSubscriptionMap().begin();
-    		 it != historyClientConfig_.clientSubscriptionMap().end();
-    		 it++) {
+    	ClientSubscriptionConfig::Map::iterator it1;
+    	for (it1 = historyClientConfig_.clientSubscriptionMap().begin();
+    		 it1 != historyClientConfig_.clientSubscriptionMap().end();
+    		 it1++) {
 
-    		ClientSubscriptionConfig::SPtr csc = it->second;
+    		//
+    		// create subscription
+    		//
+    		ClientSubscriptionConfig::SPtr csc = it1->second;
     		ClientSubscription::SPtr cs = constructSPtr<ClientSubscription>();
 
     		cs->id(csc->id());
@@ -67,18 +69,24 @@ namespace OpcUaHistory
     		clientConnection_.addClientSubscription(csc->id(), cs);
 
 
-#if 0
-    		uint32_t samplingInterval(void);
-    		void samplingInterval(uint32_t samplingInterval);
-    		uint32_t queueSize(void);
-    		void queueSize(uint32_t queueSize);
-    		DataChangeFilter dataChangeFilter(void);
-    		void dataChangeFilter(DataChangeFilter dataChangeFilter);
-    		OpcUaNodeId& nodeId(void);
-    		void nodeId(OpcUaNodeId& nodeId);
-    		std::string& valueName(void);
-    		void valueName(const std::string& valueName);
-#endif
+    		ClientNodeConfig::Map::iterator it2;
+    		for (it2 = csc->clientNodeConfigMap().begin();
+    			 it2 != csc->clientNodeConfigMap().end();
+    			 it2++) {
+
+    			//
+    			// create monitored item
+    			//
+    			ClientNodeConfig::SPtr cnc = it2->second;
+    			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
+
+    			cmi->samplingInterval(cnc->samplingInterval());
+    			cmi->queueSize(cnc->queueSize());
+    			cmi->dataChangeFilter(cnc->dataChangeFilter());
+    			cmi->nodeId(cnc->nodeId());
+
+    			cs->addMonitoredItem(cmi);
+    		}
     	}
 
     	// open connection to server

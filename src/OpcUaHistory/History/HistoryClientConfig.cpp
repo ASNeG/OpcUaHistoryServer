@@ -91,7 +91,7 @@ namespace OpcUaHistory
 		valueName_ = valueName;
 	}
 
-	ClientNodeConfig::DataChangeFilter
+	DataChangeFilter
 	ClientNodeConfig::dataChangeFilter(void)
 	{
 		return dataChangeFilter_;
@@ -428,7 +428,7 @@ namespace OpcUaHistory
 
 		// data change filter
 		std::string dataChangeFilter;
-		ClientNodeConfig::DataChangeFilter dataChangeFilterType;
+		DataChangeFilter dataChangeFilterType;
 		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
 			Log(Error, "parameter missing or invalid in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.DataChangeFilter")
@@ -436,13 +436,13 @@ namespace OpcUaHistory
 			return false;
 		}
 		if (dataChangeFilter == "status") {
-			dataChangeFilterType = ClientNodeConfig::Status;
+			dataChangeFilterType = Status;
 		}
 		else if (dataChangeFilter == "status-value") {
-			dataChangeFilterType = ClientNodeConfig::StatusValue;
+			dataChangeFilterType = StatusValue;
 		}
 		else if (dataChangeFilter == "status-value-timestamp") {
-			dataChangeFilterType = ClientNodeConfig::StatusValueTimestamp;
+			dataChangeFilterType = StatusValueTimestamp;
 		}
 		else {
 			Log(Error, "parameter invalid in config file")

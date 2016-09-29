@@ -68,7 +68,6 @@ namespace OpcUaHistory
 		State state(void);
 		NamespaceUris& namespaceUris(void);
 
-		void startup(void);
 		bool connect(void);
 		bool disconnect(void);
 
@@ -91,6 +90,7 @@ namespace OpcUaHistory
 		IOThread::SPtr ioThread_;
 
 		// runtime parameters
+		bool init_;
 		State state_;
 		NamespaceUris namespaceUris_;
 
@@ -100,6 +100,7 @@ namespace OpcUaHistory
 		AttributeService::SPtr attributeService_;
 
 		NamespaceMap namespaceMap_;
+		void init(void);
 		void timerLoop(void);
 	    void readNamespaceArray(void);
 	    void handleNamespaceArray(ServiceTransactionRead::SPtr serviceTransactionRead);

@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
+#include "OpcUaHistory/OpcUaClient/ClientMonitoredItem.h"
 #include <map>
 #include <set>
 #include <vector>
@@ -64,6 +65,7 @@ namespace OpcUaHistory
 		uint32_t maxNotificationsPerPublish(void);
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
 
+		void addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem);
 
 		void state(State state);
 		State state(void);

@@ -126,6 +126,12 @@ namespace OpcUaHistory
 	}
 
 	void
+	ClientSubscription::addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem)
+	{
+		// FIXME: todo
+	}
+
+	void
 	ClientSubscription::startup(ServiceSetManager& serviceSetManager, SessionService::SPtr& sessionService)
 	{
 		if (subscriptionService_.get() != nullptr) return;

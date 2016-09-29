@@ -28,6 +28,7 @@ namespace OpcUaHistory
 	: serverUri_("opc.tcp://127.0.0.1:4841")
 	, reconnectTimeout_(5000)
 
+	, init_(false)
 	, state_(S_Disconnected)
 	, namespaceUris_()
 
@@ -73,6 +74,7 @@ namespace OpcUaHistory
 	bool
 	ClientConnection::addClientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription)
 	{
+		init();
 		ClientSubscription::Map::iterator it;
 		it = clientSubscriptionMap_.find(id);
 		if (it != clientSubscriptionMap_.end()) {
@@ -118,8 +120,11 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientConnection::startup(void)
+	ClientConnection::init(void)
 	{
+		if (init_) return;
+		init_ = true;
+
 		// init service sets
 		serviceSetManager_.registerIOThread("GlobalIOThread", ioThread_);
 

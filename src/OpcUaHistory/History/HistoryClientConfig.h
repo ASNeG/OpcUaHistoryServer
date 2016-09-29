@@ -21,6 +21,7 @@
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
 
@@ -32,13 +33,6 @@ namespace OpcUaHistory
 	  public:
 		typedef boost::shared_ptr<ClientNodeConfig> SPtr;
 		typedef std::map<std::string, ClientNodeConfig::SPtr> Map;
-
-		typedef enum
-		{
-			Status,
-			StatusValue,
-			StatusValueTimestamp
-		} DataChangeFilter;
 
 		ClientNodeConfig(void);
 		~ClientNodeConfig(void);
