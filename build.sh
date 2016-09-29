@@ -29,7 +29,7 @@ build_local()
 
     # install build local
     set -x
-    cmake ../src \ 
+    cmake ../src \
           "${CMAKE_GENERATOR_LOCAL}" \
           -DINSTALL_PREFIX_OpcUaStack="${HOME}/install" \
           -DCMAKE_INSTALL_PREFIX="${HOME}/install" 
