@@ -29,4 +29,53 @@ namespace OpcUaHistory
 	{
 	}
 
+	uint32_t
+	ClientMonitoredItem::samplingInterval(void)
+	{
+		return samplingInterval_;
+	}
+
+	void
+	ClientMonitoredItem::samplingInterval(uint32_t samplingInterval)
+	{
+		samplingInterval_ = samplingInterval;
+	}
+
+	uint32_t
+	ClientMonitoredItem::queueSize(void)
+	{
+		return queueSize_;
+	}
+
+	void
+	ClientMonitoredItem::queueSize(uint32_t queueSize)
+	{
+		queueSize_ = queueSize;
+	}
+
+	OpcUaNodeId&
+	ClientMonitoredItem::nodeId(void)
+	{
+		return nodeId_;
+	}
+
+	void
+	ClientMonitoredItem::nodeId(OpcUaNodeId& nodeId)
+	{
+		nodeId_ = nodeId;
+	}
+
+	DataChangeFilter
+	ClientMonitoredItem::dataChangeFilter(void)
+	{
+		return dataChangeFilter_;
+	}
+
+	void
+	ClientMonitoredItem::dataChangeFilter(DataChangeFilter dataChangeFilter)
+	{
+		dataChangeFilter_ = dataChangeFilter;
+	}
+
+
 }

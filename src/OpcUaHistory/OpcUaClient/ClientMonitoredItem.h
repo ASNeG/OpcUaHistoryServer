@@ -23,7 +23,10 @@
 #include <set>
 #include <vector>
 #include <stdint.h>
+#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
+using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
@@ -43,6 +46,22 @@ namespace OpcUaHistory
 
 		ClientMonitoredItem(void);
 		~ClientMonitoredItem(void);
+
+		uint32_t samplingInterval(void);
+		void samplingInterval(uint32_t samplingInterval);
+		uint32_t queueSize(void);
+		void queueSize(uint32_t queueSize);
+		DataChangeFilter dataChangeFilter(void);
+		void dataChangeFilter(DataChangeFilter dataChangeFilter);
+		OpcUaNodeId& nodeId(void);
+		void nodeId(OpcUaNodeId& nodeId);
+
+	  private:
+		uint32_t samplingInterval_;
+		uint32_t queueSize_;
+		OpcUaNodeId nodeId_;
+		std::string valueName_;
+		DataChangeFilter dataChangeFilter_;
 	};
 
 }
