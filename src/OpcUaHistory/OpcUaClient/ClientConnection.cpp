@@ -71,7 +71,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	ClientConnection::clientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription)
+	ClientConnection::addClientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription)
 	{
 		ClientSubscription::Map::iterator it;
 		it = clientSubscriptionMap_.find(id);

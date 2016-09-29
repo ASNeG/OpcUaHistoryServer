@@ -64,7 +64,21 @@ namespace OpcUaHistory
     		cs->maxKeepAliveCount(csc->maxKeepAliveCount());
     		cs->maxNotificationsPerPublish(csc->maxNotificationsPerPublish());
 
-    		clientConnection_.clientSubscription(csc->id(), cs);
+    		clientConnection_.addClientSubscription(csc->id(), cs);
+
+
+#if 0
+    		uint32_t samplingInterval(void);
+    		void samplingInterval(uint32_t samplingInterval);
+    		uint32_t queueSize(void);
+    		void queueSize(uint32_t queueSize);
+    		DataChangeFilter dataChangeFilter(void);
+    		void dataChangeFilter(DataChangeFilter dataChangeFilter);
+    		OpcUaNodeId& nodeId(void);
+    		void nodeId(OpcUaNodeId& nodeId);
+    		std::string& valueName(void);
+    		void valueName(const std::string& valueName);
+#endif
     	}
 
     	// open connection to server

@@ -60,7 +60,7 @@ namespace OpcUaHistory
 		std::string serverUri(void);
 		void reconnectTimeout(uint32_t reconnectTimeout);
 		uint32_t reconnectTimeout(void);
-		bool clientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription);
+		bool addClientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription);
 		void ioThread(IOThread::SPtr& ioThread);
 		IOThread::SPtr& ioThread(void);
 
