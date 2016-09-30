@@ -201,10 +201,31 @@ namespace OpcUaHistory
 	void
 	ClientSubscription::openMonitoredItems(void)
 	{
-		// open all monitored items
-		ClientMonitoredItem::Set::iterator it;
-		for (it = clientMonitoredItemSet_.begin(); it != clientMonitoredItemSet_.end(); it++) {
-			;
+		if (state_ != S_Open) return;
+
+		ClientMonitoredItem::Vec cmiv;
+		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
+
+		// find all monitored items to be opened
+		ClientMonitoredItem::Set::iterator it1;
+		for (it1 = clientMonitoredItemSet_.begin(); it1 != clientMonitoredItemSet_.end(); it1++) {
+			ClientMonitoredItem::SPtr cmi = *it1;
+
+			if (cmi->state() != ClientMonitoredItem::S_Close) continue;
+			if (cmi->reconnectTime() < now) continue;
+
+			cmiv.push_back(cmi);
+		}
+		if (cmiv.empty()) return;
+
+
+		// open the found monitored items
+		ClientMonitoredItem::Vec::iterator it2;
+		for (it2 = cmiv.begin(); it2 != cmiv.end(); it2++) {
+			ClientMonitoredItem::SPtr cmi = *it2;
+
+			// FXIME: todo
 		}
 
 	}
@@ -212,10 +233,14 @@ namespace OpcUaHistory
 	void
 	ClientSubscription::cleanUpMonitoredItems(void)
 	{
+		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
 		// clean up all monitored items
 		ClientMonitoredItem::Set::iterator it;
 		for (it = clientMonitoredItemSet_.begin(); it != clientMonitoredItemSet_.end(); it++) {
-			;
+			ClientMonitoredItem::SPtr cmi = *it;
+			cmi->reconnectTime(now);
+			cmi->state(ClientMonitoredItem::S_Close);
 		}
 	}
 

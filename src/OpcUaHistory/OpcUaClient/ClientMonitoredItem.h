@@ -39,15 +39,11 @@ namespace OpcUaHistory
 		typedef boost::shared_ptr<ClientMonitoredItem> SPtr;
 		typedef std::map<std::string, ClientMonitoredItem::SPtr> Map;
 		typedef std::set<ClientMonitoredItem::SPtr> Set;
-		typedef std::vector<std::string> NamespaceUris;
-		typedef std::map<uint32_t, uint32_t> NamespaceMap;
+		typedef std::vector<ClientMonitoredItem::SPtr> Vec;
 
 		typedef enum {
-			S_Error,
 			S_Close,
-			S_Opening,
-			S_Open,
-			S_Closing
+			S_Open
 		} State;
 
 		ClientMonitoredItem(void);
