@@ -47,6 +47,7 @@ namespace OpcUaHistory
     	clientConnection_.serverUri(historyClientConfig_.serverUri());
     	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
     	clientConnection_.ioThread(ioThread);
+    	clientConnection_.namespaceUris(historyClientConfig_.namespaceUris());
 
     	// create subscriptions
     	ClientSubscriptionConfig::Map::iterator it1;

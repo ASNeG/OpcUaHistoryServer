@@ -41,6 +41,7 @@ namespace OpcUaHistory
 		typedef boost::shared_ptr<ClientSubscription> SPtr;
 		typedef std::map<std::string, ClientSubscription::SPtr> Map;
 		typedef std::set<ClientSubscription::SPtr> Set;
+		typedef std::map<uint32_t, uint32_t> NamespaceMap;
 
 		typedef enum {
 			S_Error,
@@ -73,7 +74,7 @@ namespace OpcUaHistory
 		void state(State state);
 		State state(void);
 
-		void open(void);
+		void open(NamespaceMap& namespaceMap);
 		void close(void);
 
 		//- SubscriptionServiceIf ---------------------------------------------
@@ -111,6 +112,7 @@ namespace OpcUaHistory
 		bool init_;
 		State state_;
 		uint32_t subscriptionId_;
+		NamespaceMap* namespaceMap_;
 		ServiceSetManager* serviceSetManager_;
 		SessionService::SPtr sessionService_;
 

@@ -57,6 +57,8 @@ namespace OpcUaHistory
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
 		OpcUaNodeId& nodeId(void);
 		void nodeId(OpcUaNodeId& nodeId);
+		void handle(uint32_t handle);
+		uint32_t handle(void);
 
 		void state(State state);
 		State state(void);
@@ -70,6 +72,7 @@ namespace OpcUaHistory
 		uint32_t queueSize_;
 		OpcUaNodeId nodeId_;
 		DataChangeFilter dataChangeFilter_;
+		uint32_t handle_;
 
 		// runtime data
 		State state_;

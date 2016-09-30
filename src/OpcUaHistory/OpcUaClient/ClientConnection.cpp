@@ -116,6 +116,12 @@ namespace OpcUaHistory
 		return state_;
 	}
 
+	void
+	ClientConnection::namespaceUris(NamespaceUris& namespaceUris)
+	{
+		namespaceUris_ = namespaceUris;
+	}
+
 	ClientConnection::NamespaceUris&
 	ClientConnection::namespaceUris(void)
 	{
@@ -330,7 +336,7 @@ namespace OpcUaHistory
     	ClientSubscription::Map::iterator it;
     	for (it = clientSubscriptionMap_.begin(); it != clientSubscriptionMap_.end(); it++) {
     		ClientSubscription::SPtr clientSubscription = it->second;
-    		clientSubscription->open();
+    		clientSubscription->open(namespaceMap_);
     	}
     }
 

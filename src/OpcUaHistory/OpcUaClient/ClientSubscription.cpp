@@ -29,10 +29,11 @@ namespace OpcUaHistory
 	, ioThread_()
 	, id_("")
 	, subscriptionId_(0)
-	, publishingInterval_(0)
-	, livetimeCount_(0)
-	, maxKeepAliveCount_(0)
+	, publishingInterval_(100)
+	, livetimeCount_(100)
+	, maxKeepAliveCount_(100)
 	, maxNotificationsPerPublish_(0)
+	, namespaceMap_(nullptr)
 	, subscriptionService_()
 	, monitoredItemService_()
 	, serviceSetManager_(nullptr)
@@ -162,8 +163,9 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientSubscription::open(void)
+	ClientSubscription::open(NamespaceMap& namespaceMap)
 	{
+		namespaceMap_ = &namespaceMap;
 		state_ = S_Opening;
 		ServiceTransactionCreateSubscription::SPtr trx = ServiceTransactionCreateSubscription::construct();
 		subscriptionService_->asyncSend(trx);
@@ -212,12 +214,25 @@ namespace OpcUaHistory
 		for (it1 = clientMonitoredItemSet_.begin(); it1 != clientMonitoredItemSet_.end(); it1++) {
 			ClientMonitoredItem::SPtr cmi = *it1;
 
-			if (cmi->state() != ClientMonitoredItem::S_Close) continue;
-			if (cmi->reconnectTime() < now) continue;
+			if (cmi->state() != ClientMonitoredItem::S_Close) {
+				// the monitored item is already opened
+				continue;
+			}
+
+			if (cmi->reconnectTime() > now) {
+				// reconnect time has not been reached
+				continue;
+			}
 
 			cmiv.push_back(cmi);
 		}
 		if (cmiv.empty()) return;
+
+		// create monitored item transaction
+		ServiceTransactionCreateMonitoredItems::SPtr trx = ServiceTransactionCreateMonitoredItems::construct();
+		CreateMonitoredItemsRequest::SPtr req = trx->request();
+		req->subscriptionId(subscriptionId_);
+		req->itemsToCreate()->resize(cmiv.size());
 
 
 		// open the found monitored items
@@ -225,9 +240,34 @@ namespace OpcUaHistory
 		for (it2 = cmiv.begin(); it2 != cmiv.end(); it2++) {
 			ClientMonitoredItem::SPtr cmi = *it2;
 
-			// FXIME: todo
+			OpcUaNodeId nodeId = cmi->nodeId();
+
+			// determine namespace index
+			NamespaceMap::iterator it3;
+			it3 = namespaceMap_->find(cmi->nodeId().namespaceIndex());
+			if (it3 == namespaceMap_->end()) {
+				Log(Error, "cannot create monitored items, because namespace index not exist in namespace map")
+					.parameter("Id", id_)
+				    .parameter("SubscriptionId", subscriptionId_)
+					.parameter("NodeId", nodeId.toString())
+					.parameter("ClientHandle", cmi->handle());
+				return;
+			}
+			nodeId.namespaceIndex(it3->second);
+
+			Log(Debug, "Try to create monitored item")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+			    .parameter("NodeId", nodeId.toString())
+			    .parameter("ClientHandle", cmi->handle());
+
+			MonitoredItemCreateRequest::SPtr monitoredItemCreateRequest = MonitoredItemCreateRequest::construct();
+			monitoredItemCreateRequest->itemToMonitor().nodeId()->copyFrom(nodeId);
+			monitoredItemCreateRequest->requestedParameters().clientHandle(cmi->handle());
+			req->itemsToCreate()->push_back(monitoredItemCreateRequest);
 		}
 
+		monitoredItemService_->asyncSend(trx);
 	}
 
 	void
@@ -302,6 +342,8 @@ namespace OpcUaHistory
     void
     ClientSubscription::dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem)
     {
+    	// FIXME: todo
+    	std::cout << "data change notification..." << std::endl;
     }
 
 	void
@@ -325,7 +367,82 @@ namespace OpcUaHistory
     void
     ClientSubscription::monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems)
     {
-    	;
+		OpcUaStatusCode statusCode = serviceTransactionCreateMonitoredItems->statusCode();
+		if (statusCode != Success) {
+			Log(Error, "create monitor item request error")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+			return;
+		}
+
+		CreateMonitoredItemsRequest::SPtr req = serviceTransactionCreateMonitoredItems->request();
+		CreateMonitoredItemsResponse::SPtr res = serviceTransactionCreateMonitoredItems->response();
+
+		if (req->itemsToCreate()->size() != res->results()->size()) {
+			Log(Error, "create monitored item response error (size)")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("ReqSize", req->itemsToCreate()->size())
+				.parameter("ResSize", res->results()->size());
+			return;
+		}
+
+		for (uint32_t idx=0; idx < req->itemsToCreate()->size(); idx++) {
+			MonitoredItemCreateRequest::SPtr monitoredItemCreateRequest;
+			req->itemsToCreate()->get(idx, monitoredItemCreateRequest);
+			if (monitoredItemCreateRequest.get() == nullptr) {
+				Log(Error, "create monitored item response error, because request content not found")
+					.parameter("Id", id_)
+					.parameter("SubscriptionId", subscriptionId_)
+					.parameter("Idx", idx);
+				continue;
+			}
+
+			uint32_t clientHandle = monitoredItemCreateRequest->requestedParameters().clientHandle();
+
+#if 0
+			if (monitorItem.get() == nullptr) {
+				Log(Error, "create monitored item response error, because monitor item not found")
+					.parameter("Id", id_)
+					.parameter("SubscriptionId", subscriptionId_)
+					.parameter("Idx", idx)
+					.parameter("ClientHandle", clientHandle);
+				continue;
+			}
+#endif
+
+#if 0
+			MonitoredItemCreateResult::SPtr monitoredItemCreateResult;
+			res->results()->get(idx, monitoredItemCreateResult);
+			if (monitoredItemCreateResult.get() == nullptr) {
+				Log(Error, "create monitored item response error, because response content not found")
+					.parameter("Idx", idx)
+				    .parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
+				    .parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
+				    .parameter("ClientHandle", monitorItem->clientHandle());
+				continue;
+			}
+			if (monitoredItemCreateResult->statusCode() != Success) {
+				Log(Error, "create monitored item response error, because server response error")
+					.parameter("Idx", idx)
+				    .parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
+				    .parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
+				    .parameter("ClientHandle", monitorItem->clientHandle())
+				    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(monitoredItemCreateResult->statusCode()));
+				continue;
+			}
+
+			Log(Error, "create monitored item")
+				.parameter("Idx", idx)
+				.parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
+				.parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
+				.parameter("ClientHandle", monitorItem->clientHandle())
+				.parameter("MonitoredItemId", monitoredItemCreateResult->monitoredItemId());
+			monitorItem->monitoredItemId(monitoredItemCreateResult->monitoredItemId());
+			monitorItem->monitorItemState(MonitorItem::MIS_Open);
+#endif
+		}
     }
 
     void
