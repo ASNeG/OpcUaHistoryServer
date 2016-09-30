@@ -24,8 +24,8 @@ namespace OpcUaHistory
 {
 
 	ClientSubscription::ClientSubscription(void)
-	: state_(S_Close)
-	, active_(false)
+	: init_(false)
+	, state_(S_Close)
 	, ioThread_()
 	, id_("")
 	, subscriptionId_(0)
@@ -34,6 +34,10 @@ namespace OpcUaHistory
 	, maxKeepAliveCount_(0)
 	, maxNotificationsPerPublish_(0)
 	, subscriptionService_()
+	, monitoredItemService_()
+	, serviceSetManager_(nullptr)
+	, sessionService_()
+	, clientMonitoredItemSet_()
 	{
 	}
 
@@ -114,6 +118,18 @@ namespace OpcUaHistory
 	}
 
 	void
+	ClientSubscription::serviceSetManager(ServiceSetManager* serviceSetManager)
+	{
+		serviceSetManager_ = serviceSetManager;
+	}
+
+	void
+	ClientSubscription::sessionService(SessionService::SPtr& sessionService)
+	{
+		sessionService_ = sessionService;
+	}
+
+	void
 	ClientSubscription::state(State state)
 	{
 		state_ = state;
@@ -126,26 +142,28 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientSubscription::addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem)
+	ClientSubscription::init(void)
 	{
-		// FIXME: todo
-	}
-
-	void
-	ClientSubscription::startup(ServiceSetManager& serviceSetManager, SessionService::SPtr& sessionService)
-	{
-		if (subscriptionService_.get() != nullptr) return;
+		// initialization of the subscription component only once
+		if (init_) return;
+		init_ = true;
 
 		// create subscriptions service
 		SubscriptionServiceConfig subscriptionServiceConfig;
 		subscriptionServiceConfig.ioThreadName("GlobalIOThread");
 		subscriptionServiceConfig.subscriptionServiceIf_ = this;
-		subscriptionService_ = serviceSetManager.subscriptionService(sessionService, subscriptionServiceConfig);
+		subscriptionService_ = serviceSetManager_->subscriptionService(sessionService_, subscriptionServiceConfig);
+
+		// create monitored item service
+		MonitoredItemServiceConfig monitoredItemServiceConfig;
+		monitoredItemServiceConfig.ioThreadName("GlobalIOThread");
+		monitoredItemServiceConfig.monitoredItemServiceIf_ = this;
+		monitoredItemService_ = serviceSetManager_->monitoredItemService(sessionService_, monitoredItemServiceConfig);
 	}
+
 	void
 	ClientSubscription::open(void)
 	{
-		active_ = true;
 		state_ = S_Opening;
 		ServiceTransactionCreateSubscription::SPtr trx = ServiceTransactionCreateSubscription::construct();
 		subscriptionService_->asyncSend(trx);
@@ -154,9 +172,52 @@ namespace OpcUaHistory
 	void
 	ClientSubscription::close(void)
 	{
-		active_ = false;
+		state_ = S_Closing;
+		ServiceTransactionDeleteSubscriptions::SPtr trx = constructSPtr<ServiceTransactionDeleteSubscriptions>();
+		DeleteSubscriptionsRequest::SPtr req = trx->request();
+		req->subscriptionIds()->resize(1);
+		req->subscriptionIds()->set(0, subscriptionId_);
+
+		subscriptionService_->asyncSend(trx);
 	}
 
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// functions to handle monitored items
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	void
+	ClientSubscription::addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem)
+	{
+		init();
+
+		// add monitored item to set
+		clientMonitoredItemSet_.insert(clientMonitoredItem);
+	}
+
+	void
+	ClientSubscription::openMonitoredItems(void)
+	{
+		// open all monitored items
+		ClientMonitoredItem::Set::iterator it;
+		for (it = clientMonitoredItemSet_.begin(); it != clientMonitoredItemSet_.end(); it++) {
+			;
+		}
+
+	}
+
+	void
+	ClientSubscription::cleanUpMonitoredItems(void)
+	{
+		// clean up all monitored items
+		ClientMonitoredItem::Set::iterator it;
+		for (it = clientMonitoredItemSet_.begin(); it != clientMonitoredItemSet_.end(); it++) {
+			;
+		}
+	}
 
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
@@ -182,21 +243,35 @@ namespace OpcUaHistory
 		Log(Debug, "open subscription")
 			.parameter("Id", id_)
 		    .parameter("SubscriptionId", subscriptionId_);
+
+		// open all monitored items
+		openMonitoredItems();
     }
 
     void
     ClientSubscription::subscriptionServiceModifySubscriptionResponse(ServiceTransactionModifySubscription::SPtr serviceTransactionModifySubscription)
     {
+    	// nothing to do
     }
 
     void
     ClientSubscription::subscriptionServiceTransferSubscriptionsResponse(ServiceTransactionTransferSubscriptions::SPtr serviceTransactionTransferSubscriptions)
     {
+    	// nothing to do
     }
 
     void
     ClientSubscription::subscriptionServiceDeleteSubscriptionsResponse(ServiceTransactionDeleteSubscriptions::SPtr serviceTransactionDeleteSubscriptions)
     {
+		Log(Debug, "close subscription")
+			.parameter("Id", id_)
+		    .parameter("SubscriptionId", subscriptionId_);
+
+    	subscriptionId_ = 0;
+    	state_ = S_Close;
+
+    	// clean up all monitored items
+    	cleanUpMonitoredItems();
     }
 
     void
@@ -207,6 +282,49 @@ namespace OpcUaHistory
 	void
 	ClientSubscription::subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId)
 	{
+		Log(Debug, "state update subscription")
+			.parameter("Id", id_)
+		    .parameter("SubscriptionId", subscriptionId_)
+		    .parameter("SubscriptionState", (uint32_t)subscriptionState);
+
+		// FIXME: todo
 	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// MonitoredItemService
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+    void
+    ClientSubscription::monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems)
+    {
+    	;
+    }
+
+    void
+    ClientSubscription::monitoredItemServiceDeleteMonitoredItemsResponse(ServiceTransactionDeleteMonitoredItems::SPtr serviceTransactionDeleteMonitoredItems)
+    {
+    	// nothing to do
+    }
+
+    void
+    ClientSubscription::monitoredItemServiceModifyMonitoredItemsResponse(ServiceTransactionModifyMonitoredItems::SPtr serviceTransactionModifyMonitoredItems)
+    {
+    	// nothing to do
+    }
+
+    void
+    ClientSubscription::monitoredItemServiceSetMonitoringModeResponse(ServiceTransactionSetMonitoringMode::SPtr serviceTransactionSetMonitoringMode)
+    {
+    	// nothing to do
+    }
+
+    void
+    ClientSubscription::monitoredItemServiceSetTriggeringResponse(ServiceTransactionSetTriggering::SPtr serviceTransactionSetTriggering)
+    {
+    	// nothing to do
+    }
 
 }

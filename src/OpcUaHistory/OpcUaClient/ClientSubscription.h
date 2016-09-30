@@ -35,6 +35,7 @@ namespace OpcUaHistory
 
 	class ClientSubscription
 	: public SubscriptionServiceIf
+	, public MonitoredItemServiceIf
 	{
 	  public:
 		typedef boost::shared_ptr<ClientSubscription> SPtr;
@@ -64,13 +65,14 @@ namespace OpcUaHistory
 		void maxKeepAliveCount(uint32_t maxKeepAliveCount);
 		uint32_t maxNotificationsPerPublish(void);
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
+		void serviceSetManager(ServiceSetManager* serviceSetManager);
+		void sessionService(SessionService::SPtr& sessionService);
 
 		void addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem);
 
 		void state(State state);
 		State state(void);
 
-		void startup(ServiceSetManager& serviceSetManager, SessionService::SPtr& sessionService);
 		void open(void);
 		void close(void);
 
@@ -84,8 +86,18 @@ namespace OpcUaHistory
 		virtual void subscriptionStateUpdate(SubscriptionState subscriptionState, uint32_t subscriptionId);
 		//- SubscriptionServiceIf ---------------------------------------------
 
+		//- MonitoredItemServiceIf --------------------------------------------
+	    virtual void monitoredItemServiceCreateMonitoredItemsResponse(ServiceTransactionCreateMonitoredItems::SPtr serviceTransactionCreateMonitoredItems);
+	    virtual void monitoredItemServiceDeleteMonitoredItemsResponse(ServiceTransactionDeleteMonitoredItems::SPtr serviceTransactionDeleteMonitoredItems);
+	    virtual void monitoredItemServiceModifyMonitoredItemsResponse(ServiceTransactionModifyMonitoredItems::SPtr serviceTransactionModifyMonitoredItems);
+	    virtual void monitoredItemServiceSetMonitoringModeResponse(ServiceTransactionSetMonitoringMode::SPtr serviceTransactionSetMonitoringMode);
+	    virtual void monitoredItemServiceSetTriggeringResponse(ServiceTransactionSetTriggering::SPtr serviceTransactionSetTriggering);
+		//- MonitoredItemServiceIf --------------------------------------------
 
 	  private:
+		void init(void);
+		void openMonitoredItems(void);
+		void cleanUpMonitoredItems(void);
 
 		// configuration parameters
 		IOThread::SPtr ioThread_;
@@ -96,11 +108,16 @@ namespace OpcUaHistory
 		uint32_t maxNotificationsPerPublish_;
 
 		// runtime parameters
-		bool active_;
+		bool init_;
 		State state_;
 		uint32_t subscriptionId_;
+		ServiceSetManager* serviceSetManager_;
+		SessionService::SPtr sessionService_;
 
 		SubscriptionService::SPtr subscriptionService_;
+		MonitoredItemService::SPtr monitoredItemService_;
+
+		ClientMonitoredItem::Set clientMonitoredItemSet_;
 	};
 
 }

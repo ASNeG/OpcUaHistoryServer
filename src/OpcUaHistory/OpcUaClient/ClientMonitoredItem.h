@@ -24,9 +24,11 @@
 #include <vector>
 #include <stdint.h>
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
@@ -42,6 +44,10 @@ namespace OpcUaHistory
 
 		typedef enum {
 			S_Error,
+			S_Close,
+			S_Opening,
+			S_Open,
+			S_Closing
 		} State;
 
 		ClientMonitoredItem(void);
@@ -56,12 +62,22 @@ namespace OpcUaHistory
 		OpcUaNodeId& nodeId(void);
 		void nodeId(OpcUaNodeId& nodeId);
 
+		void state(State state);
+		State state(void);
+		void reconnectTime(boost::posix_time::ptime reconnectTime);
+		boost::posix_time::ptime reconnectTime(void);
+
 	  private:
+
+	    // configuration data
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
 		OpcUaNodeId nodeId_;
-		std::string valueName_;
 		DataChangeFilter dataChangeFilter_;
+
+		// runtime data
+		State state_;
+		boost::posix_time::ptime reconnectTime_;
 	};
 
 }

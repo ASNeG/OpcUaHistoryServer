@@ -75,6 +75,7 @@ namespace OpcUaHistory
 	ClientConnection::addClientSubscription(const std::string& id, ClientSubscription::SPtr& clientSubscription)
 	{
 		init();
+
 		ClientSubscription::Map::iterator it;
 		it = clientSubscriptionMap_.find(id);
 		if (it != clientSubscriptionMap_.end()) {
@@ -83,7 +84,9 @@ namespace OpcUaHistory
 				.parameter("SubscriptionId", id);
 			return false;
 		}
-		clientSubscription->startup(serviceSetManager_, sessionService_);
+
+		clientSubscription->serviceSetManager(&serviceSetManager_);
+		clientSubscription->sessionService(sessionService_);
 		clientSubscriptionMap_.insert(std::make_pair(id, clientSubscription));
 
 		return true;
