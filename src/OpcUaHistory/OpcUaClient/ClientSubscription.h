@@ -19,6 +19,7 @@
 #define __OpcUaHistory_ClientSubscription_h__
 
 #include <boost/shared_ptr.hpp>
+#include "OpcUaStackCore/Base/Callback.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaHistory/OpcUaClient/ClientMonitoredItem.h"
@@ -32,6 +33,16 @@ using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
+
+	class ClientSubscriptionIf
+	{
+	  public:
+		ClientSubscriptionIf(void) {}
+		virtual ~ClientSubscriptionIf(void) {}
+
+		virtual void dataChangeNotification(ClientMonitoredItem::SPtr& clientMonitoredItem, OpcUaDataValue& dataValue) = 0;
+	};
+
 
 	class ClientSubscription
 	: public SubscriptionServiceIf
@@ -68,6 +79,7 @@ namespace OpcUaHistory
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
 		void serviceSetManager(ServiceSetManager* serviceSetManager);
 		void sessionService(SessionService::SPtr& sessionService);
+		void clientSubscriptionIf(ClientSubscriptionIf* clientSubscriptionIf);
 
 		void addMonitoredItem(ClientMonitoredItem::SPtr& clientMonitoredItem);
 
@@ -121,6 +133,7 @@ namespace OpcUaHistory
 		MonitoredItemService::SPtr monitoredItemService_;
 
 		ClientMonitoredItem::IdMap clientMonitoredItemMap_;
+		ClientSubscriptionIf* clientSubscriptionIf_;
 	};
 
 }

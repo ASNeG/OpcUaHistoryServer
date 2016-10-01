@@ -66,6 +66,7 @@ namespace OpcUaHistory
     		cs->livetimeCount(csc->livetimeCount());
     		cs->maxKeepAliveCount(csc->maxKeepAliveCount());
     		cs->maxNotificationsPerPublish(csc->maxNotificationsPerPublish());
+    		cs->clientSubscriptionIf(this);
 
     		clientConnection_.addClientSubscription(csc->id(), cs);
 
@@ -103,5 +104,15 @@ namespace OpcUaHistory
     	clientConnection_.disconnect();
     	return true;
     }
+
+    void
+    HistoryClient::dataChangeNotification(ClientMonitoredItem::SPtr& clientMonitoredItem, OpcUaDataValue& dataValue)
+    {
+    	std::cout << "data change notification ...";
+    	dataValue.out(std::cout);
+    	std::cout << std::endl;
+
+    }
+
 
 }

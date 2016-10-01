@@ -39,6 +39,7 @@ namespace OpcUaHistory
 	, serviceSetManager_(nullptr)
 	, sessionService_()
 	, clientMonitoredItemMap_()
+	, clientSubscriptionIf_(nullptr)
 	{
 	}
 
@@ -128,6 +129,12 @@ namespace OpcUaHistory
 	ClientSubscription::sessionService(SessionService::SPtr& sessionService)
 	{
 		sessionService_ = sessionService;
+	}
+
+	void
+	ClientSubscription::clientSubscriptionIf(ClientSubscriptionIf* clientSubscriptionIf)
+	{
+		clientSubscriptionIf_ = clientSubscriptionIf;
 	}
 
 	void
@@ -332,8 +339,9 @@ namespace OpcUaHistory
 				.parameter("SubscriptionId", subscriptionId_)
 			    .parameter("ClientHandle", cmi->clientHandle());
 
-			cmi->state(ClientMonitoredItem::S_Close);
 			req->monitoredItemIds()->push_back(cmi->monitoredItemId());
+			cmi->state(ClientMonitoredItem::S_Close);
+			cmi->monitoredItemId(0);
 		}
 
 		monitoredItemService_->asyncSend(trx);
@@ -397,8 +405,22 @@ namespace OpcUaHistory
     void
     ClientSubscription::dataChangeNotification(const MonitoredItemNotification::SPtr& monitoredItem)
     {
-    	// FIXME: todo
-    	std::cout << "data change notification..." << std::endl;
+		// locate the associated entry
+		ClientMonitoredItem::SPtr cmi;
+		ClientMonitoredItem::IdMap::iterator it;
+		it = clientMonitoredItemMap_.find(monitoredItem->clientHandle());
+		if (it == clientMonitoredItemMap_.end()) {
+			Log(Warning, "monitor item no found in data change notification")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("ClientHandle", monitoredItem->clientHandle());
+			return;
+		}
+
+		clientSubscriptionIf_->dataChangeNotification(
+			cmi,
+			monitoredItem->dataValue()
+		);
     }
 
 	void

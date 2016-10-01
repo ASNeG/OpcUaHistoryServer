@@ -28,6 +28,7 @@ namespace OpcUaHistory
 {
 
 	class HistoryClient
+	: public ClientSubscriptionIf
 	{
 	  public:
 		typedef boost::shared_ptr<HistoryClient> SPtr;
@@ -45,7 +46,9 @@ namespace OpcUaHistory
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager, IOThread::SPtr ioThread);
         bool shutdown(void);
 
-
+        // -- ClientSubscriptionIf --------------------------------------------
+        virtual void dataChangeNotification(ClientMonitoredItem::SPtr& clientMonitoredItem, OpcUaDataValue& dataValue);
+        // -- ClientSubscriptionIf --------------------------------------------
 
 	  private:
         HistoryClientConfig historyClientConfig_;
