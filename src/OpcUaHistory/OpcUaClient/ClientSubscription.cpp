@@ -38,7 +38,7 @@ namespace OpcUaHistory
 	, monitoredItemService_()
 	, serviceSetManager_(nullptr)
 	, sessionService_()
-	, clientMonitoredItemSet_()
+	, clientMonitoredItemMap_()
 	{
 	}
 
@@ -196,8 +196,10 @@ namespace OpcUaHistory
 	{
 		init();
 
-		// add monitored item to set
-		clientMonitoredItemSet_.insert(clientMonitoredItem);
+		// add monitored item to map
+		clientMonitoredItemMap_.insert(
+			std::make_pair(clientMonitoredItem->clientHandle(), clientMonitoredItem)
+		);
 	}
 
 	void
@@ -210,9 +212,9 @@ namespace OpcUaHistory
 
 
 		// find all monitored items to be opened
-		ClientMonitoredItem::Set::iterator it1;
-		for (it1 = clientMonitoredItemSet_.begin(); it1 != clientMonitoredItemSet_.end(); it1++) {
-			ClientMonitoredItem::SPtr cmi = *it1;
+		ClientMonitoredItem::IdMap::iterator it1;
+		for (it1 = clientMonitoredItemMap_.begin(); it1 != clientMonitoredItemMap_.end(); it1++) {
+			ClientMonitoredItem::SPtr cmi = it1->second;
 
 			if (cmi->state() != ClientMonitoredItem::S_Close) {
 				// the monitored item is already opened
@@ -250,7 +252,7 @@ namespace OpcUaHistory
 					.parameter("Id", id_)
 				    .parameter("SubscriptionId", subscriptionId_)
 					.parameter("NodeId", nodeId.toString())
-					.parameter("ClientHandle", cmi->handle());
+					.parameter("ClientHandle", cmi->clientHandle());
 				return;
 			}
 			nodeId.namespaceIndex(it3->second);
@@ -259,11 +261,11 @@ namespace OpcUaHistory
 				.parameter("Id", id_)
 				.parameter("SubscriptionId", subscriptionId_)
 			    .parameter("NodeId", nodeId.toString())
-			    .parameter("ClientHandle", cmi->handle());
+			    .parameter("ClientHandle", cmi->clientHandle());
 
 			MonitoredItemCreateRequest::SPtr monitoredItemCreateRequest = MonitoredItemCreateRequest::construct();
 			monitoredItemCreateRequest->itemToMonitor().nodeId()->copyFrom(nodeId);
-			monitoredItemCreateRequest->requestedParameters().clientHandle(cmi->handle());
+			monitoredItemCreateRequest->requestedParameters().clientHandle(cmi->clientHandle());
 			req->itemsToCreate()->push_back(monitoredItemCreateRequest);
 		}
 
@@ -276,9 +278,9 @@ namespace OpcUaHistory
 		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
 
 		// clean up all monitored items
-		ClientMonitoredItem::Set::iterator it;
-		for (it = clientMonitoredItemSet_.begin(); it != clientMonitoredItemSet_.end(); it++) {
-			ClientMonitoredItem::SPtr cmi = *it;
+		ClientMonitoredItem::IdMap::iterator it;
+		for (it = clientMonitoredItemMap_.begin(); it != clientMonitoredItemMap_.end(); it++) {
+			ClientMonitoredItem::SPtr cmi = it->second;
 			cmi->reconnectTime(now);
 			cmi->state(ClientMonitoredItem::S_Close);
 		}
@@ -400,9 +402,9 @@ namespace OpcUaHistory
 			}
 
 			uint32_t clientHandle = monitoredItemCreateRequest->requestedParameters().clientHandle();
-
-#if 0
-			if (monitorItem.get() == nullptr) {
+			ClientMonitoredItem::IdMap::iterator it;
+			it = clientMonitoredItemMap_.find(clientHandle);
+			if (it == clientMonitoredItemMap_.end()) {
 				Log(Error, "create monitored item response error, because monitor item not found")
 					.parameter("Id", id_)
 					.parameter("SubscriptionId", subscriptionId_)
@@ -410,38 +412,39 @@ namespace OpcUaHistory
 					.parameter("ClientHandle", clientHandle);
 				continue;
 			}
-#endif
+			ClientMonitoredItem::SPtr cmi = it->second;
 
-#if 0
 			MonitoredItemCreateResult::SPtr monitoredItemCreateResult;
 			res->results()->get(idx, monitoredItemCreateResult);
 			if (monitoredItemCreateResult.get() == nullptr) {
 				Log(Error, "create monitored item response error, because response content not found")
+					.parameter("Id", id_)
+					.parameter("SubscriptionId", subscriptionId_)
 					.parameter("Idx", idx)
-				    .parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
-				    .parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
-				    .parameter("ClientHandle", monitorItem->clientHandle());
+				    .parameter("NodeId", cmi->nodeId().toString())
+				    .parameter("ClientHandle", clientHandle);
 				continue;
 			}
 			if (monitoredItemCreateResult->statusCode() != Success) {
 				Log(Error, "create monitored item response error, because server response error")
+					.parameter("Id", id_)
+					.parameter("SubscriptionId", subscriptionId_)
 					.parameter("Idx", idx)
-				    .parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
-				    .parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
-				    .parameter("ClientHandle", monitorItem->clientHandle())
+				    .parameter("NodeId", cmi->nodeId().toString())
+				    .parameter("ClientHandle", clientHandle)
 				    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(monitoredItemCreateResult->statusCode()));
 				continue;
 			}
 
 			Log(Error, "create monitored item")
-				.parameter("Idx", idx)
-				.parameter("NodeId", monitorItem->valueInfoEntry()->nodeId_.toString())
-				.parameter("ApplId", monitorItem->valueInfoEntry()->valueName_)
-				.parameter("ClientHandle", monitorItem->clientHandle())
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("NodeId", cmi->nodeId().toString())
+				.parameter("ClientHandle", clientHandle)
 				.parameter("MonitoredItemId", monitoredItemCreateResult->monitoredItemId());
-			monitorItem->monitoredItemId(monitoredItemCreateResult->monitoredItemId());
-			monitorItem->monitorItemState(MonitorItem::MIS_Open);
-#endif
+
+			cmi->monitoredItemId(monitoredItemCreateResult->monitoredItemId());
+			cmi->state(ClientMonitoredItem::S_Open);
 		}
     }
 

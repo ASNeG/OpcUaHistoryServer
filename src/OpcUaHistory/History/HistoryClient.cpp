@@ -70,6 +70,7 @@ namespace OpcUaHistory
     		clientConnection_.addClientSubscription(csc->id(), cs);
 
 
+    		uint32_t clientHandle = 0;
     		ClientNodeConfig::Map::iterator it2;
     		for (it2 = csc->clientNodeConfigMap().begin();
     			 it2 != csc->clientNodeConfigMap().end();
@@ -81,6 +82,8 @@ namespace OpcUaHistory
     			ClientNodeConfig::SPtr cnc = it2->second;
     			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
 
+    			clientHandle++;
+    			cmi->clientHandle(clientHandle);
     			cmi->samplingInterval(cnc->samplingInterval());
     			cmi->queueSize(cnc->queueSize());
     			cmi->dataChangeFilter(cnc->dataChangeFilter());

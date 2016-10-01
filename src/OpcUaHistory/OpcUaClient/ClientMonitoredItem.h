@@ -38,6 +38,7 @@ namespace OpcUaHistory
 	  public:
 		typedef boost::shared_ptr<ClientMonitoredItem> SPtr;
 		typedef std::map<std::string, ClientMonitoredItem::SPtr> Map;
+		typedef std::map<uint32_t, ClientMonitoredItem::SPtr> IdMap;
 		typedef std::set<ClientMonitoredItem::SPtr> Set;
 		typedef std::vector<ClientMonitoredItem::SPtr> Vec;
 
@@ -57,13 +58,15 @@ namespace OpcUaHistory
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
 		OpcUaNodeId& nodeId(void);
 		void nodeId(OpcUaNodeId& nodeId);
-		void handle(uint32_t handle);
-		uint32_t handle(void);
+		void clientHandle(uint32_t clientHandle);
+		uint32_t clientHandle(void);
 
 		void state(State state);
 		State state(void);
 		void reconnectTime(boost::posix_time::ptime reconnectTime);
 		boost::posix_time::ptime reconnectTime(void);
+		void monitoredItemId(uint32_t monitoredItemId);
+		uint32_t monitoredItemId(void);
 
 	  private:
 
@@ -72,11 +75,12 @@ namespace OpcUaHistory
 		uint32_t queueSize_;
 		OpcUaNodeId nodeId_;
 		DataChangeFilter dataChangeFilter_;
-		uint32_t handle_;
+		uint32_t clientHandle_;
 
 		// runtime data
 		State state_;
 		boost::posix_time::ptime reconnectTime_;
+		uint32_t monitoredItemId_;
 	};
 
 }

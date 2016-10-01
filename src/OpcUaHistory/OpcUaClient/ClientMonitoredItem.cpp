@@ -24,12 +24,13 @@ namespace OpcUaHistory
 	ClientMonitoredItem::ClientMonitoredItem(void)
 	: state_(S_Close)
 	, reconnectTime_(boost::posix_time::microsec_clock::local_time())
+	, monitoredItemId_(0)
 
 	, samplingInterval_(250)
 	, queueSize_(1)
 	, nodeId_()
 	, dataChangeFilter_(StatusValue)
-	, handle_(0)
+	, clientHandle_(0)
 	{
 	}
 
@@ -74,15 +75,15 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientMonitoredItem::handle(uint32_t handle)
+	ClientMonitoredItem::clientHandle(uint32_t clientHandle)
 	{
-		handle_ = handle;
+		clientHandle_ = clientHandle;
 	}
 
 	uint32_t
-	ClientMonitoredItem::handle(void)
+	ClientMonitoredItem::clientHandle(void)
 	{
-		return handle_;
+		return clientHandle_;
 	}
 
 	void
@@ -107,6 +108,18 @@ namespace OpcUaHistory
 	ClientMonitoredItem::reconnectTime(void)
 	{
 		return reconnectTime_;
+	}
+
+	void
+	ClientMonitoredItem::monitoredItemId(uint32_t monitoredItemId)
+	{
+		monitoredItemId_ = monitoredItemId;
+	}
+
+	uint32_t
+	ClientMonitoredItem::monitoredItemId(void)
+	{
+		return monitoredItemId_;
 	}
 
 	DataChangeFilter

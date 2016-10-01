@@ -119,7 +119,7 @@ namespace OpcUaHistory
 		SubscriptionService::SPtr subscriptionService_;
 		MonitoredItemService::SPtr monitoredItemService_;
 
-		ClientMonitoredItem::Set clientMonitoredItemSet_;
+		ClientMonitoredItem::IdMap clientMonitoredItemMap_;
 	};
 
 }
