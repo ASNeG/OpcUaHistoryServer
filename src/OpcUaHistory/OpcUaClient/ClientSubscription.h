@@ -99,6 +99,7 @@ namespace OpcUaHistory
 		void init(void);
 		void openMonitoredItems(void);
 		void cleanUpMonitoredItems(void);
+		void deleteMonitoredItems(void);
 
 		// configuration parameters
 		IOThread::SPtr ioThread_;

@@ -174,6 +174,10 @@ namespace OpcUaHistory
 	void
 	ClientSubscription::close(void)
 	{
+		// delete all monitored items of the subscription
+		deleteMonitoredItems();
+
+		// delete subscription
 		state_ = S_Closing;
 		ServiceTransactionDeleteSubscriptions::SPtr trx = constructSPtr<ServiceTransactionDeleteSubscriptions>();
 		DeleteSubscriptionsRequest::SPtr req = trx->request();
@@ -284,6 +288,55 @@ namespace OpcUaHistory
 			cmi->reconnectTime(now);
 			cmi->state(ClientMonitoredItem::S_Close);
 		}
+	}
+
+	void
+	ClientSubscription::deleteMonitoredItems(void)
+	{
+		if (state_ != S_Open) return;
+
+		ClientMonitoredItem::Vec cmiv;
+
+		// find all monitored items to be opened
+		ClientMonitoredItem::IdMap::iterator it1;
+		for (it1 = clientMonitoredItemMap_.begin(); it1 != clientMonitoredItemMap_.end(); it1++) {
+			ClientMonitoredItem::SPtr cmi = it1->second;
+
+			if (cmi->state() == ClientMonitoredItem::S_Close) {
+				// the monitored item is already opened
+				continue;
+			}
+
+			if (cmi->monitoredItemId() == 0) {
+				// the monitored item do not exist
+				continue;
+			}
+
+			cmiv.push_back(cmi);
+		}
+		if (cmiv.empty()) return;
+
+		// create monitored item transaction
+		ServiceTransactionDeleteMonitoredItems::SPtr trx = ServiceTransactionDeleteMonitoredItems::construct();
+		DeleteMonitoredItemsRequest::SPtr req = trx->request();
+		req->subscriptionId(subscriptionId_);
+		req->monitoredItemIds()->resize(cmiv.size());
+
+		// close the found monitored items
+		ClientMonitoredItem::Vec::iterator it2;
+		for (it2 = cmiv.begin(); it2 != cmiv.end(); it2++) {
+			ClientMonitoredItem::SPtr cmi = *it2;
+
+			Log(Debug, "Try to delete monitored item")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+			    .parameter("ClientHandle", cmi->clientHandle());
+
+			cmi->state(ClientMonitoredItem::S_Close);
+			req->monitoredItemIds()->push_back(cmi->monitoredItemId());
+		}
+
+		monitoredItemService_->asyncSend(trx);
 	}
 
 	// ------------------------------------------------------------------------
@@ -451,7 +504,50 @@ namespace OpcUaHistory
     void
     ClientSubscription::monitoredItemServiceDeleteMonitoredItemsResponse(ServiceTransactionDeleteMonitoredItems::SPtr serviceTransactionDeleteMonitoredItems)
     {
-    	// nothing to do
+		OpcUaStatusCode statusCode = serviceTransactionDeleteMonitoredItems->statusCode();
+		if (statusCode != Success) {
+			Log(Error, "delete monitor item request error")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+			return;
+		}
+
+		DeleteMonitoredItemsRequest::SPtr req = serviceTransactionDeleteMonitoredItems->request();
+		DeleteMonitoredItemsResponse::SPtr res = serviceTransactionDeleteMonitoredItems->response();
+
+		if (req->monitoredItemIds()->size() != res->results()->size()) {
+			Log(Error, "delete monitored item response error (size)")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("ReqSize", req->monitoredItemIds()->size())
+				.parameter("ResSize", res->results()->size());
+			return;
+		}
+
+
+		for (uint32_t idx=0; idx < req->monitoredItemIds()->size(); idx++) {
+			uint32_t monitoredItem;
+			req->monitoredItemIds()->get(idx, monitoredItem);
+
+			OpcUaStatusCode statusCode;;
+			res->results()->get(idx, statusCode);
+			if (statusCode != Success) {
+				Log(Error, "delete monitored item response error, because server response error")
+					.parameter("Id", id_)
+					.parameter("SubscriptionId", subscriptionId_)
+					.parameter("Idx", idx)
+				    .parameter("MonitoredItemId", monitoredItem)
+				    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+				continue;
+			}
+
+			Log(Error, "delete monitored item")
+				.parameter("Id", id_)
+				.parameter("SubscriptionId", subscriptionId_)
+				.parameter("Idx", idx)
+				.parameter("MonitoredItemId", monitoredItem);
+		}
     }
 
     void
