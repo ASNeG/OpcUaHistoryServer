@@ -170,6 +170,8 @@ namespace OpcUaHistory
     {
     	std::cout << "H_READ_VALUE" << std::endl;
     	// FIXME: todo
+
+    	applicationHReadContext->statusCode_ = BadInternalError;
     }
 
 }
