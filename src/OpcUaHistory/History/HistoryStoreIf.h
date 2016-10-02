@@ -19,6 +19,7 @@
 #define __OpcUaHistory_HistoryStoreIf_h__
 
 #include <boost/shared_ptr.hpp>
+#include "OpcUaStackCore/Base/Object.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
 using namespace OpcUaStackCore;
@@ -26,23 +27,14 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class HistoryStoreContextBase
-	{
-	  public:
-		typedef boost::shared_ptr<HistoryStoreContextBase> SPtr;
-
-		HistoryStoreContextBase(void) {}
-		virtual ~HistoryStoreContextBase(void) {}
-	};
-
 	class HistoryStoreIf
 	{
 	  public:
 		HistoryStoreIf(void) {}
 		virtual ~HistoryStoreIf(void) {}
 
-		virtual bool write(HistoryStoreContextBase::SPtr valueStoreWriteContextBase, OpcUaDataValue& dataValue) = 0;
-		virtual bool getHistoryStoreContext(const std::string valueName, HistoryStoreContextBase::SPtr& historyStoreContextBase) = 0;
+		virtual bool write(Object::SPtr& context, OpcUaDataValue& dataValue) = 0;
+		virtual bool getHistoryStoreContext(const std::string valueName, Object::SPtr& context) = 0;
 	};
 
 }

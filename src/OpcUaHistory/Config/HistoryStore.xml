@@ -5,7 +5,7 @@
 	
 	<FileHistoryStore>
 	
-		<BaseFolder>@INSTALL_DIR@/@WORK_DIR@/OpcUaHistory/</BaseFolder>
+		<BaseFolder>@INSTALL_DIR@/var/OpcUaHistory/</BaseFolder>
 		
 		<ReadFileAccess>
 		  	<VerboseLogging>off</VerboseLogging>

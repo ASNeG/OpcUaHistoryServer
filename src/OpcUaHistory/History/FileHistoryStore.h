@@ -31,7 +31,7 @@ namespace OpcUaHistory
 {
 
 	class HistoryStoreContextWrite
-	: public HistoryStoreContextBase
+	: public Object
 	{
 	  public:
 		typedef boost::shared_ptr<HistoryStoreContextWrite> SPtr;
@@ -62,8 +62,8 @@ namespace OpcUaHistory
         bool startupFileStore(void);
 
 	    // -- HistoryStoreIf --------------------------------------------------
-	    bool write(HistoryStoreContextBase::SPtr valueStoreWriteContextBase, OpcUaDataValue& dataValue);
-	    bool getHistoryStoreContext(const std::string valueName, HistoryStoreContextBase::SPtr& historyStoreContextBase);
+	    bool write(Object::SPtr& context, OpcUaDataValue& dataValue);
+	    bool getHistoryStoreContext(const std::string valueName, Object::SPtr& context);
 	    // -- HistoryStoreIf --------------------------------------------------
 
         FileHistoryStoreConfig fileHistoryConfig_;

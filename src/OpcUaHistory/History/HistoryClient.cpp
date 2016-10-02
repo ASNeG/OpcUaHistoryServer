@@ -26,6 +26,7 @@ namespace OpcUaHistory
 	HistoryClient::HistoryClient(void)
 	: historyClientConfig_()
 	, ioThread_()
+	, historyStoreIf_(nullptr)
 	{
 	}
 
@@ -37,6 +38,12 @@ namespace OpcUaHistory
 	HistoryClient::ioThread(IOThread::SPtr& ioThread)
 	{
 		ioThread_ = ioThread;
+	}
+
+	void
+	HistoryClient::historyStoreIf(HistoryStoreIf* historyStoreIf)
+	{
+		historyStoreIf_ = historyStoreIf;
 	}
 
     bool
@@ -89,12 +96,16 @@ namespace OpcUaHistory
     			ClientNodeConfig::SPtr cnc = it2->second;
     			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
 
+    			Object::SPtr context;
+    			historyStoreIf_->getHistoryStoreContext(cnc->valueName(), context);
+
     			clientHandle++;
     			cmi->clientHandle(clientHandle);
     			cmi->samplingInterval(cnc->samplingInterval());
     			cmi->queueSize(cnc->queueSize());
     			cmi->dataChangeFilter(cnc->dataChangeFilter());
     			cmi->nodeId(cnc->nodeId());
+    			cmi->context(context);
 
     			cs->addMonitoredItem(cmi);
     		}
@@ -114,10 +125,7 @@ namespace OpcUaHistory
     void
     HistoryClient::dataChangeNotification(ClientMonitoredItem::SPtr& clientMonitoredItem, OpcUaDataValue& dataValue)
     {
-    	std::cout << "data change notification ...";
-    	dataValue.out(std::cout);
-    	std::cout << std::endl;
-
+    	historyStoreIf_->write(clientMonitoredItem->context(), dataValue);
     }
 
 

@@ -67,6 +67,8 @@ namespace OpcUaHistory
 		boost::posix_time::ptime reconnectTime(void);
 		void monitoredItemId(uint32_t monitoredItemId);
 		uint32_t monitoredItemId(void);
+		void context(Object::SPtr& context);
+		Object::SPtr& context(void);
 
 	  private:
 
@@ -81,6 +83,7 @@ namespace OpcUaHistory
 		State state_;
 		boost::posix_time::ptime reconnectTime_;
 		uint32_t monitoredItemId_;
+		Object::SPtr context_;
 	};
 
 }

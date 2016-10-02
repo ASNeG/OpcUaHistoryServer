@@ -88,6 +88,7 @@ namespace OpcUaHistory
 
 		void open(NamespaceMap& namespaceMap);
 		void close(void);
+		void error(void);
 
 		//- SubscriptionServiceIf ---------------------------------------------
 	    virtual void subscriptionServiceCreateSubscriptionResponse(ServiceTransactionCreateSubscription::SPtr serviceTransactionCreateSubscription);

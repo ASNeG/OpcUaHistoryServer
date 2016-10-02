@@ -21,7 +21,6 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaHistory/History/HistoryClient.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
 
 using namespace OpcUaStackCore;
 

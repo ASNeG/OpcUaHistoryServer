@@ -187,7 +187,6 @@ namespace OpcUaHistory
 			case SS_Connect:
 				Log(Debug, "session state changed to connect")
 				    .parameter("ServerUri", serverUri_);
-				state_ = S_Connected;
 				readNamespaceArray();
 				break;
 			case SS_Disconnect:
@@ -244,6 +243,7 @@ namespace OpcUaHistory
 	void
 	ClientConnection::readNamespaceArray(void)
 	{
+		state_ = S_Connected;
 		ServiceTransactionRead::SPtr readTrx = constructSPtr<ServiceTransactionRead>();
 		ReadRequest::SPtr req = readTrx->request();
 		req->maxAge(0);
@@ -343,12 +343,17 @@ namespace OpcUaHistory
     void
     ClientConnection::handleDisconnect(void)
     {
+    	if (state_ != S_Established) {
+    		state_ = S_Disconnected;
+    		return;
+    	}
+
     	state_ = S_Disconnected;
 
     	ClientSubscription::Map::iterator it;
     	for (it = clientSubscriptionMap_.begin(); it != clientSubscriptionMap_.end(); it++) {
     		ClientSubscription::SPtr clientSubscription = it->second;
-    		clientSubscription->close();
+    		clientSubscription->error();
     	}
     }
 

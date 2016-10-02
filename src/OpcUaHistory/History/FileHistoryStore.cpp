@@ -120,18 +120,18 @@ namespace OpcUaHistory
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     bool
-    FileHistoryStore::write(HistoryStoreContextBase::SPtr valueStoreWriteContextBase, OpcUaDataValue& dataValue)
+    FileHistoryStore::write(Object::SPtr& context, OpcUaDataValue& dataValue)
     {
-    	HistoryStoreContextWrite::SPtr context = boost::static_pointer_cast<HistoryStoreContextWrite>(valueStoreWriteContextBase);
-    	return fileWriteManager_.write(context->valueWriteContext_, dataValue);
+    	HistoryStoreContextWrite::SPtr storeContext = boost::static_pointer_cast<HistoryStoreContextWrite>(context);
+    	return fileWriteManager_.write(storeContext->valueWriteContext_, dataValue);
     }
 
     bool
-    FileHistoryStore::getHistoryStoreContext(const std::string valueName, HistoryStoreContextBase::SPtr& historyStoreContextBase)
+    FileHistoryStore::getHistoryStoreContext(const std::string valueName, Object::SPtr& context)
     {
-    	HistoryStoreContextWrite::SPtr context = constructSPtr<HistoryStoreContextWrite>();
-    	context->valueWriteContext_.valueName_ = valueName;
-    	historyStoreContextBase = context;
+    	HistoryStoreContextWrite::SPtr storeContext = constructSPtr<HistoryStoreContextWrite>();
+    	storeContext->valueWriteContext_.valueName_ = valueName;
+    	context = storeContext;
     	return true;
     }
 

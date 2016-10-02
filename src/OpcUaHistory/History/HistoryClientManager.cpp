@@ -59,6 +59,7 @@ namespace OpcUaHistory
     		historyClientSet_.insert(historyClient);
 
     		historyClient->ioThread(ioThread_);
+    		historyClient->historyStoreIf(historyStoreIf_);
     		if (!historyClient->startup(*it, configXmlManager)) {
     			return false;
     		}

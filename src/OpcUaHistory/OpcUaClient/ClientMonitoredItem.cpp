@@ -31,6 +31,7 @@ namespace OpcUaHistory
 	, nodeId_()
 	, dataChangeFilter_(StatusValue)
 	, clientHandle_(0)
+	, context_()
 	{
 	}
 
@@ -120,6 +121,18 @@ namespace OpcUaHistory
 	ClientMonitoredItem::monitoredItemId(void)
 	{
 		return monitoredItemId_;
+	}
+
+	void
+	ClientMonitoredItem::context(Object::SPtr& context)
+	{
+		context_ = context;
+	}
+
+	Object::SPtr&
+	ClientMonitoredItem::context(void)
+	{
+		return context_;
 	}
 
 	DataChangeFilter

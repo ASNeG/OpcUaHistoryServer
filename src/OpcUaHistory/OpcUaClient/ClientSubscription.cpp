@@ -194,6 +194,15 @@ namespace OpcUaHistory
 		subscriptionService_->asyncSend(trx);
 	}
 
+	void
+	ClientSubscription::error(void)
+	{
+	   	// clean up all monitored items
+		state_ = S_Close;
+		subscriptionId_ = 0;
+	    cleanUpMonitoredItems();
+	}
+
 
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
@@ -395,11 +404,7 @@ namespace OpcUaHistory
 			.parameter("Id", id_)
 		    .parameter("SubscriptionId", subscriptionId_);
 
-    	subscriptionId_ = 0;
     	state_ = S_Close;
-
-    	// clean up all monitored items
-    	cleanUpMonitoredItems();
     }
 
     void
@@ -416,6 +421,7 @@ namespace OpcUaHistory
 				.parameter("ClientHandle", monitoredItem->clientHandle());
 			return;
 		}
+		cmi = it->second;
 
 		clientSubscriptionIf_->dataChangeNotification(
 			cmi,
@@ -511,7 +517,7 @@ namespace OpcUaHistory
 				continue;
 			}
 
-			Log(Error, "create monitored item")
+			Log(Debug, "create monitored item")
 				.parameter("Id", id_)
 				.parameter("SubscriptionId", subscriptionId_)
 				.parameter("NodeId", cmi->nodeId().toString())
