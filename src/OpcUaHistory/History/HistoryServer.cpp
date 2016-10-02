@@ -129,16 +129,16 @@ namespace OpcUaHistory
 	  	RegisterForwardRequest::SPtr req = trx->request();
 	  	RegisterForwardResponse::SPtr res = trx->response();
 
-	  	//req->forwardInfoSync()->setReadCallback(readCallback_);
-	  	//req->forwardInfoSync()->setWriteCallback(writeCallback_);
-	  	//req->nodesToRegister()->resize(valueMap_.size());
+	  	req->forwardInfoSync()->setReadHCallback(hReadCallback_);
+	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
 
-#if 0
 	  	uint32_t pos = 0;
-	  	ValueMap::iterator it;
-	  	for (it = valueMap_.begin(); it != valueMap_.end(); it++) {
+	  	ServerNodeConfig::Map::iterator it;
+	  	for (it = historyServerConfig_.serverNodeConfigMap().begin(); it != historyServerConfig_.serverNodeConfigMap().end(); it++) {
+	  		ServerNodeConfig::SPtr snc = it->second;
+
 	  		OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
-	  		*nodeId = it->first;
+	  		*nodeId = snc->nodeId();
 
 	  		req->nodesToRegister()->set(pos, nodeId);
 	  		pos++;
@@ -146,7 +146,8 @@ namespace OpcUaHistory
 
 	  	applicationServiceIf_->sendSync(trx);
 	  	if (trx->statusCode() != Success) {
-	  		std::cout << "response error" << std::endl;
+	  		Log(Error, "register forward response error")
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(trx->statusCode()));
 	  		return false;
 	  	}
 
@@ -154,19 +155,20 @@ namespace OpcUaHistory
 	  		OpcUaStatusCode statusCode;
 	  		res->statusCodeArray()->get(pos, statusCode);
 	  		if (statusCode != Success) {
-	  			std::cout << "register value error" << std::endl;
+		  		Log(Error, "register forward value error")
+		  			.parameter("Idx", pos)
+		  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
 	  			return false;
 	  		}
 	  	}
 
-	    return true;
-#endif
     	return true;
     }
 
     void
     HistoryServer::hReadValue(ApplicationHReadContext* applicationHReadContext)
     {
+    	std::cout << "H_READ_VALUE" << std::endl;
     	// FIXME: todo
     }
 

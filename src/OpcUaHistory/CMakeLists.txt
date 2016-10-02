@@ -42,6 +42,7 @@ install(TARGETS OpcUaHistory DESTINATION ${LIB_DIR}/OpcUaStack)
 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServer.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory) 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.History.NodeSet.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryModel.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryStore.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaClientModel.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
