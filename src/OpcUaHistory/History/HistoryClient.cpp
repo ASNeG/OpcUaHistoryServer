@@ -97,7 +97,7 @@ namespace OpcUaHistory
     			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
 
     			Object::SPtr context;
-    			historyStoreIf_->getHistoryStoreContext(cnc->valueName(), context);
+    			historyStoreIf_->getHistoryStoreContext(cnc->valueName(), context, HistoryStoreIf::Write);
 
     			clientHandle++;
     			cmi->clientHandle(clientHandle);

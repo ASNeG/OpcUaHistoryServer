@@ -42,6 +42,20 @@ namespace OpcUaHistory
 		ValueWriteContext valueWriteContext_;
 	};
 
+
+	class HistoryStoreContextRead
+	: public Object
+	{
+	  public:
+		typedef boost::shared_ptr<HistoryStoreContextRead> SPtr;
+
+		HistoryStoreContextRead(void);
+		~HistoryStoreContextRead(void);
+
+		ValueReadContext valueReadContext_;
+	};
+
+
 	class FileHistoryStore
 	: public HistoryStoreIf
 	{
@@ -62,8 +76,28 @@ namespace OpcUaHistory
         bool startupFileStore(void);
 
 	    // -- HistoryStoreIf --------------------------------------------------
-	    bool write(Object::SPtr& context, OpcUaDataValue& dataValue);
-	    bool getHistoryStoreContext(const std::string valueName, Object::SPtr& context);
+	    bool write(
+	    	Object::SPtr& context,
+	    	OpcUaDataValue& dataValue
+	    );
+	    bool getHistoryStoreContext(
+	    	const std::string valueName,
+	    	Object::SPtr& context,
+	    	HistoryStoreIf::Access access
+	    );
+		bool readInitial(
+			Object::SPtr& context,
+			std::string& continousPoint,
+			OpcUaDateTime& from,
+			OpcUaDateTime& to,
+			OpcUaDataValue::Vec& dataValueVec,
+			uint32_t maxResultEntries = 0
+		);
+		bool readNext(
+			std::string& continousPoint,
+			OpcUaDataValue::Vec& dataValueVec,
+			uint32_t maxResultEntries = 0
+		);
 	    // -- HistoryStoreIf --------------------------------------------------
 
         FileHistoryStoreConfig fileHistoryConfig_;

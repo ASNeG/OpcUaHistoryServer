@@ -30,11 +30,39 @@ namespace OpcUaHistory
 	class HistoryStoreIf
 	{
 	  public:
+		typedef enum {
+			Read,
+			Write
+		} Access;
+
 		HistoryStoreIf(void) {}
 		virtual ~HistoryStoreIf(void) {}
 
-		virtual bool write(Object::SPtr& context, OpcUaDataValue& dataValue) = 0;
-		virtual bool getHistoryStoreContext(const std::string valueName, Object::SPtr& context) = 0;
+		virtual bool write(
+			Object::SPtr& context,
+			OpcUaDataValue& dataValue
+		) = 0;
+
+		virtual bool getHistoryStoreContext(
+			const std::string valueName,
+			Object::SPtr& context,
+			Access access
+		) = 0;
+
+		virtual bool readInitial(
+			Object::SPtr& context,
+			std::string& continousPoint,
+			OpcUaDateTime& from,
+			OpcUaDateTime& to,
+			OpcUaDataValue::Vec& dataValueVec,
+			uint32_t maxResultEntries = 0
+		) = 0;
+
+		virtual bool readNext(
+			std::string& continousPoint,
+			OpcUaDataValue::Vec& dataValueVec,
+			uint32_t maxResultEntries = 0
+		) = 0;
 	};
 
 }

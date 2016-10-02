@@ -120,19 +120,80 @@ namespace OpcUaHistory
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     bool
-    FileHistoryStore::write(Object::SPtr& context, OpcUaDataValue& dataValue)
+    FileHistoryStore::write(
+    	Object::SPtr& context,
+    	OpcUaDataValue& dataValue
+    )
     {
     	HistoryStoreContextWrite::SPtr storeContext = boost::static_pointer_cast<HistoryStoreContextWrite>(context);
     	return fileWriteManager_.write(storeContext->valueWriteContext_, dataValue);
     }
 
     bool
-    FileHistoryStore::getHistoryStoreContext(const std::string valueName, Object::SPtr& context)
+    FileHistoryStore::getHistoryStoreContext(
+    	const std::string valueName,
+    	Object::SPtr& context,
+    	HistoryStoreIf::Access access
+    )
     {
-    	HistoryStoreContextWrite::SPtr storeContext = constructSPtr<HistoryStoreContextWrite>();
-    	storeContext->valueWriteContext_.valueName_ = valueName;
-    	context = storeContext;
+    	if (access == HistoryStoreIf::Write) {
+    		HistoryStoreContextWrite::SPtr storeContext = constructSPtr<HistoryStoreContextWrite>();
+    		storeContext->valueWriteContext_.valueName_ = valueName;
+    		context = storeContext;
+    	}
+    	else {
+    		HistoryStoreContextRead::SPtr storeContext = constructSPtr<HistoryStoreContextRead>();
+    		storeContext->valueReadContext_.valueName_ = valueName;
+    		context = storeContext;
+    	}
     	return true;
     }
+
+	bool
+	FileHistoryStore::readInitial(
+		Object::SPtr& context,
+		std::string& continousPoint,
+		OpcUaDateTime& from,
+		OpcUaDateTime& to,
+		OpcUaDataValue::Vec& dataValueVec,
+		uint32_t maxResultEntries
+	)
+	{
+    	HistoryStoreContextRead::SPtr storeContext = boost::static_pointer_cast<HistoryStoreContextRead>(context);
+
+    	continousPoint = "";
+    	ValueReadContinousPoint valueReadContinousPoint;
+    	bool success = fileReadManager_.readInitial(
+    		storeContext->valueReadContext_,
+    		&valueReadContinousPoint,
+    		from,
+    		to,
+    		dataValueVec,
+    		maxResultEntries
+    	);
+    	if (!success) return false;
+
+    	// FIXME: todo - handle continout point
+    	continousPoint = valueReadContinousPoint.continousPoint_;
+
+		return true;
+	}
+
+	bool FileHistoryStore::readNext(
+		std::string& continousPoint,
+		OpcUaDataValue::Vec& dataValueVec,
+		uint32_t maxResultEntries
+	)
+	{
+		ValueReadContinousPoint valueReadContinousPoint;
+		valueReadContinousPoint.continousPoint_ = continousPoint;
+
+		bool success = fileReadManager_.readNext(valueReadContinousPoint, dataValueVec, maxResultEntries);
+		if (!success) return false;
+
+		// FIXME: todo - handle continout point
+
+		return true;
+	}
 
 }

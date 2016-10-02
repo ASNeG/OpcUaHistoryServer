@@ -74,7 +74,6 @@ namespace OpcUaHistory
     bool
     HistoryServer::shutdown(void)
     {
-    	// FIXME: todo
     	return true;
     }
 
