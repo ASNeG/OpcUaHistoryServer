@@ -35,6 +35,7 @@ namespace OpcUaHistory
 
 	    bool startup(std::string& configFile, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
+	    HistoryStoreIf* historyStoreIf(void);
 
 	  private:
 	    FileHistoryStore fileHistoryStore_;

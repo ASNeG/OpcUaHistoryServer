@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryStoreIf.h"
 #include "OpcUaHistory/History/FileHistoryStoreConfig.h"
 #include "OpcUaHistory/HistoryAccessFile/FileReadManager.h"
 #include "OpcUaHistory/HistoryAccessFile/FileWriteManager.h"
@@ -29,7 +30,20 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	class HistoryStoreContextWrite
+	: public HistoryStoreContextBase
+	{
+	  public:
+		typedef boost::shared_ptr<HistoryStoreContextWrite> SPtr;
+
+		HistoryStoreContextWrite(void);
+		~HistoryStoreContextWrite(void);
+
+		ValueWriteContext valueWriteContext_;
+	};
+
 	class FileHistoryStore
+	: public HistoryStoreIf
 	{
 	  public:
 		typedef boost::shared_ptr<FileHistoryStore> SPtr;
@@ -46,6 +60,11 @@ namespace OpcUaHistory
 
 	  private:
         bool startupFileStore(void);
+
+	    // -- HistoryStoreIf --------------------------------------------------
+	    bool write(HistoryStoreContextBase::SPtr valueStoreWriteContextBase, OpcUaDataValue& dataValue);
+	    bool getHistoryStoreContext(const std::string valueName, HistoryStoreContextBase::SPtr& historyStoreContextBase);
+	    // -- HistoryStoreIf --------------------------------------------------
 
         FileHistoryStoreConfig fileHistoryConfig_;
 

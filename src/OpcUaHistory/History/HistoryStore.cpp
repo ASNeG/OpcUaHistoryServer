@@ -40,19 +40,29 @@ namespace OpcUaHistory
     	    return false;
     	}
 
+    	return true;
+    }
+
+    HistoryStoreIf*
+    HistoryStore::historyStoreIf(void)
+    {
+
     	// get interface
     	if (fileHistoryStore_.activate()) {
-    		// FIXME: todo get interface ....
+    		return &fileHistoryStore_;
     	}
-
-    	return true;
+    	else {
+    		return nullptr;
+    	}
     }
 
     bool
     HistoryStore::shutdown(void)
     {
-    	// FIXME: todo
-    	return true;
+    	if (fileHistoryStore_.activate()) {
+    		return fileHistoryStore_.shutdown();
+    	}
+    	return false;
     }
 
 }

@@ -23,6 +23,29 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// class HistoryStoreContextWrite
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	HistoryStoreContextWrite::HistoryStoreContextWrite(void)
+	: valueWriteContext_()
+	{
+	}
+
+	HistoryStoreContextWrite::~HistoryStoreContextWrite(void)
+	{
+	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// class FileHistoryStore
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	FileHistoryStore::FileHistoryStore(void)
 	: fileHistoryConfig_()
 	, fileReadManager_()
@@ -86,6 +109,29 @@ namespace OpcUaHistory
     	fileWriteManager_.maxConcurrentValues(fileHistoryConfig_.historyStoreFileWriteConfig().maxConcurrentValues_);
     	fileWriteManager_.ageCounter(fileHistoryConfig_.historyStoreFileWriteConfig().ageCounter_);
 
+    	return true;
+    }
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    //
+    // HistoryStoreIf
+    //
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    bool
+    FileHistoryStore::write(HistoryStoreContextBase::SPtr valueStoreWriteContextBase, OpcUaDataValue& dataValue)
+    {
+    	HistoryStoreContextWrite::SPtr context = boost::static_pointer_cast<HistoryStoreContextWrite>(valueStoreWriteContextBase);
+    	return fileWriteManager_.write(context->valueWriteContext_, dataValue);
+    }
+
+    bool
+    FileHistoryStore::getHistoryStoreContext(const std::string valueName, HistoryStoreContextBase::SPtr& historyStoreContextBase)
+    {
+    	HistoryStoreContextWrite::SPtr context = constructSPtr<HistoryStoreContextWrite>();
+    	context->valueWriteContext_.valueName_ = valueName;
+    	historyStoreContextBase = context;
     	return true;
     }
 
