@@ -133,6 +133,7 @@ namespace OpcUaHistory
 
         // start history server manager
         historyServerManager_.historyStoreIf(historyStoreIf);
+        historyServerManager_.applicationServiceIf(&service());
         if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
 
 		return true;

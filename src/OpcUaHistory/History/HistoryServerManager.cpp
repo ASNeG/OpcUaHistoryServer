@@ -26,6 +26,7 @@ namespace OpcUaHistory
 	HistoryServerManager::HistoryServerManager(void)
 	: historyServerSet_()
 	, historyStoreIf_(nullptr)
+	, applicationServiceIf_(nullptr)
 	{
 	}
 
@@ -39,6 +40,12 @@ namespace OpcUaHistory
 		historyStoreIf_ = historyStoreIf;
 	}
 
+	void
+	HistoryServerManager::applicationServiceIf(ApplicationServiceIf* applicationServiceIf)
+	{
+		applicationServiceIf_ = applicationServiceIf;
+	}
+
     bool
     HistoryServerManager::startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager)
     {
@@ -48,6 +55,7 @@ namespace OpcUaHistory
     		historyServerSet_.insert(historyServer);
 
     		historyServer->historyStoreIf(historyStoreIf_);
+    		historyServer->applicationServiceIf(applicationServiceIf_);
     		if (!historyServer->startup(*it, configXmlManager)) {
     			return false;
     		}

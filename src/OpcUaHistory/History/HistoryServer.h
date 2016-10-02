@@ -20,10 +20,13 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaStackCore/Application/ApplicationHReadContext.h"
 #include "OpcUaHistory/History/HistoryStoreIf.h"
 #include "OpcUaHistory/History/HistoryServerConfig.h"
+#include "OpcUaStackServer/Application/ApplicationIf.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackServer;
 
 namespace OpcUaHistory
 {
@@ -34,18 +37,27 @@ namespace OpcUaHistory
 		typedef boost::shared_ptr<HistoryServer> SPtr;
 		typedef std::map<std::string, HistoryServer::SPtr> Map;
 		typedef std::set<HistoryServer::SPtr> Set;
+		typedef std::map<uint32_t, uint32_t> NamespaceMap;
 
 		HistoryServer(void);
 		~HistoryServer(void);
 
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
 
 	    bool startup(std::string& fileName, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
 
 	  private:
+	    void hReadValue(ApplicationHReadContext* applicationHReadContext);
+	    bool getNamespaceInfo(void);
+	    bool registerCallbacks(void);
+
 	    HistoryServerConfig historyServerConfig_;
 	    HistoryStoreIf* historyStoreIf_;
+	    ApplicationServiceIf* applicationServiceIf_;
+	    NamespaceMap namespaceMap_;
+	    Callback hReadCallback_;
 	};
 
 }

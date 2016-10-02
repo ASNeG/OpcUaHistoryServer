@@ -34,6 +34,7 @@ namespace OpcUaHistory
 		~HistoryServerManager(void);
 
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
 
 	    bool startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
@@ -41,6 +42,7 @@ namespace OpcUaHistory
 	  private:
 	    HistoryServer::Set historyServerSet_;
 	    HistoryStoreIf* historyStoreIf_;
+	    ApplicationServiceIf* applicationServiceIf_;
 	};
 
 }
