@@ -26,6 +26,8 @@ namespace OpcUaHistory
 
 	HistoryClientManager::HistoryClientManager(void)
 	: historyClientSet_()
+	, ioThread_()
+	, historyStoreIf_(nullptr)
 	{
 	}
 
@@ -33,11 +35,22 @@ namespace OpcUaHistory
 	{
 	}
 
+	void
+	HistoryClientManager::ioThread(IOThread::SPtr& ioThread)
+	{
+		ioThread_ = ioThread;
+	}
+
+	void
+	HistoryClientManager::historyStoreIf(HistoryStoreIf* historyStoreIf)
+	{
+		historyStoreIf_ = historyStoreIf;
+	}
+
     bool
     HistoryClientManager::startup(
     	std::vector<std::string>& configFiles,
-    	ConfigXmlManager& configXmlManager,
-    	IOThread::SPtr ioThread
+    	ConfigXmlManager& configXmlManager
     )
     {
     	std::vector<std::string>::iterator it;
@@ -45,7 +58,8 @@ namespace OpcUaHistory
     		HistoryClient::SPtr historyClient = constructSPtr<HistoryClient>();
     		historyClientSet_.insert(historyClient);
 
-    		if (!historyClient->startup(*it, configXmlManager, ioThread)) {
+    		historyClient->ioThread(ioThread_);
+    		if (!historyClient->startup(*it, configXmlManager)) {
     			return false;
     		}
     	}
@@ -56,7 +70,11 @@ namespace OpcUaHistory
     bool
     HistoryClientManager::shutdown(void)
     {
-    	// FIXME: todo
+    	HistoryClient::Set::iterator it;
+    	for (it = historyClientSet_.begin(); it !=  historyClientSet_.end(); it++) {
+    		HistoryClient::SPtr historyClient = *it;
+    		historyClient->shutdown();
+    	}
     	return true;
     }
 

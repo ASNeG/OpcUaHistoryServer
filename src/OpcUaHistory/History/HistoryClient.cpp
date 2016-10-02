@@ -25,6 +25,7 @@ namespace OpcUaHistory
 
 	HistoryClient::HistoryClient(void)
 	: historyClientConfig_()
+	, ioThread_()
 	{
 	}
 
@@ -32,11 +33,16 @@ namespace OpcUaHistory
 	{
 	}
 
+	void
+	HistoryClient::ioThread(IOThread::SPtr& ioThread)
+	{
+		ioThread_ = ioThread;
+	}
+
     bool
     HistoryClient::startup(
     	const std::string& fileName,
-    	ConfigXmlManager& configXmlManager,
-    	IOThread::SPtr ioThread
+    	ConfigXmlManager& configXmlManager
     )
     {
     	if (!historyClientConfig_.decode(fileName, configXmlManager)) {
@@ -46,7 +52,7 @@ namespace OpcUaHistory
     	// configure client connection
     	clientConnection_.serverUri(historyClientConfig_.serverUri());
     	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
-    	clientConnection_.ioThread(ioThread);
+    	clientConnection_.ioThread(ioThread_);
     	clientConnection_.namespaceUris(historyClientConfig_.namespaceUris());
 
     	// create subscriptions

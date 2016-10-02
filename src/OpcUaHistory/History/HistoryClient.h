@@ -43,7 +43,9 @@ namespace OpcUaHistory
 		HistoryClient(void);
 		~HistoryClient(void);
 
-        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager, IOThread::SPtr ioThread);
+		void ioThread(IOThread::SPtr& ioThread);
+
+        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
         bool shutdown(void);
 
         // -- ClientSubscriptionIf --------------------------------------------
@@ -53,6 +55,7 @@ namespace OpcUaHistory
 	  private:
         HistoryClientConfig historyClientConfig_;
         ClientConnection clientConnection_;
+        IOThread::SPtr ioThread_;
 	};
 
 }

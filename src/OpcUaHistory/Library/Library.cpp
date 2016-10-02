@@ -122,9 +122,16 @@ namespace OpcUaHistory
         ioThread_ = constructSPtr<IOThread>();
         if (!ioThread_->startup()) return false;
 
-        // start history client and history server
+        // start history store
         if (!historyStore_.startup(configHistory, configXmlManager_)) return false;
-        if (!historyClientManager_.startup(configClients, configXmlManager_, ioThread_)) return false;
+        HistoryStoreIf* historyStoreIf = historyStore_.historyStoreIf();
+
+        // start history client manager
+        historyClientManager_.ioThread(ioThread_);
+        historyClientManager_.historyStoreIf(historyStoreIf);
+        if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
+
+        // start history server manager
         if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
 
 		return true;
