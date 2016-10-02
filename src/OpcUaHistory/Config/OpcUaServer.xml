@@ -90,6 +90,7 @@
   
   <InformationModel>
     <NodeSetFile>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/Opc.Ua.NodeSet.xml</NodeSetFile>
+    <NodeSetFile>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/Opc.Ua.History.NodeSet.xml</NodeSetFile>
   </InformationModel>
 
 </OpcUaServer>
