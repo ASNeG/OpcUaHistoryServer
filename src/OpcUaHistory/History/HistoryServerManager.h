@@ -33,11 +33,14 @@ namespace OpcUaHistory
 		HistoryServerManager(void);
 		~HistoryServerManager(void);
 
+		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+
 	    bool startup(std::vector<std::string>& configFiles, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
 
 	  private:
 	    HistoryServer::Set historyServerSet_;
+	    HistoryStoreIf* historyStoreIf_;
 	};
 
 }

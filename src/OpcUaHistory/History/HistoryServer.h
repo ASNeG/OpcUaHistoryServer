@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryStoreIf.h"
 #include "OpcUaHistory/History/HistoryServerConfig.h"
 
 using namespace OpcUaStackCore;
@@ -37,11 +38,14 @@ namespace OpcUaHistory
 		HistoryServer(void);
 		~HistoryServer(void);
 
+		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+
 	    bool startup(std::string& fileName, ConfigXmlManager& configXmlManager);
 	    bool shutdown(void);
 
 	  private:
 	    HistoryServerConfig historyServerConfig_;
+	    HistoryStoreIf* historyStoreIf_;
 	};
 
 }

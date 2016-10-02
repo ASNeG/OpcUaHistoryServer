@@ -25,11 +25,18 @@ namespace OpcUaHistory
 
 	HistoryServerManager::HistoryServerManager(void)
 	: historyServerSet_()
+	, historyStoreIf_(nullptr)
 	{
 	}
 
 	HistoryServerManager::~HistoryServerManager(void)
 	{
+	}
+
+	void
+	HistoryServerManager::historyStoreIf(HistoryStoreIf* historyStoreIf)
+	{
+		historyStoreIf_ = historyStoreIf;
 	}
 
     bool
@@ -40,6 +47,7 @@ namespace OpcUaHistory
     		HistoryServer::SPtr historyServer = constructSPtr<HistoryServer>();
     		historyServerSet_.insert(historyServer);
 
+    		historyServer->historyStoreIf(historyStoreIf_);
     		if (!historyServer->startup(*it, configXmlManager)) {
     			return false;
     		}
@@ -50,7 +58,11 @@ namespace OpcUaHistory
     bool
     HistoryServerManager::shutdown(void)
     {
-    	// FIXME: todo
+    	HistoryServer::Set::iterator it;
+    	for (it = historyServerSet_.begin(); it != historyServerSet_.end(); it++) {
+    		HistoryServer::SPtr historyServer = *it;
+    		historyServer->shutdown();
+    	}
     	return true;
     }
 

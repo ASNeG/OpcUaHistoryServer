@@ -25,11 +25,18 @@ namespace OpcUaHistory
 
 	HistoryServer::HistoryServer(void)
 	: historyServerConfig_()
+	, historyStoreIf_(nullptr)
 	{
 	}
 
 	HistoryServer::~HistoryServer(void)
 	{
+	}
+
+	void
+	HistoryServer::historyStoreIf(HistoryStoreIf* historyStoreIf)
+	{
+		historyStoreIf_ = historyStoreIf;
 	}
 
     bool
@@ -38,6 +45,8 @@ namespace OpcUaHistory
     	if (!historyServerConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
+
+    	// FIXME: todo
 
     	return true;
     }
