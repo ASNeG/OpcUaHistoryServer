@@ -31,6 +31,14 @@ using namespace OpcUaStackServer;
 namespace OpcUaHistory
 {
 
+	class HistoryServerItem
+	{
+	  public:
+		HistoryServerItem(void);
+		~HistoryServerItem(void);
+	};
+
+
 	class HistoryServer
 	{
 	  public:
