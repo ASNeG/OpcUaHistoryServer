@@ -158,6 +158,7 @@
     <References>
       <Reference ReferenceType="HasTypeDefinition">i=2138</Reference>
       <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=2</Reference>
+      <Reference ReferenceType="i=56">ns=1;i=500</Reference>
     </References>
 	<Value>
       <uax:Int32>123</uax:Int32>
@@ -568,6 +569,12 @@
     </Value>
   </UAVariable>
   
-
+  <UAObject NodeId="ns=1;i=500" BrowseName="0:HA Configuration">
+    <DisplayName>HA Configuration</DisplayName>
+    <Description>Opc Ua library test folder</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=2318</Reference>
+    </References>
+  </UAObject>
 
 </UANodeSet>
