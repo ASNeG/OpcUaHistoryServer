@@ -34,8 +34,17 @@ namespace OpcUaHistory
 	class HistoryServerItem
 	{
 	  public:
+		typedef boost::shared_ptr<HistoryServerItem> SPtr;
+		typedef std::map<OpcUaNodeId, HistoryServerItem::SPtr> Map;
+
 		HistoryServerItem(void);
 		~HistoryServerItem(void);
+
+		void context(Object::SPtr& context);
+		Object::SPtr& context(void);
+
+	  private:
+		Object::SPtr context_;
 	};
 
 
@@ -66,6 +75,7 @@ namespace OpcUaHistory
 	    ApplicationServiceIf* applicationServiceIf_;
 	    NamespaceMap namespaceMap_;
 	    Callback hReadCallback_;
+	    HistoryServerItem::Map historyServerItemMap_;
 	};
 
 }

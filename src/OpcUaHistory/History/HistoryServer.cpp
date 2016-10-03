@@ -33,11 +33,24 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryServerItem::HistoryServerItem(void)
+	: context_()
 	{
 	}
 
 	HistoryServerItem::~HistoryServerItem(void)
 	{
+	}
+
+	void
+	HistoryServerItem::context(Object::SPtr& context)
+	{
+		context_ = context;
+	}
+
+	Object::SPtr&
+	HistoryServerItem::context(void)
+	{
+		return context_;
 	}
 
 
@@ -162,8 +175,24 @@ namespace OpcUaHistory
 	  		OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
 	  		*nodeId = snc->nodeId();
 
+	  		NamespaceMap::iterator it;
+	  		it = namespaceMap_.find(nodeId->namespaceIndex());
+	  		if (it == namespaceMap_.end()) {
+	  			Log(Error, "namespace index not exist in opc ua model")
+	  				.parameter("NodeId", *nodeId);
+	  			continue;
+	  		}
+	  		nodeId->namespaceIndex(it->second);
+
 	  		req->nodesToRegister()->set(pos, nodeId);
 	  		pos++;
+
+	  		// add item to history server item map
+	  		Object::SPtr context;
+	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), context, HistoryStoreIf::Read);
+	  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
+	  		historyServerItem->context(context);
+	  		historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
 	  	}
 
 	  	applicationServiceIf_->sendSync(trx);
@@ -192,6 +221,15 @@ namespace OpcUaHistory
     {
     	std::cout << "H_READ_VALUE" << std::endl;
     	// FIXME: todo
+
+
+#if 0
+    	Object::SPtr context;
+    		  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), context, HistoryStoreIf::Read);
+    		  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
+    		  		historyServerItem->context(context);
+    		  		historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
+#endif
 
     	applicationHReadContext->statusCode_ = BadInternalError;
     }
