@@ -219,19 +219,42 @@ namespace OpcUaHistory
     void
     HistoryServer::hReadValue(ApplicationHReadContext* applicationHReadContext)
     {
-    	std::cout << "H_READ_VALUE" << std::endl;
-    	// FIXME: todo
+    	// find context
+    	HistoryServerItem::Map::iterator it1;
+    	it1 = historyServerItemMap_.find(applicationHReadContext->nodeId_);
+    	if (it1 == historyServerItemMap_.end()) {
+    		applicationHReadContext->statusCode_ = BadNotFound;
+    		return;
+    	}
+    	HistoryServerItem::SPtr historyServerItem  = it1->second;
+    	Object::SPtr context = historyServerItem->context();
 
+    	// read data from value store
+    	OpcUaDataValue::Vec dataValueVec;
+    	std::string continousPoint = "";
+    	OpcUaDateTime startTime(applicationHReadContext->startTime_);
+    	OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
+    	bool success = historyStoreIf_->readInitial(
+    		context,
+    		continousPoint,
+    		startTime,
+    		stopTime,
+    		dataValueVec,
+    	0);
+    	if (dataValueVec.size() == 0) {
+    		applicationHReadContext->statusCode_ = BadNoData;
+    		return;
+    	}
 
-#if 0
-    	Object::SPtr context;
-    		  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), context, HistoryStoreIf::Read);
-    		  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
-    		  		historyServerItem->context(context);
-    		  		historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
-#endif
+    	// create result array
+    	applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
+    	applicationHReadContext->dataValueArray_->resize(dataValueVec.size());
+    	for (uint32_t idx = 0; idx < dataValueVec.size(); idx++) {
+    		applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
+    	}
 
-    	applicationHReadContext->statusCode_ = BadInternalError;
+    	applicationHReadContext->statusCode_ = Success;
+    	return;
     }
 
 }
