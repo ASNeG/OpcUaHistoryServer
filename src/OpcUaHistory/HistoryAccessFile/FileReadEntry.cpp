@@ -301,6 +301,7 @@ namespace OpcUaHistory
 			iosRecord.write(record, recordSize-12);
 
 			OpcUaDataValue::SPtr dataValue = constructSPtr<OpcUaDataValue>();
+			dataValue->sourceTimestamp(sourceTimestamp);
 			dataValue->serverTimestamp().opcUaBinaryDecode(iosRecord);
 			OpcUaNumber::opcUaBinaryDecode(iosRecord, statusCode);
 			dataValue->statusCode((OpcUaStatusCode)statusCode);
