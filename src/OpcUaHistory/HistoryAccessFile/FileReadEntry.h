@@ -24,6 +24,7 @@
 #include <list>
 #include "OpcUaStackCore/Container/DoublyLinkedList.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
+#include "OpcUaStackCore/ServiceSet/TimestampsToReturn.h"
 
 using namespace OpcUaStackCore;
 
@@ -56,8 +57,16 @@ namespace OpcUaHistory
 
 		void dateTimeFrom(OpcUaDateTime& from);
 		void dateTimeTo(OpcUaDateTime& to);
-		bool readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
-		bool readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries = 0);
+		bool readInitial(
+			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
+			uint32_t maxResultEntries = 0
+		);
+		bool readNext(
+			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
+			uint32_t maxResultEntries = 0
+		);
 
 		bool maxResultEntriesReached(void);
 

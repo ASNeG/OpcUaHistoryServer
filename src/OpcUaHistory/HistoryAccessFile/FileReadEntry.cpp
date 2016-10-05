@@ -139,7 +139,11 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileReadEntry::readInitial(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
+	FileReadEntry::readInitial(
+		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
+		uint32_t maxResultEntries
+	)
 	{
 		maxResultEntriesReached_ = false;
 
@@ -168,11 +172,19 @@ namespace OpcUaHistory
 		}
 
 		// read entries
-		return readNext(dataValueVec, maxResultEntries);
+		return readNext(
+			dataValueVec,
+			timestampsToReturn,
+			maxResultEntries
+		);
 	}
 
 	bool
-	FileReadEntry::readNext(OpcUaDataValue::Vec& dataValueVec, uint32_t maxResultEntries)
+	FileReadEntry::readNext(
+		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
+		uint32_t maxResultEntries
+	)
 	{
 		ageCounter_++;
 		maxResultEntriesReached_ = false;
@@ -311,6 +323,14 @@ namespace OpcUaHistory
 			OpcUaNumber::opcUaBinaryDecode(iosRecord, count);
 
 			dataValueVec.push_back(dataValue);
+
+			// transmit only desired timestamps
+			if (timestampsToReturn == TimestampsToReturn_Source) {
+				dataValue->serverTimestamp(OpcUaDateTime());
+			}
+			else if (timestampsToReturn == TimestampsToReturn_Server) {
+				dataValue->sourceTimestamp(OpcUaDateTime());
+			}
 
 			if (maxResultEntries != 0) {
 				numberResultEntries++;

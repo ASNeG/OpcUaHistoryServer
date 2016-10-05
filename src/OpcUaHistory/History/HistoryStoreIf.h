@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/Object.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
+#include "OpcUaStackCore/ServiceSet/TimestampsToReturn.h"
 
 using namespace OpcUaStackCore;
 
@@ -55,12 +56,14 @@ namespace OpcUaHistory
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		) = 0;
 
 		virtual bool readNext(
 			std::string& continousPoint,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		) = 0;
 	};

@@ -174,6 +174,7 @@ namespace OpcUaHistory
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
@@ -187,6 +188,7 @@ namespace OpcUaHistory
     		from,
     		to,
     		dataValueVec,
+    		timestampsToReturn,
     		maxResultEntries
     	);
     	if (!success) return false;
@@ -200,13 +202,19 @@ namespace OpcUaHistory
 	bool FileHistoryStore::readNext(
 		std::string& continousPoint,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
 		ValueReadContinousPoint valueReadContinousPoint;
 		valueReadContinousPoint.continousPoint_ = continousPoint;
 
-		bool success = fileReadManager_.readNext(valueReadContinousPoint, dataValueVec, maxResultEntries);
+		bool success = fileReadManager_.readNext(
+			valueReadContinousPoint,
+			dataValueVec,
+			timestampsToReturn,
+			maxResultEntries
+		);
 		if (!success) return false;
 
 		// FIXME: todo - handle continout point

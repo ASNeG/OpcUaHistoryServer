@@ -91,11 +91,13 @@ namespace OpcUaHistory
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 		bool readNext(
 			std::string& continousPoint,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 	    // -- HistoryStoreIf --------------------------------------------------

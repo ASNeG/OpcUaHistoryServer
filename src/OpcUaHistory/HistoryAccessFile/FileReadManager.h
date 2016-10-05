@@ -18,6 +18,7 @@
 #ifndef __OpcUaHistory_FileReadManager_h__
 #define __OpcUaHistory_FileReadManager_h__
 
+#include "OpcUaStackCore/ServiceSet/TimestampsToReturn.h"
 #include "OpcUaHistory/HistoryAccessFile/FileReadEntry.h"
 
 using namespace OpcUaStackCore;
@@ -83,11 +84,13 @@ namespace OpcUaHistory
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 		bool readNext(
 			ValueReadContinousPoint& continousPoint,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 
@@ -99,12 +102,14 @@ namespace OpcUaHistory
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 		bool readNext(
 			ValueReadContinousPoint& continousPoint,
 			FileReadEntry::SPtr& fileReadEntry,
 			OpcUaDataValue::Vec& dataValueVec,
+			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		);
 

@@ -171,6 +171,7 @@ namespace OpcUaHistory
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
@@ -179,6 +180,7 @@ namespace OpcUaHistory
 
 		bool rc = fileReadEntry->readInitial(
 			dataValueVec,
+			timestampsToReturn,
 			maxResultEntries
 		);
 		if (!rc) return false;
@@ -216,6 +218,7 @@ namespace OpcUaHistory
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
@@ -227,6 +230,7 @@ namespace OpcUaHistory
 				from,
 				to,
 				dataValueVec,
+				timestampsToReturn,
 				maxResultEntries
 			);
 		}
@@ -244,6 +248,7 @@ namespace OpcUaHistory
 				from,
 				to,
 				dataValueVec,
+				timestampsToReturn,
 				maxResultEntries
 			);
 		}
@@ -259,6 +264,7 @@ namespace OpcUaHistory
 			from,
 			to,
 			dataValueVec,
+			timestampsToReturn,
 			maxResultEntries
 		);
 	}
@@ -268,11 +274,13 @@ namespace OpcUaHistory
 		ValueReadContinousPoint& continousPoint,
 		FileReadEntry::SPtr& fileReadEntry,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
 		bool rc = fileReadEntry->readNext(
 			dataValueVec,
+			timestampsToReturn,
 			maxResultEntries
 		);
 		if (!rc) return false;
@@ -311,6 +319,7 @@ namespace OpcUaHistory
 	FileReadManager::readNext(
 		ValueReadContinousPoint& continousPoint,
 		OpcUaDataValue::Vec& dataValueVec,
+		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
@@ -337,6 +346,7 @@ namespace OpcUaHistory
 			continousPoint,
 			it->second,
 			dataValueVec,
+			timestampsToReturn,
 			maxResultEntries
 		);
 	}

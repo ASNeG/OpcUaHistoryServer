@@ -240,7 +240,8 @@ namespace OpcUaHistory
     		startTime,
     		stopTime,
     		dataValueVec,
-    	0);
+    		applicationHReadContext->timestampsToReturn_
+    	);
     	if (dataValueVec.size() == 0) {
     		applicationHReadContext->statusCode_ = BadNoData;
     		return;
