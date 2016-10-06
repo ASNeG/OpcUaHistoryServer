@@ -56,6 +56,7 @@ namespace OpcUaHistory
 			OpcUaDateTime& from,
 			OpcUaDateTime& to,
 			OpcUaDataValue::Vec& dataValueVec,
+			OpcUaBoolean releaseContinuationPoint,
 			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		) = 0;
@@ -63,6 +64,7 @@ namespace OpcUaHistory
 		virtual bool readNext(
 			std::string& continousPoint,
 			OpcUaDataValue::Vec& dataValueVec,
+			OpcUaBoolean releaseContinuationPoint,
 			TimestampsToReturn timestampsToReturn = TimestampsToReturn_Both,
 			uint32_t maxResultEntries = 0
 		) = 0;

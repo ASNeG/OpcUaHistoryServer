@@ -174,6 +174,7 @@ namespace OpcUaHistory
 		OpcUaDateTime& from,
 		OpcUaDateTime& to,
 		OpcUaDataValue::Vec& dataValueVec,
+		OpcUaBoolean releaseContinuationPoint,
 		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
@@ -182,6 +183,11 @@ namespace OpcUaHistory
 
     	continousPoint = "";
     	ValueReadContinousPoint valueReadContinousPoint;
+
+		if (releaseContinuationPoint) {
+			valueReadContinousPoint.command_ = ValueReadContinousPoint::Delete;
+		}
+
     	bool success = fileReadManager_.readInitial(
     		storeContext->valueReadContext_,
     		&valueReadContinousPoint,
@@ -202,12 +208,17 @@ namespace OpcUaHistory
 	bool FileHistoryStore::readNext(
 		std::string& continousPoint,
 		OpcUaDataValue::Vec& dataValueVec,
+		OpcUaBoolean releaseContinuationPoint,
 		TimestampsToReturn timestampsToReturn,
 		uint32_t maxResultEntries
 	)
 	{
 		ValueReadContinousPoint valueReadContinousPoint;
 		valueReadContinousPoint.continousPoint_ = continousPoint;
+
+		if (releaseContinuationPoint) {
+			valueReadContinousPoint.command_ = ValueReadContinousPoint::Delete;
+		}
 
 		bool success = fileReadManager_.readNext(
 			valueReadContinousPoint,
