@@ -39,6 +39,8 @@ namespace OpcUaHistory
 		uint32_t maxContinousPoint_;
 		uint32_t continousPointIdleTimeout_;
 		uint32_t maxDeleteTimeoutEntries_;
+
+		uint32_t maxNumResultValuesPerRequest_;
 	};
 
 	class FileHistoryStoreWriteConfig

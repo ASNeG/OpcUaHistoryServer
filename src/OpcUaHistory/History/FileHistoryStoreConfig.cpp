@@ -37,6 +37,7 @@ namespace OpcUaHistory
 	, maxContinousPoint_(100)
 	, continousPointIdleTimeout_(60000)
 	, maxDeleteTimeoutEntries_(20)
+	, maxNumResultValuesPerRequest_(2000)
 	{
 	}
 
@@ -269,6 +270,14 @@ namespace OpcUaHistory
 		if (!success) {
 			Log(Error, "parameter missing in config file")
 				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.MaxDeleteTimeoutEntries");
+			return false;
+		}
+
+		// get max num result values per request
+		success = config.getConfigParameter("MaxNumResultValuesPerRequest", readConfig_.maxNumResultValuesPerRequest_);
+		if (!success) {
+			Log(Error, "parameter missing in config file")
+				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess.MaxNumResultValuesPerRequest");
 			return false;
 		}
 
