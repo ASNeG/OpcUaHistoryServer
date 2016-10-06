@@ -16,6 +16,8 @@
 		  	<MaxContinousPoint>100</MaxContinousPoint>
 		  	<ContinousPointIdleTimeout>60000</ContinousPointIdleTimeout>
 		  	<MaxDeleteTimeoutEntries>20</MaxDeleteTimeoutEntries>
+		  	
+		  	<MaxNumResultValuesPerRequest>2000</MaxNumResultValuesPerRequest>
 		</ReadFileAccess>
 		
 		<WriteFileAccess>

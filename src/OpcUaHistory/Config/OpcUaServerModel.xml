@@ -5,7 +5,7 @@
 	  	<Uri>http://yourorganisation.org/HistoryServer/</Uri>
 	</NamespaceUris>
 	
-	
+
 	<Node NodeId="ns=1;i=200" ValueName="SByteValue"/>
     <Node NodeId="ns=1;i=201" ValueName="SByteArrayValue"/>
     <Node NodeId="ns=1;i=202" ValueName="ByteValue"/>

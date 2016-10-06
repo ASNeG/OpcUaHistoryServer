@@ -188,6 +188,14 @@ namespace OpcUaHistory
 			valueReadContinousPoint.command_ = ValueReadContinousPoint::Delete;
 		}
 
+		if (
+			maxResultEntries == 0 ||
+			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_
+		)
+		{
+			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_;
+		}
+
     	bool success = fileReadManager_.readInitial(
     		storeContext->valueReadContext_,
     		&valueReadContinousPoint,
@@ -199,9 +207,7 @@ namespace OpcUaHistory
     	);
     	if (!success) return false;
 
-    	// FIXME: todo - handle continout point
     	continousPoint = valueReadContinousPoint.continousPoint_;
-
 		return true;
 	}
 
@@ -220,6 +226,14 @@ namespace OpcUaHistory
 			valueReadContinousPoint.command_ = ValueReadContinousPoint::Delete;
 		}
 
+		if (
+			maxResultEntries == 0 ||
+			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_
+		)
+		{
+			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_;
+		}
+
 		bool success = fileReadManager_.readNext(
 			valueReadContinousPoint,
 			dataValueVec,
@@ -228,8 +242,7 @@ namespace OpcUaHistory
 		);
 		if (!success) return false;
 
-		// FIXME: todo - handle continout point
-
+		continousPoint = valueReadContinousPoint.continousPoint_;
 		return true;
 	}
 

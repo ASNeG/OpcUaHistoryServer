@@ -219,6 +219,24 @@ namespace OpcUaHistory
     void
     HistoryServer::hReadValue(ApplicationHReadContext* applicationHReadContext)
     {
+    	//
+    	// use case:
+    	//
+    	// 1. First initial request
+    	//	    Condition:
+    	//		- Continous Point is empty
+    	// 2. Continous Point Request
+    	//	    Condition:
+    	//		- Continous Point is not empty
+    	//		- Release Continous Point is false
+    	// 3. Delete Continous Point
+    	//		Condition:
+    	//		- Continous Point is not empty
+    	//		- Release Continous Point is true
+    	//
+    	// FIXME: implement use cases...
+    	//
+
     	// find context
     	HistoryServerItem::Map::iterator it1;
     	it1 = historyServerItemMap_.find(applicationHReadContext->nodeId_);
@@ -227,20 +245,36 @@ namespace OpcUaHistory
     		return;
     	}
     	HistoryServerItem::SPtr historyServerItem  = it1->second;
+
+    	//
+    	// 1. initial request
+    	//
+    	if (applicationHReadContext->continousPoint_.empty()) {
+    		return hReadValueFirst(applicationHReadContext, historyServerItem);
+    	}
+
     	Object::SPtr context = historyServerItem->context();
+
+    	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+    	std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
+
 
     	// read data from value store
     	OpcUaDataValue::Vec dataValueVec;
     	std::string continousPoint = "";
     	OpcUaDateTime startTime(applicationHReadContext->startTime_);
     	OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
+    	uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
+
     	bool success = historyStoreIf_->readInitial(
     		context,
     		continousPoint,
     		startTime,
     		stopTime,
     		dataValueVec,
-    		applicationHReadContext->timestampsToReturn_
+    		applicationHReadContext->releaseContinuationPoints_,
+    		applicationHReadContext->timestampsToReturn_,
+    		maxNumResultValuesPerRequest
     	);
     	if (dataValueVec.size() == 0) {
     		applicationHReadContext->statusCode_ = BadNoData;
@@ -256,6 +290,63 @@ namespace OpcUaHistory
 
     	applicationHReadContext->statusCode_ = Success;
     	return;
+    }
+
+    void
+    HistoryServer::hReadValueFirst(
+    	ApplicationHReadContext* applicationHReadContext,
+    	HistoryServerItem::SPtr& historyServerItem
+    )
+    {
+    	std::cout << std::endl;
+    	std::cout << "ReadFirst" << std::endl;
+       	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
+
+       	Object::SPtr context = historyServerItem->context();
+
+        // read data from value store
+        OpcUaDataValue::Vec dataValueVec;
+        std::string continousPoint = "";
+        OpcUaDateTime startTime(applicationHReadContext->startTime_);
+        OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
+        uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
+
+        bool success = historyStoreIf_->readInitial(
+        	context,
+        	continousPoint,
+        	startTime,
+        	stopTime,
+        	dataValueVec,
+        	applicationHReadContext->releaseContinuationPoints_,
+        	applicationHReadContext->timestampsToReturn_,
+        	maxNumResultValuesPerRequest
+        );
+
+        applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
+
+        if (!success) {
+        	applicationHReadContext->statusCode_ = Success;
+        	return;
+        }
+
+        if (dataValueVec.size() == 0) {
+        	applicationHReadContext->statusCode_ = Success;
+        	return;
+        }
+
+        if (!continousPoint.empty()) {
+        	applicationHReadContext->continousPoint_ = continousPoint;
+        }
+
+        // create result array
+        applicationHReadContext->dataValueArray_->resize(dataValueVec.size());
+        for (uint32_t idx = 0; idx < dataValueVec.size(); idx++) {
+        	applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
+        }
+
+        applicationHReadContext->statusCode_ = Success;
+        return;
     }
 
 }

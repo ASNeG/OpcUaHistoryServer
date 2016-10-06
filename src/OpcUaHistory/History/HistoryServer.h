@@ -67,6 +67,10 @@ namespace OpcUaHistory
 
 	  private:
 	    void hReadValue(ApplicationHReadContext* applicationHReadContext);
+	    void hReadValueFirst(
+	    	ApplicationHReadContext* applicationHReadContext,
+	    	HistoryServerItem::SPtr& historyServerItem
+	    );
 	    bool getNamespaceInfo(void);
 	    bool registerCallbacks(void);
 
