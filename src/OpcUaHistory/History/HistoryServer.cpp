@@ -322,8 +322,6 @@ namespace OpcUaHistory
         	applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
         }
 
-        std::cout << "Size=" << dataValueVec.size() << std::endl;
-        std::cout << "..." << applicationHReadContext->continousPoint_ << std::endl;
         applicationHReadContext->statusCode_ = Success;
         return;
     }
@@ -363,6 +361,7 @@ namespace OpcUaHistory
             }
 
             if (dataValueVec.size() == 0) {
+            	applicationHReadContext->continousPoint_ = "";
             	applicationHReadContext->statusCode_ = Success;
             	return;
             }
@@ -373,8 +372,6 @@ namespace OpcUaHistory
             	applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
             }
 
-            std::cout << "Size=" << dataValueVec.size() << std::endl;
-            std::cout << "..." << applicationHReadContext->continousPoint_ << std::endl;
             applicationHReadContext->statusCode_ = Success;
             return;
     }
@@ -385,6 +382,10 @@ namespace OpcUaHistory
     	HistoryServerItem::SPtr& historyServerItem
     )
     {
+    	std::cout << std::endl;
+    	std::cout << "ReadDelete" << std::endl;
+       	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
     	// FIXME: todo
     }
 

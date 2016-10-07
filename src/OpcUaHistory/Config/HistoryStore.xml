@@ -17,7 +17,7 @@
 		  	<ContinousPointIdleTimeout>60000</ContinousPointIdleTimeout>
 		  	<MaxDeleteTimeoutEntries>20</MaxDeleteTimeoutEntries>
 		  	
-		  	<MaxNumResultValuesPerNode>10</MaxNumResultValuesPerNode>
+		  	<MaxNumResultValuesPerNode>2000</MaxNumResultValuesPerNode>
 		</ReadFileAccess>
 		
 		<WriteFileAccess>
