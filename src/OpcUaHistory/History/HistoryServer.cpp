@@ -67,6 +67,7 @@ namespace OpcUaHistory
 	, applicationServiceIf_(nullptr)
 	, namespaceMap_()
 	, hReadCallback_(boost::bind(&HistoryServer::hReadValue, this, _1))
+	, hWriteCallback_(boost::bind(&HistoryServer::hWriteValue, this, _1))
 	{
 	}
 
@@ -165,6 +166,7 @@ namespace OpcUaHistory
 	  	RegisterForwardResponse::SPtr res = trx->response();
 
 	  	req->forwardInfoSync()->setReadHCallback(hReadCallback_);
+	  	req->forwardInfoSync()->setWriteHCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
 
 	  	uint32_t pos = 0;
@@ -275,10 +277,10 @@ namespace OpcUaHistory
     	HistoryServerItem::SPtr& historyServerItem
     )
     {
-    	std::cout << std::endl;
-    	std::cout << "ReadFirst" << std::endl;
-       	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
-        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
+    	//std::cout << std::endl;
+    	//std::cout << "ReadFirst" << std::endl;
+       	//std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
        	Object::SPtr context = historyServerItem->context();
 
@@ -332,10 +334,10 @@ namespace OpcUaHistory
     	HistoryServerItem::SPtr& historyServerItem
     )
     {
-       	std::cout << std::endl;
-        std::cout << "ReadNext" << std::endl;
-        std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
-        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
+       	//std::cout << std::endl;
+        //std::cout << "ReadNext" << std::endl;
+        //std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
         Object::SPtr context = historyServerItem->context();
 
@@ -382,11 +384,10 @@ namespace OpcUaHistory
     	HistoryServerItem::SPtr& historyServerItem
     )
     {
-    	std::cout << std::endl;
-    	std::cout << "ReadDelete" << std::endl;
-       	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
-        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
-    	// FIXME: todo
+    	//std::cout << std::endl;
+    	//std::cout << "ReadDelete" << std::endl;
+       	//std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
         Object::SPtr context = historyServerItem->context();
 
@@ -413,6 +414,12 @@ namespace OpcUaHistory
 
         applicationHReadContext->statusCode_ = Success;
         return;
+    }
+
+    void
+    HistoryServer::hWriteValue(ApplicationHWriteContext* applicationHWriteContext)
+    {
+    	// FIXME: todo
     }
 
 }

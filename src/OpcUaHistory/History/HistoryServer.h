@@ -21,6 +21,7 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackCore/Application/ApplicationHReadContext.h"
+#include "OpcUaStackCore/Application/ApplicationHWriteContext.h"
 #include "OpcUaHistory/History/HistoryStoreIf.h"
 #include "OpcUaHistory/History/HistoryServerConfig.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
@@ -67,6 +68,7 @@ namespace OpcUaHistory
 
 	  private:
 	    void hReadValue(ApplicationHReadContext* applicationHReadContext);
+	    void hWriteValue(ApplicationHWriteContext* applicationHWriteContext);
 	    void hReadValueFirst(
 	    	ApplicationHReadContext* applicationHReadContext,
 	    	HistoryServerItem::SPtr& historyServerItem
@@ -87,6 +89,7 @@ namespace OpcUaHistory
 	    ApplicationServiceIf* applicationServiceIf_;
 	    NamespaceMap namespaceMap_;
 	    Callback hReadCallback_;
+	    Callback hWriteCallback_;
 	    HistoryServerItem::Map historyServerItemMap_;
 	};
 
