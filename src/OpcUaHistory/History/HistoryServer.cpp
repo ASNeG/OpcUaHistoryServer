@@ -347,11 +347,8 @@ namespace OpcUaHistory
             OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
             uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
 
-            bool success = historyStoreIf_->readInitial(
-            	context,
+            bool success = historyStoreIf_->readNext(
             	applicationHReadContext->continousPoint_,
-            	startTime,
-            	stopTime,
             	dataValueVec,
             	applicationHReadContext->releaseContinuationPoints_,
             	applicationHReadContext->timestampsToReturn_,

@@ -190,10 +190,10 @@ namespace OpcUaHistory
 
 		if (
 			maxResultEntries == 0 ||
-			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_
+			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_
 		)
 		{
-			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_;
+			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_;
 		}
 
     	bool success = fileReadManager_.readInitial(
@@ -228,10 +228,10 @@ namespace OpcUaHistory
 
 		if (
 			maxResultEntries == 0 ||
-			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_
+			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_
 		)
 		{
-			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerRequest_;
+			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_;
 		}
 
 		bool success = fileReadManager_.readNext(
