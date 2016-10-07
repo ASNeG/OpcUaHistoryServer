@@ -303,7 +303,7 @@ namespace OpcUaHistory
         applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
 
         if (!success) {
-        	applicationHReadContext->statusCode_ = Success;
+        	applicationHReadContext->statusCode_ = BadInternalError;
         	return;
         }
 
@@ -333,47 +333,47 @@ namespace OpcUaHistory
     )
     {
        	std::cout << std::endl;
-        	std::cout << "ReadNext" << std::endl;
-           	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
-            std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
+        std::cout << "ReadNext" << std::endl;
+        std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
+        std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
-           	Object::SPtr context = historyServerItem->context();
+        Object::SPtr context = historyServerItem->context();
 
-            // read data from value store
-            OpcUaDataValue::Vec dataValueVec;
-            OpcUaDateTime startTime(applicationHReadContext->startTime_);
-            OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
-            uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
+        // read data from value store
+        OpcUaDataValue::Vec dataValueVec;
+        OpcUaDateTime startTime(applicationHReadContext->startTime_);
+        OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
+        uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
 
-            bool success = historyStoreIf_->readNext(
-            	applicationHReadContext->continousPoint_,
-            	dataValueVec,
-            	applicationHReadContext->releaseContinuationPoints_,
-            	applicationHReadContext->timestampsToReturn_,
-            	maxNumResultValuesPerRequest
-            );
+        bool success = historyStoreIf_->readNext(
+            applicationHReadContext->continousPoint_,
+            dataValueVec,
+            applicationHReadContext->releaseContinuationPoints_,
+            applicationHReadContext->timestampsToReturn_,
+           	maxNumResultValuesPerRequest
+        );
 
-            applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
+        applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
 
-            if (!success) {
-            	applicationHReadContext->statusCode_ = Success;
-            	return;
-            }
+        if (!success) {
+        	applicationHReadContext->statusCode_ = BadInternalError;
+            return;
+        }
 
-            if (dataValueVec.size() == 0) {
-            	applicationHReadContext->continousPoint_ = "";
-            	applicationHReadContext->statusCode_ = Success;
-            	return;
-            }
-
-            // create result array
-            applicationHReadContext->dataValueArray_->resize(dataValueVec.size());
-            for (uint32_t idx = 0; idx < dataValueVec.size(); idx++) {
-            	applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
-            }
-
+        if (dataValueVec.size() == 0) {
+            applicationHReadContext->continousPoint_ = "";
             applicationHReadContext->statusCode_ = Success;
             return;
+        }
+
+        // create result array
+        applicationHReadContext->dataValueArray_->resize(dataValueVec.size());
+        for (uint32_t idx = 0; idx < dataValueVec.size(); idx++) {
+            applicationHReadContext->dataValueArray_->set(idx, dataValueVec[idx]);
+        }
+
+        applicationHReadContext->statusCode_ = Success;
+        return;
     }
 
     void
@@ -387,6 +387,32 @@ namespace OpcUaHistory
        	std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
         std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
     	// FIXME: todo
+
+        Object::SPtr context = historyServerItem->context();
+
+        // read data from value store
+        OpcUaDataValue::Vec dataValueVec;
+        OpcUaDateTime startTime(applicationHReadContext->startTime_);
+        OpcUaDateTime stopTime(applicationHReadContext->stopTime_);
+        uint32_t maxNumResultValuesPerRequest = applicationHReadContext->numValuesPerNode_;
+
+        bool success = historyStoreIf_->readNext(
+            applicationHReadContext->continousPoint_,
+            dataValueVec,
+            applicationHReadContext->releaseContinuationPoints_,
+            applicationHReadContext->timestampsToReturn_,
+           	maxNumResultValuesPerRequest
+        );
+
+        applicationHReadContext->dataValueArray_ = constructSPtr<OpcUaDataValueArray>();
+
+        if (!success) {
+        	applicationHReadContext->statusCode_ = BadInternalError;
+            return;
+        }
+
+        applicationHReadContext->statusCode_ = Success;
+        return;
     }
 
 }
