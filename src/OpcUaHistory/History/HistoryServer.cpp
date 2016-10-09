@@ -33,7 +33,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryServerItem::HistoryServerItem(void)
-	: context_()
+	: contextRead_()
+	, contextWrite_()
 	{
 	}
 
@@ -42,15 +43,27 @@ namespace OpcUaHistory
 	}
 
 	void
-	HistoryServerItem::context(Object::SPtr& context)
+	HistoryServerItem::contextRead(Object::SPtr& contextRead)
 	{
-		context_ = context;
+		contextRead_ = contextRead;
 	}
 
 	Object::SPtr&
-	HistoryServerItem::context(void)
+	HistoryServerItem::contextRead(void)
 	{
-		return context_;
+		return contextRead_;
+	}
+
+	void
+	HistoryServerItem::contextWrite(Object::SPtr& contextWrite)
+	{
+		contextWrite_ = contextWrite;
+	}
+
+	Object::SPtr&
+	HistoryServerItem::contextWrite(void)
+	{
+		return contextWrite_;
 	}
 
 
@@ -190,10 +203,13 @@ namespace OpcUaHistory
 	  		pos++;
 
 	  		// add item to history server item map
-	  		Object::SPtr context;
-	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), context, HistoryStoreIf::Read);
+	  		Object::SPtr contextRead;
+	  		Object::SPtr contextWrite;
+	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), contextRead, HistoryStoreIf::Read);
+	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), contextWrite, HistoryStoreIf::Write);
 	  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
-	  		historyServerItem->context(context);
+	  		historyServerItem->contextRead(contextRead);
+	  		historyServerItem->contextWrite(contextWrite);
 	  		historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
 	  	}
 
@@ -282,7 +298,7 @@ namespace OpcUaHistory
        	//std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
         //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
-       	Object::SPtr context = historyServerItem->context();
+       	Object::SPtr context = historyServerItem->contextRead();
 
         // read data from value store
         OpcUaDataValue::Vec dataValueVec;
@@ -339,7 +355,7 @@ namespace OpcUaHistory
         //std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
         //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
-        Object::SPtr context = historyServerItem->context();
+        Object::SPtr context = historyServerItem->contextRead();
 
         // read data from value store
         OpcUaDataValue::Vec dataValueVec;
@@ -389,7 +405,7 @@ namespace OpcUaHistory
        	//std::cout << "ContinousPoint=" << applicationHReadContext->continousPoint_ << std::endl;
         //std::cout << "NumValuesPerNode=" << applicationHReadContext->numValuesPerNode_ << std::endl;
 
-        Object::SPtr context = historyServerItem->context();
+        Object::SPtr context = historyServerItem->contextRead();
 
         // read data from value store
         OpcUaDataValue::Vec dataValueVec;
@@ -419,7 +435,28 @@ namespace OpcUaHistory
     void
     HistoryServer::hWriteValue(ApplicationHWriteContext* applicationHWriteContext)
     {
-    	// FIXME: todo
+    	// find context
+    	HistoryServerItem::Map::iterator it1;
+    	it1 = historyServerItemMap_.find(applicationHWriteContext->nodeId_);
+    	if (it1 == historyServerItemMap_.end()) {
+    		applicationHWriteContext->statusCode_ = BadNotFound;
+    		return;
+    	}
+    	HistoryServerItem::SPtr historyServerItem  = it1->second;
+
+    	for (uint32_t idx=0; idx<applicationHWriteContext->dataValueArray_->size(); idx++) {
+    		OpcUaDataValue::SPtr dataValue;
+    		if (!applicationHWriteContext->dataValueArray_->get(idx, dataValue)) {
+    			applicationHWriteContext->statusCode_ = BadInvalidArgument;
+    			return;
+    		}
+
+    		if (!historyStoreIf_->write(historyServerItem->contextWrite(), *dataValue.get())) {
+    			applicationHWriteContext->statusCode_ = BadInternalError;
+    			return;
+    		}
+    	}
+    	applicationHWriteContext->statusCode_ = Success;
     }
 
 }

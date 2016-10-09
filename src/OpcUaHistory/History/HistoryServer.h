@@ -41,11 +41,14 @@ namespace OpcUaHistory
 		HistoryServerItem(void);
 		~HistoryServerItem(void);
 
-		void context(Object::SPtr& context);
-		Object::SPtr& context(void);
+		void contextRead(Object::SPtr& context);
+		Object::SPtr& contextRead(void);
+		void contextWrite(Object::SPtr& context);
+		Object::SPtr& contextWrite(void);
 
 	  private:
-		Object::SPtr context_;
+		Object::SPtr contextRead_;
+		Object::SPtr contextWrite_;
 	};
 
 
