@@ -20,6 +20,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include <stdint.h>
 
 namespace OpcUaHistory
 {
@@ -32,15 +33,15 @@ namespace OpcUaHistory
 
 		typedef enum
 		{
-			Read,
-			Write
+			M_Read,
+			M_Write
 		} Mode;
 
 		typedef enum
 		{
-			Ok,
-			Error,
-			EndOfFile
+			S_Ok,
+			S_Error,
+			S_EndOfFile
 		} State;
 
 		CSV(void);
@@ -49,12 +50,18 @@ namespace OpcUaHistory
 		void delimiter(const std::string& delimiter);
 		bool open(const std::string& fileName, Mode mode);
 		bool close(void);
-		bool readLine(Line& line);
-		bool writeLine(Line& line);
+		CSV::State readLine(Line& line);
+		CSV::State writeLine(Line& line);
+		uint32_t lineNumber(void);
 
 	  private:
+		uint32_t lineNumber_;
+
 		std::string delimiter_;
 		std::string fileName_;
+
+		std::ifstream ifFile_;
+		std::ofstream ofFile_;
 
 	};
 
