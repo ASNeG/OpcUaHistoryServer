@@ -174,7 +174,7 @@ namespace OpcUaHistory
 	{
 		namespaceMap_ = &namespaceMap;
 		state_ = S_Opening;
-		ServiceTransactionCreateSubscription::SPtr trx = ServiceTransactionCreateSubscription::construct();
+		ServiceTransactionCreateSubscription::SPtr trx = constructSPtr<ServiceTransactionCreateSubscription>();
 		subscriptionService_->asyncSend(trx);
 	}
 
@@ -251,7 +251,7 @@ namespace OpcUaHistory
 		if (cmiv.empty()) return;
 
 		// create monitored item transaction
-		ServiceTransactionCreateMonitoredItems::SPtr trx = ServiceTransactionCreateMonitoredItems::construct();
+		ServiceTransactionCreateMonitoredItems::SPtr trx = constructSPtr<ServiceTransactionCreateMonitoredItems>();
 		CreateMonitoredItemsRequest::SPtr req = trx->request();
 		req->subscriptionId(subscriptionId_);
 		req->itemsToCreate()->resize(cmiv.size());
@@ -283,7 +283,7 @@ namespace OpcUaHistory
 			    .parameter("NodeId", nodeId.toString())
 			    .parameter("ClientHandle", cmi->clientHandle());
 
-			MonitoredItemCreateRequest::SPtr monitoredItemCreateRequest = MonitoredItemCreateRequest::construct();
+			MonitoredItemCreateRequest::SPtr monitoredItemCreateRequest = constructSPtr<MonitoredItemCreateRequest>();
 			monitoredItemCreateRequest->itemToMonitor().nodeId()->copyFrom(nodeId);
 			monitoredItemCreateRequest->requestedParameters().clientHandle(cmi->clientHandle());
 			req->itemsToCreate()->push_back(monitoredItemCreateRequest);
@@ -333,7 +333,7 @@ namespace OpcUaHistory
 		if (cmiv.empty()) return;
 
 		// create monitored item transaction
-		ServiceTransactionDeleteMonitoredItems::SPtr trx = ServiceTransactionDeleteMonitoredItems::construct();
+		ServiceTransactionDeleteMonitoredItems::SPtr trx = constructSPtr<ServiceTransactionDeleteMonitoredItems>();
 		DeleteMonitoredItemsRequest::SPtr req = trx->request();
 		req->subscriptionId(subscriptionId_);
 		req->monitoredItemIds()->resize(cmiv.size());
