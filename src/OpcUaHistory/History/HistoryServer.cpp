@@ -131,7 +131,7 @@ namespace OpcUaHistory
 	HistoryServer::getNamespaceInfo(void)
 	{
 		// read namespace array
-		ServiceTransactionNamespaceInfo::SPtr trx = ServiceTransactionNamespaceInfo::construct();
+		ServiceTransactionNamespaceInfo::SPtr trx = constructSPtr<ServiceTransactionNamespaceInfo>();
 		NamespaceInfoRequest::SPtr req = trx->request();
 		NamespaceInfoResponse::SPtr res = trx->response();
 
@@ -174,12 +174,11 @@ namespace OpcUaHistory
     bool
     HistoryServer::registerCallbacks(void)
     {
-	  	ServiceTransactionRegisterForward::SPtr trx = ServiceTransactionRegisterForward::construct();
+	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
 	  	RegisterForwardResponse::SPtr res = trx->response();
-
-	  	req->forwardInfoSync()->setReadHCallback(hReadCallback_);
-	  	req->forwardInfoSync()->setWriteHCallback(hWriteCallback_);
+	  	req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
+	  	req->forwardInfoSync()->writeHService().setCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
 
 	  	uint32_t pos = 0;

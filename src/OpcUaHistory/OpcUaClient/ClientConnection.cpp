@@ -249,7 +249,7 @@ namespace OpcUaHistory
 		req->maxAge(0);
 		req->timestampsToReturn(2);
 
-		ReadValueId::SPtr readValueId = ReadValueId::construct();
+		ReadValueId::SPtr readValueId = constructSPtr<ReadValueId>();
 		readValueId->nodeId((OpcUaInt16)0, (OpcUaInt32)2255);
 		readValueId->attributeId((OpcUaInt32) 13);
 		readValueId->dataEncoding().namespaceIndex((OpcUaInt16) 0);
