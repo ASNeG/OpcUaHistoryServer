@@ -177,8 +177,8 @@ namespace OpcUaHistory
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
 	  	RegisterForwardResponse::SPtr res = trx->response();
-
-	  	req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
+	  	
+                req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
 	  	req->forwardInfoSync()->writeHService().setCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
 
