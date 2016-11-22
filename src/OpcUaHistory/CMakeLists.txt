@@ -1,3 +1,25 @@
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#
+# prebuild
+#
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+configure_file(
+    "${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/etc/init/OpcUaHistory.conf.in"
+    "${PROJECT_BINARY_DIR}/OpcUaHistory.conf"
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/etc/init.d/OpcUaHistory.in"
+    "${PROJECT_BINARY_DIR}/OpcUaHistory"
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/usr/lib/systemd/system/OpcUaHistory.service.in"
+    "${PROJECT_BINARY_DIR}/OpcUaHistory.service"
+)
+
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -7,28 +29,29 @@
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 include_directories(
-    ${INSTALL_PREFIX_OpcUaStack}/usr/include/OpcUaStack
+    ${OPCUASTACK_INSTALL_PREFIX}/usr/include/OpcUaStack${OPCUASTACK_VERSION_MAJOR}
     ${PROJECT_SOURCE_DIR}
-    ${Boost_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIR}
+    ${OPENSSL_INCLUDE_DIR}
 )
 
-file(GLOB OpcUaHistory_SRC ${PROJECT_SOURCE_DIR}/OpcUaHistory/*/*.cpp)
-add_library(OpcUaHistory SHARED ${OpcUaHistory_SRC})
+file(
+    GLOB 
+    OpcUaHistory_SRC 
+    ${PROJECT_SOURCE_DIR}/OpcUaHistory/*/*.cpp
+)
+
+add_library(
+    OpcUaHistory SHARED 
+    ${OpcUaHistory_SRC}
+)
 
 target_link_libraries(
     OpcUaHistory
-    ${OpcUaStackCore}
-    ${OpcUaStackServer}
-    ${OpcUaStackClient}
     ${pthread}
+    ${OPCUASTACK_LIBRARY_CORE}
+    ${OPCUASTACK_LIBRARY_CLIENT}
     ${Boost_LIBRARIES}
-)
-
-set_target_properties(
-    OpcUaHistory
-    PROPERTIES 
-    VERSION ${VERSION}
-    SOVERSION ${VERSION_MAJOR}
 )
 
 # -----------------------------------------------------------------------------
@@ -38,23 +61,24 @@ set_target_properties(
 # 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-install(TARGETS OpcUaHistory DESTINATION ${LIB_DIR}/OpcUaStack)
+install(TARGETS OpcUaHistory DESTINATION /usr/lib/OpcUaStack)
 
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServer.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory) 
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.History.NodeSet.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryModel.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryStore.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaClientModel.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServerModel.xml DESTINATION ${CONF_DIR}/OpcUaStack/OpcUaHistory)
-install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/log/README DESTINATION ${LOG_DIR}/OpcUaStack/OpcUaHistory)
-install(DIRECTORY DESTINATION ${LOG_DIR}/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServer.xml DESTINATION /etc/OpcUaStack/OpcUaHistory) 
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.History.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryModel.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/HistoryStore.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaClientModel.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServerModel.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/log/README DESTINATION /var/log/OpcUaStack/OpcUaHistory)
+install(DIRECTORY DESTINATION /var/log/OpcUaStack/OpcUaHistory)
 
 if (WIN32)
 else() 
-    install(PROGRAMS ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/etc/init.d/OpcUaHistory DESTINATION etc/init.d)
-    install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/etc/init/OpcUaHistory.conf DESTINATION etc/init)
-    install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/usr/lib/systemd/system/OpcUaHistory.service DESTINATION usr/lib/systemd/system)
+    install(PROGRAMS ${PROJECT_BINARY_DIR}/OpcUaHistory DESTINATION /etc/init.d)
+    install(FILES ${PROJECT_BINARY_DIR}/OpcUaHistory.conf DESTINATION /etc/init)
+    install(FILES ${PROJECT_BINARY_DIR}/OpcUaHistory.service DESTINATION /usr/lib/systemd/system)
 endif()
 
 if (CPACK_BINARY_DEB)

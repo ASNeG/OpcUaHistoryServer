@@ -19,7 +19,7 @@
 
   <Logging>
     <FileLogger>
-      <LogFileName>@INSTALL_DIR@/@LOG_DIR@/OpcUaHistory/OpcUaServer.log</LogFileName>
+      <LogFileName>@CONF_DIR@/../../../var/log/OpcUaStack/OpcUaHistory/OpcUaServer.log</LogFileName>
       <MaxLogFileNumber>20</MaxLogFileNumber>
       <MaxLogFileSize>5000000</MaxLogFileSize>
       <LogLevel>Trace</LogLevel>
@@ -83,14 +83,14 @@
     <Application>
       <Name>OpcUaHistory</Name>  
       <Library>OpcUaHistory</Library>
-      <Config>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryModel.xml</Config>
+      <Config>@CONF_DIR@/HistoryModel.xml</Config>
     </Application>
   </Applications>
  
   
   <InformationModel>
-    <NodeSetFile>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/Opc.Ua.NodeSet.xml</NodeSetFile>
-    <NodeSetFile>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/Opc.Ua.History.NodeSet.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.History.NodeSet.xml</NodeSetFile>
   </InformationModel>
 
 </OpcUaServer>

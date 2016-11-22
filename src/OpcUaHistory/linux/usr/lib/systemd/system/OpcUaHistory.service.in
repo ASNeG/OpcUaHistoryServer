@@ -3,7 +3,7 @@ Description=opc ua history server
 
 [Service]
 Environment="LD_LIBRARY_PATH=/usr/lib/OpcUaStack:${LD_LIBRARY_PATH}"
-ExecStart=/usr/bin/OpcUaServer OpcUaHistory
+ExecStart=/usr/bin/OpcUaServer@OPCUASTACK_VERSION_MAJOR@ /etc/OpcUaStack/OpcUaHistory/OpcUaServer.xml
 Restart=on-failure
 
 [Install]

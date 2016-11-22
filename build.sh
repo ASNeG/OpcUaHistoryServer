@@ -8,15 +8,31 @@
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
+#OPCUASTACK_INSTALL_PREFIX=${HOME}/install
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
 usage()
 {
-   echo "build.sh [local, package, tst, clean]"
+   echo "build.sh [info, local, deb]"
 }
 
+
+version_info()
+{
+    echo "version info"
+
+    rm -rf build_info
+    mkdir build_info
+    cd build_info
+    cmake -DCREATE_INFO_FILES=1 ../src/
+}
+
+version_info_clean()
+{
+    rm -rf build_info
+}
 
 build_local()
 {
@@ -28,18 +44,18 @@ build_local()
     cd build_local
 
     # install build local
+    : ${OPCUASTACK_INSTALL_PREFIX:=${HOME}/install}
     set -x
     cmake ../src \
-          "${CMAKE_GENERATOR_LOCAL}" \
-          -DINSTALL_PREFIX_OpcUaStack="${HOME}/install" \
-          -DCMAKE_INSTALL_PREFIX="${HOME}/install" 
+          -DOPCUASTACK_INSTALL_PREFIX=${OPCUASTACK_INSTALL_PREFIX} \
+          "${CMAKE_GENERATOR_LOCAL}" 
     set +x
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
         return $?
     fi
-    make install
+    make DESTDIR="${HOME}/install" install
      if [ $? -ne 0 ] ;
     then
         echo "make install error"
@@ -56,41 +72,31 @@ build_local_clean()
 }
 
 
-build_package()
+build_deb()
 {
-    echo "build package start"
+    echo "build deb package start"
 
     # check if debian package to be produced
     if which dpkg > /dev/null ;
     then
         echo "build deb package enable"
-        CPACK_BINARY_DEB="-DCPACK_BINARY_DEB=1"
     else
         echo "build deb package disable"
-        CPACK_BINARY_DEB="-DCPACK_BINARY_DEB=0"
+        return -1
     fi
 
-    # check if rpm package to be produced
-    if which rpmbuild > /dev/null ;
-    then
-        echo "build rpm package enable"
-        CPACK_BINARY_RPM="-DCPACK_BINARY_RPM=1"
-    else
-        echo "build rpm package disable"
-        CPACK_BINARY_RPM="-DCPACK_BINARY_RPM=0"
-    fi
-    
     # build package directory
-    rm -rf build_package
-    mkdir build_package
-    cd build_package
+    rm -rf build_deb
+    mkdir build_deb
+    cd build_deb
 
     # build package
-   echo "${CPACK_BINARY}"
+   : ${OPCUASTACK_INSTALL_PREFIX:=/}
     cmake ../src \
+        -DOPCUASTACK_INSTALL_PREFIX=${OPCUASTACK_INSTALL_PREFIX} \
         "${CMAKE_GENERATOR_LOCAL}" \
-        ${CPACK_BINARY_DEB} \
-        ${CPACK_BINARY_RPM} 
+        "-DCPACK_BINARY_DEB=1" \
+        "-DCPACK_BINARY_RPM=0" 
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
@@ -107,10 +113,59 @@ build_package()
 }
 
 
-build_package_clean()
+build_deb_clean()
 {
-    rm -rf build_package
+    rm -rf build_deb
 }
+
+build_rpm()
+{
+    echo "build rpm package start"
+
+    # check if rpm package to be produced
+    if which rpmbuild > /dev/null ;
+    then
+        echo "build rpm package enable"
+    else
+        echo "build rpm package disable"
+        return -1
+    fi
+    
+    # build package directory
+    rm -rf build_rpm
+    mkdir build_rpm
+    cd build_rpm
+
+    # build package
+    echo "${CPACK_BINARY}"
+    : ${OPCUASTACK_INSTALL_PREFIX:=/}
+    cmake ../src \
+        -DOPCUASTACK_INSTALL_PREFIX=${OPCUASTACK_INSTALL_PREFIX} \
+        "${CMAKE_GENERATOR_LOCAL}" \
+        "-DCPACK_BINARY_DEB=0" \
+        "-DCPACK_BINARY_RPM=1"
+    if [ $? -ne 0 ] ;
+    then
+        echo "cmake error"
+        return $?
+    fi
+    make package
+    if [ $? -ne 0 ] ;
+    then
+        echo "make package error"
+        return $?
+    fi
+
+    return 0
+}
+
+
+build_rpm_clean()
+{
+    rm -rf build_rpm
+}
+
+
 
 build_tst()
 {    
@@ -122,9 +177,11 @@ build_tst()
     cd build_tst
 
     # build tst
+    : ${OPCUASTACK_INSTALL_PREFIX:=${HOME}/install}
     cmake ../tst \
+        -DOPCUASTACK_INSTALL_PREFIX=${OPCUASTACK_INSTALL_PREFIX} \
   	"${CMAKE_GENERATOR_LOCAL}" \
-	-DINSTALL_PREFIX_OpcUaStack="${HOME}/install"
+	-DOPCUASTACK_INSTALL_PREFIX="${HOME}/install"
     if [ $? -ne 0 ] ;
     then
         echo "cmake error"
@@ -150,8 +207,10 @@ build_tst_clean()
 
 clean()
 {
+    build_info_clean
     build_local_clean
-    build_package_clean
+    build_deb_clean
+    build_rpm_clean
     build_tst_clean
 }
 
@@ -168,22 +227,22 @@ then
     exit
 fi
 
-if [ "$1" = "local" ] ;
+if [ "$1" = "info" ] ;
 then
+    version_info
+    exit $?
+elif [ "$1" = "local" ] ;
+then 
     build_local
     exit $?
-elif [ "$1" = "package" ] ;
+elif [ "$1" = "deb" ] ;
 then 
-    build_package
+    build_deb
     exit $?
-elif [ "$1" = "tst" ] ;
-then
-    build_tst
+elif [ "$1" = "rpm" ] ;
+then 
+    build_rpm
     exit $?
-elif [ "$1" = "clean" ] ;
-then
-    clean
-    exit 0
 else
     usage
 fi

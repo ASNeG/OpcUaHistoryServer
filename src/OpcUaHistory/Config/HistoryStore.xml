@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HistoryStore xmlns="http://ASNeG.de/HistoryManager.xsd">
+<HistoryStore xmlns="http://ASNeG.de/HistoryStore.xsd">
 
 	<HistoryStoreModel>FileHistoryStore</HistoryStoreModel>
 	
 	<FileHistoryStore>
 	
-		<BaseFolder>@INSTALL_DIR@/var/OpcUaHistory/</BaseFolder>
+		<BaseFolder>@CONF_DIR@/../../../var/OpcUaHistory/</BaseFolder>
 		
 		<ReadFileAccess>
 		  	<VerboseLogging>off</VerboseLogging>

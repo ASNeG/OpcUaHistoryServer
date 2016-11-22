@@ -2,13 +2,13 @@
 <HistoryModel xmlns="http://ASNeG.de/HistoryModel.xsd">
 
 	<OpcUaClients>
-		<OpcUaClient>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaClientModel.xml</OpcUaClient>
+		<OpcUaClient>@CONF_DIR@/OpcUaClientModel.xml</OpcUaClient>
 	</OpcUaClients>
 	
 	<OpcUaServers>
-	    <OpcUaServer>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/OpcUaServerModel.xml</OpcUaServer>
+	    <OpcUaServer>@CONF_DIR@/OpcUaServerModel.xml</OpcUaServer>
 	</OpcUaServers>
 	
-	<HistoryStore>@INSTALL_DIR@/@CONF_DIR@/OpcUaHistory/HistoryStore.xml</HistoryStore>
+	<HistoryStore>/@CONF_DIR@/HistoryStore.xml</HistoryStore>
 	
 </HistoryModel>
