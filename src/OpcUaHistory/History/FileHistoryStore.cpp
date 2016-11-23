@@ -105,6 +105,17 @@ namespace OpcUaHistory
     bool
     FileHistoryStore::startupFileStore(void)
     {
+    	// create base folder if the base folder do not exist
+    	if (!boost::filesystem::exists(fileHistoryConfig_.baseFolder())) {
+    		Log(Info, "base folder not exist - create base folder")
+    			.parameter("BaseFolder", fileHistoryConfig_.baseFolder());
+
+    		if (!boost::filesystem::create_directory(fileHistoryConfig_.baseFolder())) {
+    			Log(Error, "create base folder error")
+    			    .parameter("ValueFolder", fileHistoryConfig_.baseFolder());
+    		}
+    	}
+
     	// init file read manager
     	fileReadManager_.baseFolder(fileHistoryConfig_.baseFolder());
     	fileReadManager_.verbose(fileHistoryConfig_.historyStoreFileReadConfig().verboseLogging_);
