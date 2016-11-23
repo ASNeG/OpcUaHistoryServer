@@ -61,7 +61,7 @@ target_link_libraries(
 # 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-install(TARGETS OpcUaHistory DESTINATION /usr/lib/OpcUaStack)
+install(TARGETS OpcUaHistory DESTINATION /usr/lib)
 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/OpcUaServer.xml DESTINATION /etc/OpcUaStack/OpcUaHistory) 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaHistory/Config/Opc.Ua.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaHistory)
