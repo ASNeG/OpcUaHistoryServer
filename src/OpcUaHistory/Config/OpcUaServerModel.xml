@@ -2,7 +2,7 @@
 <OpcUaServerModel xmlns="http://ASNeG.de/OpcUaServerModel.xsd">
 
 	<NamespaceUris>
-	  	<Uri>http://yourorganisation.org/HistoryServer/</Uri>
+	  	<Uri>http://ASNeG.de/HistoryServer/</Uri>
 	</NamespaceUris>
 	
 

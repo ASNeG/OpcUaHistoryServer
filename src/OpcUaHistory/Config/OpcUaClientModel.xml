@@ -7,10 +7,10 @@
 	</Endpoint>
 	
 	<NamespaceUris>
-	  	<Uri>http://yourorganisation.org/Test-Server-Lib/</Uri>
+	  	<Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
 	</NamespaceUris>
 	
-	<Subscription Id="subscription1">
+	<Subscription Id="subst1">
 		<PublishingInterval>0</PublishingInterval>
 		<LifetimeCount>0</LifetimeCount>
 		<MaxKeepAliveCount>0</MaxKeepAliveCount>
