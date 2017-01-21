@@ -32,4 +32,264 @@
 	
 	</FileHistoryStore>
 	
+	<ValueStore>
+		<NamespaceUris>
+		    <Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
+			<Uri>http://ASNeG.de/HistoryServer/</Uri>
+	    </NamespaceUris>
+	
+		<Value Name="SByteValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=200"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=200"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=200"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=200" MonItem="Client.Subst.MonItem"/>
+		</Value
+		
+		<Value Name="SByteArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=201"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=201"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=201"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=201" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="ByteValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=202"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=202"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=202"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=202" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="ByteArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=203"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=203"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=203"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=203" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int16Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=204"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=204"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=204"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=204" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int16ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=205"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=205"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=205"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=205" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt16Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=206"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=206"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=206"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=206" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt16ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=207"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=207"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=207"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=207" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int32Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=208"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=208"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=208"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=208" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int32ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=209"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=209"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=209"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=209" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt32Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=210"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=210"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=210"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=210" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt32ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=211"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=211"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=211"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=211" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int64Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=212"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=212"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=212"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=212" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="Int64ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=213"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=213"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=213"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=213" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt64Value">
+        	<Server Operation="HRead"  NodeId="ns=1;i=214"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=214"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=214"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=214" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="UInt64ArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=215"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=215"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=215"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=215" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="FloatValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=216"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=216"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=216"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=216" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="FloatArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=217"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=217"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=217"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=217" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="DoubleValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=218"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=218"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=218"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=218" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="DoubleArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=219"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=219"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=219"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=219" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="BooleanValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=220"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=220"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=220"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=220" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="BooleanArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=221"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=221"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=221"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=221" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="StringValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=222"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=222"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=222"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=222" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="StringArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=223"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=223"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=223"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=223" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="ByteStringValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=224"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=224"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=224"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=224" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="ByteStringArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=225"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=225"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=225"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=225" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="LocalizedTextValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=226"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=226"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=226"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=226" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="LocalizedTextArrayValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=227"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=227"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=227"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=227" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="DateTimeValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=228"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=228"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=228"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=228" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="DateTimeValueArray">
+        	<Server Operation="HRead"  NodeId="ns=1;i=229"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=229"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=229"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=229" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="GuidValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=230"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=230"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=230"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=230" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="GuidValueArray">
+        	<Server Operation="HRead"  NodeId="ns=1;i=231"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=231"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=231"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=231" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="NodeIdValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=232"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=232"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=232"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=232" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="NodeIdValueArray">
+        	<Server Operation="HRead"  NodeId="ns=1;i=233"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=233"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=233"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=233" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="QualifiedNameValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=234"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=234"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=234"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=234" MonItem="Client.Subst.MonItem"/>
+		</Value>
+		
+		<Value Name="QualifiedNameValueArray">
+        	<Server Operation="HRead"  NodeId="ns=1;i=235"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=235"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=235"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=235" MonItem="Client.Subst.MonItem"/>
+		</Value>
+	
+	</ValueStore>
+	
 </HistoryStore>
