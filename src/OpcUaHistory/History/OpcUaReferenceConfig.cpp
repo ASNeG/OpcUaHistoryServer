@@ -25,6 +25,57 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// OpcUaMonReferenceConfig
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	OpcUaMonReferenceConfig::OpcUaMonReferenceConfig(void)
+	: configFileName_("")
+	, elementPrefix_("")
+	, handle_("")
+	{
+	}
+
+	OpcUaMonReferenceConfig::~OpcUaMonReferenceConfig(void)
+	{
+	}
+
+	void
+	OpcUaMonReferenceConfig::configFileName(const std::string& configFileName)
+	{
+		configFileName_ = configFileName;
+	}
+
+	void
+	OpcUaMonReferenceConfig::elementPrefix(const std::string& elementPrefix)
+	{
+		elementPrefix_ = elementPrefix;
+	}
+
+	std::string&
+	OpcUaMonReferenceConfig::handle(void)
+	{
+		return handle_;
+	}
+
+	bool
+	OpcUaMonReferenceConfig::decode(Config& config)
+	{
+		// FIXME: todo
+		return true;
+	}
+
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// OpcUaReferenceConfig
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	OpcUaReferenceConfig::OpcUaReferenceConfig(void)
 	: configFileName_("")
 	, elementPrefix_("")
@@ -104,6 +155,10 @@ namespace OpcUaHistory
 				.parameter("Value", service)
 				.parameter("ConfigFileName", configFileName_);
 			return false;
+		}
+
+		if (service_ == Mon) {
+			// FIXME: todo
 		}
 
 		return true;

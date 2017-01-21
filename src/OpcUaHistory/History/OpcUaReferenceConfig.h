@@ -26,6 +26,26 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+	class OpcUaMonReferenceConfig
+	: Object
+	{
+	  public:
+		OpcUaMonReferenceConfig(void);
+		~OpcUaMonReferenceConfig(void);
+
+		void configFileName(const std::string& configFileName);
+		void elementPrefix(const std::string& elementPrefix);
+		std::string& handle(void);
+
+		bool decode(Config& config);
+
+	  private:
+		std::string configFileName_;
+		std::string elementPrefix_;
+		std::string handle_;
+	};
+
+
 	class OpcUaReferenceConfig
 	{
 	  public:
