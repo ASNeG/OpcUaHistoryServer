@@ -9,6 +9,6 @@
 	    <OpcUaServer>@CONF_DIR@/OpcUaServerModel.xml</OpcUaServer>
 	</OpcUaServers>
 	
-	<HistoryStore>/@CONF_DIR@/HistoryStore.xml</HistoryStore>
+	<HistoryStore>/@CONF_DIR@/HistoryStoreModel.xml</HistoryStore>
 	
 </HistoryModel>
