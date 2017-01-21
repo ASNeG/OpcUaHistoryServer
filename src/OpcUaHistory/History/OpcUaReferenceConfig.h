@@ -28,6 +28,8 @@ namespace OpcUaHistory
 	class OpcUaReferenceConfig
 	{
 	  public:
+		typedef boost::shared_ptr<OpcUaReferenceConfig> SPtr;
+		typedef std::vector<OpcUaReferenceConfig::SPtr> Vec;
 		typedef enum
 		{
 			None,
@@ -42,11 +44,13 @@ namespace OpcUaHistory
 		~OpcUaReferenceConfig(void);
 
 		void configFileName(const std::string& configFileName);
+		void elementPrefix(const std::string& elementPrefix);
 		OpcUaNodeId& nodeId(void);
 		Service service(void);
 
 	  private:
 		std::string configFileName_;
+		std::string elementPrefix_;
 		OpcUaNodeId nodeId_;
 		Service service_;
 	};

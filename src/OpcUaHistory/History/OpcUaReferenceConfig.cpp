@@ -24,6 +24,10 @@ namespace OpcUaHistory
 {
 
 	OpcUaReferenceConfig::OpcUaReferenceConfig(void)
+	: configFileName_("")
+	, elementPrefix_("")
+	, nodeId_()
+	, service_(None)
 	{
 	}
 
@@ -35,6 +39,12 @@ namespace OpcUaHistory
 	OpcUaReferenceConfig::configFileName(const std::string& configFileName)
 	{
 		configFileName_ = configFileName;
+	}
+
+	void
+	OpcUaReferenceConfig::elementPrefix(const std::string& elementPrefix)
+	{
+		elementPrefix_ = elementPrefix;
 	}
 
 	OpcUaNodeId&
