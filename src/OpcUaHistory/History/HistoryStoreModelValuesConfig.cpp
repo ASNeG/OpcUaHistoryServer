@@ -35,6 +35,8 @@ namespace OpcUaHistory
 	HistoryStoreModelValueConfig::HistoryStoreModelValueConfig(void)
 	: configFileName_("")
 	, name_("")
+	, serverVec_()
+	, clientVec_()
 	{
 	}
 
@@ -44,6 +46,24 @@ namespace OpcUaHistory
 		configFileName_ = configFileName;
 	}
 
+	std::string&
+	HistoryStoreModelValueConfig::name(void)
+	{
+		return name_;
+	}
+
+	OpcUaReferenceConfig::Vec&
+	HistoryStoreModelValueConfig::serverVec(void)
+	{
+		return serverVec_;
+	}
+
+	OpcUaReferenceConfig::Vec&
+	HistoryStoreModelValueConfig::clientVec(void)
+	{
+		return clientVec_;
+	}
+
 	HistoryStoreModelValueConfig::~HistoryStoreModelValueConfig(void)
 	{
 	}
@@ -51,15 +71,58 @@ namespace OpcUaHistory
 	bool
 	HistoryStoreModelValueConfig::decode(Config& config)
 	{
+		std::vector<Config>::iterator it;
+
 		// get name element
 		if (!config.getConfigParameter("<xmlattr>.name", name_)) {
 			Log(Error, "attribute missing in config file")
 				.parameter("Element", "HistoryStoreModel.Values.Value")
-				.parameter("Attribute", "Name");
+				.parameter("Attribute", "Name")
+				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 
-		// FIXME: todo
+		// get client elements
+		std::vector<Config> clients;
+		config.getChilds("Client", clients);
+		if (clients.size() == 0) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "HistoryStoreModel.Values.Value.Client")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		for (it = clients.begin(); it != clients.end(); it++) {
+
+			OpcUaReferenceConfig::SPtr client = constructSPtr<OpcUaReferenceConfig>();
+			client->configFileName(configFileName_);
+			client->elementPrefix("HistoryStoreModel.Values.Value.Client");
+
+			if (!client->decode(*it))
+
+			clientVec_.push_back(client);
+		}
+
+		// get server elements
+		std::vector<Config> servers;
+		config.getChilds("Server", servers);
+		if (servers.size() == 0) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "HistoryStoreModel.Values.Value.Server")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		for (it = servers.begin(); it != servers.end(); it++) {
+
+			OpcUaReferenceConfig::SPtr server = constructSPtr<OpcUaReferenceConfig>();
+			server->configFileName(configFileName_);
+			server->elementPrefix("HistoryStoreModel.Values.Value.Client");
+
+			if (!server->decode(*it))
+
+			serverVec_.push_back(server);
+		}
 
 		return true;
 	}

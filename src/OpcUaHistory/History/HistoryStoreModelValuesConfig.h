@@ -19,6 +19,7 @@
 #define __OpcUaHistory_HistorySoreModelConfig_h__
 
 #include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaHistory/History/OpcUaReferenceConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -35,12 +36,17 @@ namespace OpcUaHistory
     	~HistoryStoreModelValueConfig(void);
 
     	void configFileName(const std::string& configFileName);
+    	std::string& name(void);
+    	OpcUaReferenceConfig::Vec& serverVec(void);
+    	OpcUaReferenceConfig::Vec& clientVec(void);
 
     	bool decode(Config& config);
 
       private:
     	std::string configFileName_;
     	std::string name_;
+    	OpcUaReferenceConfig::Vec serverVec_;
+    	OpcUaReferenceConfig::Vec clientVec_;
     };
 
 

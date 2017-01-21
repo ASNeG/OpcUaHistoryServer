@@ -18,6 +18,7 @@
 #ifndef __OpcUaHistory_OpcUaReferenceConfig_h__
 #define __OpcUaHistory_OpcUaReferenceConfig_h__
 
+#include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 
 using namespace OpcUaStackCore;
@@ -47,6 +48,8 @@ namespace OpcUaHistory
 		void elementPrefix(const std::string& elementPrefix);
 		OpcUaNodeId& nodeId(void);
 		Service service(void);
+
+		bool decode(Config& config);
 
 	  private:
 		std::string configFileName_;

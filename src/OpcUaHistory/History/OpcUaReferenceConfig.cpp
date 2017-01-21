@@ -59,4 +59,11 @@ namespace OpcUaHistory
 		return service_;
 	}
 
+	bool
+	OpcUaReferenceConfig::decode(Config& config)
+	{
+		// FIXME: todo
+		return true;
+	}
+
 }
