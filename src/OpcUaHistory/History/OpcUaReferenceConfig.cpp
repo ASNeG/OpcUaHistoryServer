@@ -15,6 +15,8 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
+
+#include <boost/algorithm/string.hpp>
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaHistory/History/OpcUaReferenceConfig.h"
 
@@ -62,7 +64,48 @@ namespace OpcUaHistory
 	bool
 	OpcUaReferenceConfig::decode(Config& config)
 	{
-		// FIXME: todo
+		// get Service attribute
+		std::string service;
+		if (!config.getConfigParameter("<xmlattr>.Service", service)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Element", elementPrefix_)
+				.parameter("Attribute", "Service")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+		boost::to_upper(service);
+		if (service == "READ") service_ = Read;
+		else if (service == "WRITE") service_ = Write;
+		else if (service == "HREAD") service_ = HRead;
+		else if (service == "HWRITE") service_ = HWrite;
+		else if (service == "MON") service_ = Mon;
+		else {
+			Log(Error, "attribute error in config file")
+				.parameter("Element", elementPrefix_)
+				.parameter("Attribute", "Service")
+				.parameter("Value", service)
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		// get NodeId attribute
+		std::string nodeIdStr;
+		if (!config.getConfigParameter("<xmlattr>.NodeId", nodeIdStr)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Element", elementPrefix_)
+				.parameter("Attribute", "NodeId")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+		if (!nodeId_.fromString(nodeIdStr)) {
+			Log(Error, "attribute error in config file")
+				.parameter("Element", elementPrefix_)
+				.parameter("Attribute", "NodeId")
+				.parameter("Value", service)
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
 		return true;
 	}
 

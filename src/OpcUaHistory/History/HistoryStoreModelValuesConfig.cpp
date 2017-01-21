@@ -127,22 +127,6 @@ namespace OpcUaHistory
 		return true;
 	}
 
-
-#if 0
-	<Values>
-		<NamespaceUris>
-		    <Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
-			<Uri>http://ASNeG.de/HistoryServer/</Uri>
-	    </NamespaceUris>
-
-		<Value Name="SByteValue">
-        	<Server Operation="HRead"  NodeId="ns=1;i=200"/>
-        	<Server Operation="HWrite" NodeId="ns=1;i=200"/>
-        	<Server Operation="Mon"    NodeId="ns=1;i=200"/>
-        	<Client Operation="Mon"    NodeId="ns=2;i=200" MonItem="Client.Subst.MonItem"/>
-		</Value
-#endif
-
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	//
