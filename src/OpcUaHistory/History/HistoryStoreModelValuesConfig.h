@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -15,28 +15,29 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include <boost/algorithm/string.hpp>
-#include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryStoreModelConfig.h"
+#ifndef __OpcUaHistory_HistorySoreModelConfig_h__
+#define __OpcUaHistory_HistorySoreModelConfig_h__
+
+#include "OpcUaStackCore/Base/Config.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	HistoryStoreModelConfig::HistoryStoreModelConfig(void)
+	class HistoryStoreModelValuesConfig
 	{
-	}
+	  public:
+		HistoryStoreModelValuesConfig(void);
+		~HistoryStoreModelValuesConfig(void);
 
-	HistoryStoreModelConfig::~HistoryStoreModelConfig(void)
-	{
-	}
+		bool decode(const std::string& configFileName, Config& config);
 
-	bool
-	HistoryStoreModelConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
-	{
-		// FIXME: todo
-		return true;
-	}
+	  private:
+		std::string configFileName_;
+
+	};
 
 }
+
+#endif

@@ -17,23 +17,24 @@
 
 #include <boost/algorithm/string.hpp>
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryStoreModelConfig.h"
+#include "OpcUaHistory/History/HistoryStoreModelValuesConfig.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
 
-	HistoryStoreModelConfig::HistoryStoreModelConfig(void)
+	HistoryStoreModelValuesConfig::HistoryStoreModelValuesConfig(void)
+	: configFileName_("")
 	{
 	}
 
-	HistoryStoreModelConfig::~HistoryStoreModelConfig(void)
+	HistoryStoreModelValuesConfig::~HistoryStoreModelValuesConfig(void)
 	{
 	}
 
 	bool
-	HistoryStoreModelConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
+	HistoryStoreModelValuesConfig::decode(const std::string& configFileName, Config& config)
 	{
 		// FIXME: todo
 		return true;
