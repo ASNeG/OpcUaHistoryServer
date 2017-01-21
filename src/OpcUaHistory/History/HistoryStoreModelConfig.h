@@ -28,6 +28,7 @@ namespace OpcUaHistory
 	class HistoryStoreModelConfig
 	{
 	  public:
+
 		HistoryStoreModelConfig(void);
 		~HistoryStoreModelConfig(void);
 

@@ -26,6 +26,7 @@ namespace OpcUaHistory
 
 	HistoryStoreModelValuesConfig::HistoryStoreModelValuesConfig(void)
 	: configFileName_("")
+	, namespaceUris_()
 	{
 	}
 
@@ -36,8 +37,73 @@ namespace OpcUaHistory
 	bool
 	HistoryStoreModelValuesConfig::decode(const std::string& configFileName, Config& config)
 	{
+		configFileName_ = configFileName;
+
+		// get Values element
+		boost::optional<Config> valuesConfig = config.getChild("Values");
+		if (!valuesConfig) {
+			Log(Error, "element missing in config file")
+				.parameter("Parameter", "HistoryStoreModel.Values")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		// decode NamespaceUris element
+		if (!decodeNamespaceUris(*valuesConfig)) {
+			return false;
+		}
+
+		// decode Values element
+		if (!decodeValues(*valuesConfig)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	HistoryStoreModelValuesConfig::decodeNamespaceUris(Config& config)
+	{
+		// get NamespaceUris element
+		boost::optional<Config> namespaceUris = config.getChild("NamespaceUris");
+		if (!namespaceUris) {
+			Log(Error, "element missing in config file")
+				.parameter("Parameter", "HistoryStoreModel.Values.NamespaceUris")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		// get Uri elements
+		config.getValues("Uri", namespaceUris_);
+		if (namespaceUris_.size() == 0) {
+			Log(Error, "element missing in config file")
+				.parameter("Parameter", "HistoryStoreModel.Values.NamespaceUris.Uri");
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	HistoryStoreModelValuesConfig::decodeValues(Config& config)
+	{
 		// FIXME: todo
 		return true;
 	}
+
+#if 0
+	<Values>
+		<NamespaceUris>
+		    <Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
+			<Uri>http://ASNeG.de/HistoryServer/</Uri>
+	    </NamespaceUris>
+
+		<Value Name="SByteValue">
+        	<Server Operation="HRead"  NodeId="ns=1;i=200"/>
+        	<Server Operation="HWrite" NodeId="ns=1;i=200"/>
+        	<Server Operation="Mon"    NodeId="ns=1;i=200"/>
+        	<Client Operation="Mon"    NodeId="ns=2;i=200" MonItem="Client.Subst.MonItem"/>
+		</Value
+#endif
 
 }

@@ -28,13 +28,19 @@ namespace OpcUaHistory
 	class HistoryStoreModelValuesConfig
 	{
 	  public:
+		typedef std::vector<std::string> NamespaceUris;
+
 		HistoryStoreModelValuesConfig(void);
 		~HistoryStoreModelValuesConfig(void);
 
 		bool decode(const std::string& configFileName, Config& config);
 
 	  private:
+		bool decodeNamespaceUris(Config& config);
+		bool decodeValues(Config& config);
+
 		std::string configFileName_;
+		NamespaceUris namespaceUris_;
 
 	};
 
