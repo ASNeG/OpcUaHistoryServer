@@ -52,6 +52,9 @@ namespace OpcUaHistory
 		HistoryStoreModelValuesConfig(void);
 		~HistoryStoreModelValuesConfig(void);
 
+		NamespaceUris& namespaceUris(void);
+		HistoryStoreModelValueConfig::Vec& valueVec(void);
+
 		bool decode(const std::string& configFileName, Config& config);
 
 	  private:

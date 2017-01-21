@@ -98,6 +98,18 @@ namespace OpcUaHistory
 	{
 	}
 
+	HistoryStoreModelValuesConfig::NamespaceUris&
+	HistoryStoreModelValuesConfig::namespaceUris(void)
+	{
+		return namespaceUris_;
+	}
+
+	HistoryStoreModelValueConfig::Vec&
+	HistoryStoreModelValuesConfig::valueVec(void)
+	{
+		return valueVec_;
+	}
+
 	bool
 	HistoryStoreModelValuesConfig::decode(const std::string& configFileName, Config& config)
 	{
