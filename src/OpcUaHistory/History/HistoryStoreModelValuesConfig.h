@@ -25,6 +25,25 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
+    class HistoryStoreModelValueConfig
+    {
+      public:
+    	typedef boost::shared_ptr<HistoryStoreModelValueConfig> SPtr;
+    	typedef std::vector<HistoryStoreModelValueConfig::SPtr> Vec;
+
+    	HistoryStoreModelValueConfig(void);
+    	~HistoryStoreModelValueConfig(void);
+
+    	void configFileName(const std::string& configFileName);
+
+    	bool decode(Config& config);
+
+      private:
+    	std::string configFileName_;
+    	std::string name_;
+    };
+
+
 	class HistoryStoreModelValuesConfig
 	{
 	  public:
@@ -41,6 +60,7 @@ namespace OpcUaHistory
 
 		std::string configFileName_;
 		NamespaceUris namespaceUris_;
+		HistoryStoreModelValueConfig::Vec valueVec_;
 
 	};
 
