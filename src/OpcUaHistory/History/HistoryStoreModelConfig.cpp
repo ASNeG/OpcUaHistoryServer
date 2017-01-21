@@ -25,6 +25,7 @@ namespace OpcUaHistory
 {
 
 	HistoryStoreModelConfig::HistoryStoreModelConfig(void)
+	: fileHistoryStoreConfig_()
 	{
 	}
 
@@ -32,10 +33,47 @@ namespace OpcUaHistory
 	{
 	}
 
+	FileHistoryStoreConfig&
+	HistoryStoreModelConfig::fileHistoryStoreconfig(void)
+	{
+		return fileHistoryStoreConfig_;
+	}
+
 	bool
 	HistoryStoreModelConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
 	{
+		bool success;
+
+		// read configuration file
+        Log(Info, "read configuration file")
+            .parameter("ConfigFileName", configFileName);
+		Config::SPtr config;
+		success = configXmlManager.registerConfiguration(configFileName, config);
+		if (!success) {
+			Log(Error, "read configuration file error")
+			   .parameter("ConfigFile", configFileName);
+			   return false;
+		}
+
+		// get HistoryStoreModel element
+		boost::optional<Config> child = config->getChild("HistoryStoreModel");
+		if (!child) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "HistoryStoreModel")
+				.parameter("ConfigFileName", configFileName);
+			return false;
+		}
+
+		// get history store configuration
+		fileHistoryStoreConfig_.configFileName(configFileName);
+		fileHistoryStoreConfig_.elementPrefix("HistoryStoreModel");
+		if (!fileHistoryStoreConfig_.decode(*child)) {
+			return false;
+		}
+
+		// get ...
 		// FIXME: todo
+
 		return true;
 	}
 

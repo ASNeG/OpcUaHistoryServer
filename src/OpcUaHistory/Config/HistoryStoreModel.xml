@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <HistoryStoreModel xmlns="http://ASNeG.de/HistoryStore.xsd">
 
-	<HistoryStoreModel>FileHistoryStore</HistoryStoreModel>
+	<HistoryStore>FileHistoryStore</HistoryStore>
 	
 	<FileHistoryStore>
 	

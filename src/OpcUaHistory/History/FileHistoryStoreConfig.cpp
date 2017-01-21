@@ -76,6 +76,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	FileHistoryStoreConfig::FileHistoryStoreConfig(void)
 	: activate_(false)
+	, configFileName_("")
 	, baseFolder_("")
 	, readConfig_()
 	, writeConfig_()
@@ -84,6 +85,18 @@ namespace OpcUaHistory
 
 	FileHistoryStoreConfig::~FileHistoryStoreConfig(void)
 	{
+	}
+
+	void
+	FileHistoryStoreConfig::configFileName(const std::string& configFileName)
+	{
+		configFileName_ = configFileName;
+	}
+
+	void
+	FileHistoryStoreConfig::elementPrefix(const std::string& elementPrefix)
+	{
+		elementPrefix_ = elementPrefix;
 	}
 
 	bool
@@ -111,29 +124,14 @@ namespace OpcUaHistory
 	}
 
 	bool
-	FileHistoryStoreConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
+	FileHistoryStoreConfig::decode(Config& config)
 	{
-		bool success;
-
-		//
-		// read configuration file
-		//
-        Log(Info, "read configuration file")
-            .parameter("ConfigFileName", configFileName);
-		Config::SPtr config;
-		success = configXmlManager.registerConfiguration(configFileName, config);
-		if (!success) {
-			Log(Error, "read configuration file error")
-			   .parameter("ConfigFile", configFileName);
-			   return false;
-		}
-
 		// read history model information
 		std::string historyStoreModel = "";
-		if (!config->getConfigParameter("HistoryStore.HistoryStoreModel", historyStoreModel)) {
-			Log(Error, "parameter missing config file")
-				.parameter("Parameter", "HistoryStore.HistoryStoreModel")
-				.parameter("ConfigFile", configFileName);
+		if (!config.getConfigParameter("HistoryStoreModel", historyStoreModel)) {
+			Log(Error, "element missing config file")
+				.parameter("Element", "HistoryStoreModel.HistoryStore.HistoryStoreModel")
+				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 		if (historyStoreModel != "FileHistoryStore") {
@@ -143,32 +141,32 @@ namespace OpcUaHistory
 		activate_ = true;
 
 		// get file history store
-		boost::optional<Config> child = config->getChild("HistoryStore.FileHistoryStore");
+		boost::optional<Config> child = config.getChild("FileHistoryStore");
 		if (!child) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "HistoryStore.FileHistoryStore")
-				.parameter("ConfigFile", configFileName);
+			Log(Error, "element missing in config file")
+				.parameter("Element", "FileHistoryStore")
+				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 
 		// get base configuration
 		if (!decodeFileStoreBase(*child)) {
 			Log(Error, "read configuration file error")
-				.parameter("ConfigFile", configFileName);
+				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 
 		// parse read configuration
 		boost::optional<Config> childRead = child->getChild("ReadFileAccess");
 		if (!child) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "HistoryStore.FileHistoryStore.ReadFileAccess")
-				.parameter("ConfigFile", configFileName);
+			Log(Error, "element missing in config file")
+				.parameter("Element", "FileHistoryStore.ReadFileAccess")
+				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 		if (!decodeFileStoreRead(*childRead)) {
 			Log(Error, "read configuration file error")
-				.parameter("ConfigFile", configFileName);
+				.parameter("ConfigFile", configFileName_);
 			return false;
 		}
 
@@ -177,12 +175,12 @@ namespace OpcUaHistory
 		if (!child) {
 			Log(Error, "parameter missing in config file")
 				.parameter("Parameter", "HistoryStore.FileHistoryStore.WriteFileAccess")
-				.parameter("ConfigFile", configFileName);
+				.parameter("ConfigFile", configFileName_);
 			return false;
 		}
 		if (!decodeFileStoreWrite(*childWrite)) {
 			Log(Error, "read configuration file error")
-				.parameter("ConfigFile", configFileName);
+				.parameter("ConfigFile", configFileName_);
 			return false;
 		}
 

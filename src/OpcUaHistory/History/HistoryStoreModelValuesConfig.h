@@ -36,6 +36,7 @@ namespace OpcUaHistory
     	~HistoryStoreModelValueConfig(void);
 
     	void configFileName(const std::string& configFileName);
+    	void elementPrefix(const std::string& elementPrefix);
     	std::string& name(void);
     	OpcUaReferenceConfig::Vec& serverVec(void);
     	OpcUaReferenceConfig::Vec& clientVec(void);
@@ -44,6 +45,7 @@ namespace OpcUaHistory
 
       private:
     	std::string configFileName_;
+    	std::string elementPrefix_;
     	std::string name_;
     	OpcUaReferenceConfig::Vec serverVec_;
     	OpcUaReferenceConfig::Vec clientVec_;

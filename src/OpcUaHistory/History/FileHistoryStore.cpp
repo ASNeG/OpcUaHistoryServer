@@ -78,6 +78,7 @@ namespace OpcUaHistory
     bool
     FileHistoryStore::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
     {
+#if 0
     	if (!fileHistoryConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
@@ -85,6 +86,7 @@ namespace OpcUaHistory
     	if (!fileHistoryConfig_.activate()) {
     		return true;
     	}
+#endif
 
     	// startup reader and writer
     	return startupFileStore();

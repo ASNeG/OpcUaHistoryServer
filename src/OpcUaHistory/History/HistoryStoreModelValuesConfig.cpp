@@ -34,6 +34,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	HistoryStoreModelValueConfig::HistoryStoreModelValueConfig(void)
 	: configFileName_("")
+	, elementPrefix_("")
 	, name_("")
 	, serverVec_()
 	, clientVec_()
@@ -44,6 +45,12 @@ namespace OpcUaHistory
 	HistoryStoreModelValueConfig::configFileName(const std::string& configFileName)
 	{
 		configFileName_ = configFileName;
+	}
+
+	void
+	HistoryStoreModelValueConfig::elementPrefix(const std::string& elementPrefix)
+	{
+		elementPrefix_ = elementPrefix;
 	}
 
 	std::string&
