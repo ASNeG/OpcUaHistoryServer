@@ -33,7 +33,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	OpcUaMonReferenceConfig::OpcUaMonReferenceConfig(void)
-	: configFileName_("")
+	: Object()
+	, configFileName_("")
 	, elementPrefix_("")
 	, handle_("")
 	{
@@ -64,7 +65,15 @@ namespace OpcUaHistory
 	bool
 	OpcUaMonReferenceConfig::decode(Config& config)
 	{
-		// FIXME: todo
+		// get Handle attribute
+		if (!config.getConfigParameter("<xmlattr>.Handle", handle_)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Element", elementPrefix_)
+				.parameter("Attribute", "Handle")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -81,6 +90,7 @@ namespace OpcUaHistory
 	, elementPrefix_("")
 	, nodeId_()
 	, service_(None)
+	, extension_()
 	{
 	}
 
@@ -110,6 +120,12 @@ namespace OpcUaHistory
 	OpcUaReferenceConfig::service(void)
 	{
 		return service_;
+	}
+
+	Object::SPtr&
+	OpcUaReferenceConfig::extension(void)
+	{
+		return extension_;
 	}
 
 	bool
@@ -157,8 +173,13 @@ namespace OpcUaHistory
 			return false;
 		}
 
+		// add monitored item extension
 		if (service_ == Mon) {
-			// FIXME: todo
+			OpcUaMonReferenceConfig::SPtr mon = constructSPtr<OpcUaMonReferenceConfig>();
+			mon->configFileName(configFileName_);
+			mon->elementPrefix(elementPrefix_);
+			extension_ = mon;
+			return mon->decode(config);
 		}
 
 		return true;

@@ -27,9 +27,11 @@ namespace OpcUaHistory
 {
 
 	class OpcUaMonReferenceConfig
-	: Object
+	: public Object
 	{
 	  public:
+		typedef boost::shared_ptr<OpcUaMonReferenceConfig> SPtr;
+
 		OpcUaMonReferenceConfig(void);
 		~OpcUaMonReferenceConfig(void);
 
@@ -68,6 +70,7 @@ namespace OpcUaHistory
 		void elementPrefix(const std::string& elementPrefix);
 		OpcUaNodeId& nodeId(void);
 		Service service(void);
+		Object::SPtr& extension(void);
 
 		bool decode(Config& config);
 
@@ -76,6 +79,8 @@ namespace OpcUaHistory
 		std::string elementPrefix_;
 		OpcUaNodeId nodeId_;
 		Service service_;
+
+		Object::SPtr extension_;
 	};
 
 }
