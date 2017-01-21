@@ -31,4 +31,22 @@ namespace OpcUaHistory
 	{
 	}
 
+	void
+	OpcUaReferenceConfig::configFileName(const std::string& configFileName)
+	{
+		configFileName_ = configFileName;
+	}
+
+	OpcUaNodeId&
+	OpcUaReferenceConfig::nodeId(void)
+	{
+		return nodeId_;
+	}
+
+	OpcUaReferenceConfig::Service
+	OpcUaReferenceConfig::service(void)
+	{
+		return service_;
+	}
+
 }

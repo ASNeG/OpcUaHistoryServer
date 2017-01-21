@@ -18,6 +18,8 @@
 #ifndef __OpcUaHistory_OpcUaReferenceConfig_h__
 #define __OpcUaHistory_OpcUaReferenceConfig_h__
 
+#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+
 using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
@@ -26,10 +28,27 @@ namespace OpcUaHistory
 	class OpcUaReferenceConfig
 	{
 	  public:
+		typedef enum
+		{
+			None,
+			Read,
+			Write,
+			Mon,
+			HRead,
+			HWrite
+		} Service;
+
 		OpcUaReferenceConfig(void);
 		~OpcUaReferenceConfig(void);
 
+		void configFileName(const std::string& configFileName);
+		OpcUaNodeId& nodeId(void);
+		Service service(void);
+
 	  private:
+		std::string configFileName_;
+		OpcUaNodeId nodeId_;
+		Service service_;
 	};
 
 }
