@@ -204,7 +204,24 @@ namespace OpcUaHistory
     bool
     HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value)
     {
+    	// read server nodes
+    	OpcUaReferenceConfig::Vec::iterator it;
+    	OpcUaReferenceConfig::Vec& refVec = value->serverVec();
 
+    	for (it = refVec.begin(); it != refVec.end(); it++) {
+    		OpcUaReferenceConfig::SPtr ref = *it;
+
+    		if (!registerServerCallbacks(ref)) {
+    			return false;
+    		}
+    	}
+
+    	return true;
+    }
+
+    bool
+    HistoryServer::registerServerCallbacks(OpcUaReferenceConfig::SPtr& ref)
+    {
 
 #if 0
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
