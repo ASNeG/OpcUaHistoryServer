@@ -211,7 +211,7 @@ namespace OpcUaHistory
     	for (it = refVec.begin(); it != refVec.end(); it++) {
     		OpcUaReferenceConfig::SPtr ref = *it;
 
-    		if (!registerServerCallbacks(ref)) {
+    		if (!registerServerCallbacks(value, ref)) {
     			return false;
     		}
     	}
@@ -220,48 +220,48 @@ namespace OpcUaHistory
     }
 
     bool
-    HistoryServer::registerServerCallbacks(OpcUaReferenceConfig::SPtr& ref)
+    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value, OpcUaReferenceConfig::SPtr& ref)
     {
-
-#if 0
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
 	  	RegisterForwardResponse::SPtr res = trx->response();
 	  	
         req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
 	  	req->forwardInfoSync()->writeHService().setCallback(hWriteCallback_);
-	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
+	  	req->nodesToRegister()->resize(1);
 
-	  	uint32_t pos = 0;
-	  	ServerNodeConfig::Map::iterator it;
-	  	for (it = historyServerConfig_.serverNodeConfigMap().begin(); it != historyServerConfig_.serverNodeConfigMap().end(); it++) {
-	  		ServerNodeConfig::SPtr snc = it->second;
+	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
+	    *nodeId = ref->nodeId();
 
-	  		OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
-	  		*nodeId = snc->nodeId();
+  		NamespaceMap::iterator it;
+  		it = namespaceMap_.find(nodeId->namespaceIndex());
+  		if (it == namespaceMap_.end()) {
+  			Log(Error, "namespace index not exist in opc ua model")
+  				.parameter("NodeId", *nodeId);
+  			return false;
+  		}
+  		nodeId->namespaceIndex(it->second);
 
-	  		NamespaceMap::iterator it;
-	  		it = namespaceMap_.find(nodeId->namespaceIndex());
-	  		if (it == namespaceMap_.end()) {
-	  			Log(Error, "namespace index not exist in opc ua model")
-	  				.parameter("NodeId", *nodeId);
-	  			continue;
-	  		}
-	  		nodeId->namespaceIndex(it->second);
+  		req->nodesToRegister()->set(0, nodeId);
 
-	  		req->nodesToRegister()->set(pos, nodeId);
-	  		pos++;
-
-	  		// add item to history server item map
-	  		Object::SPtr contextRead;
-	  		Object::SPtr contextWrite;
-	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), contextRead, HistoryStoreIf::Read);
-	  		historyStoreIf_->getHistoryStoreContext(snc->valueName(), contextWrite, HistoryStoreIf::Write);
-	  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
-	  		historyServerItem->contextRead(contextRead);
-	  		historyServerItem->contextWrite(contextWrite);
-	  		historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
-	  	}
+  		// add item to history server item map
+  		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
+  		if (ref->service() == OpcUaReferenceConfig::HRead) {
+  			Object::SPtr contextRead;
+  			historyStoreIf_->getHistoryStoreContext(value->name(), contextRead, HistoryStoreIf::Read);
+  			historyServerItem->contextRead(contextRead);
+  			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
+  		}
+  		else if (ref->service() == OpcUaReferenceConfig::HWrite) {
+  			Object::SPtr contextWrite;
+  			historyStoreIf_->getHistoryStoreContext(value->name(), contextWrite, HistoryStoreIf::Write);
+  			historyServerItem->contextWrite(contextWrite);
+  			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
+  		}
+  		else {
+  			// FIXME: todo monitoring
+  			return true;
+  		}
 
 	  	applicationServiceIf_->sendSync(trx);
 	  	if (trx->statusCode() != Success) {
@@ -270,17 +270,18 @@ namespace OpcUaHistory
 	  		return false;
 	  	}
 
-	  	for (pos = 0; pos < res->statusCodeArray()->size(); pos++) {
-	  		OpcUaStatusCode statusCode;
-	  		res->statusCodeArray()->get(pos, statusCode);
-	  		if (statusCode != Success) {
-		  		Log(Error, "register forward value error")
-		  			.parameter("Idx", pos)
-		  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
-	  			return false;
-	  		}
+	  	if (res->statusCodeArray()->size() != 1) {
+	  		Log(Error, "register forward result error");
+	  		return false;
 	  	}
-#endif
+
+  		OpcUaStatusCode statusCode;
+  		res->statusCodeArray()->get(0, statusCode);
+  		if (statusCode != Success) {
+	  		Log(Error, "register forward value error")
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+  			return false;
+  		}
 
     	return true;
     }
