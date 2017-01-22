@@ -55,7 +55,15 @@ namespace OpcUaHistory
 	class HistoryStoreModelValuesConfig
 	{
 	  public:
+    	typedef enum
+    	{
+    		None,
+    		Client,
+    		Server,
+    		ClientServer
+    	} NamespaceType;
 		typedef std::vector<std::string> NamespaceUris;
+		typedef std::vector<NamespaceType> NamespaceTypes;
 
 		HistoryStoreModelValuesConfig(void);
 		~HistoryStoreModelValuesConfig(void);
@@ -63,6 +71,7 @@ namespace OpcUaHistory
     	void configFileName(const std::string& configFileName);
     	void elementPrefix(const std::string& elementPrefix);
 		NamespaceUris& namespaceUris(void);
+		NamespaceTypes& namespaceTypes(void);
 		HistoryStoreModelValueConfig::Vec& valueVec(void);
 
 		bool decode(Config& config);
@@ -70,10 +79,12 @@ namespace OpcUaHistory
 	  private:
 		bool decodeNamespaceUris(Config& config);
 		bool decodeValues(Config& config);
+		bool namespaceCheck(HistoryStoreModelValueConfig::SPtr& value);
 
 		std::string configFileName_;
 		std::string elementPrefix_;
 		NamespaceUris namespaceUris_;
+		NamespaceTypes namespaceTypes_;
 		HistoryStoreModelValueConfig::Vec valueVec_;
 
 	};

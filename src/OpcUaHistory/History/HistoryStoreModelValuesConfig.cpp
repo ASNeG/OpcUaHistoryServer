@@ -145,6 +145,7 @@ namespace OpcUaHistory
 	: configFileName_("")
 	, elementPrefix_("")
 	, namespaceUris_()
+	, namespaceTypes_()
 	, valueVec_()
 	{
 	}
@@ -169,6 +170,12 @@ namespace OpcUaHistory
 	HistoryStoreModelValuesConfig::namespaceUris(void)
 	{
 		return namespaceUris_;
+	}
+
+	HistoryStoreModelValuesConfig::NamespaceTypes&
+	HistoryStoreModelValuesConfig::namespaceTypes(void)
+	{
+		return namespaceTypes_;
 	}
 
 	HistoryStoreModelValueConfig::Vec&
@@ -218,8 +225,14 @@ namespace OpcUaHistory
 		config.getValues("Uri", namespaceUris_);
 		if (namespaceUris_.size() == 0) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.NamespaceUris.Uri");
+				.parameter("Element", "HistoryStoreModel.Values.NamespaceUris.Uri")
+				.parameter("ConfigFileName", configFileName_);
 			return false;
+		}
+
+		// create namespace types
+		for (uint32_t idx=0; idx<namespaceUris_.size(); idx++) {
+			namespaceTypes_.push_back(None);
 		}
 
 		return true;
@@ -240,6 +253,7 @@ namespace OpcUaHistory
 		std::vector<Config>::iterator it;
 		for (it = childs.begin(); it != childs.end(); it++) {
 
+			// get value element
 			HistoryStoreModelValueConfig::SPtr value = constructSPtr<HistoryStoreModelValueConfig>();
 			value->configFileName(configFileName_);
 			value->configFileName(elementPrefix_ + ".Value");
@@ -247,6 +261,61 @@ namespace OpcUaHistory
 				return false;
 			}
 			valueVec_.push_back(value);
+
+			// check namespace index from NodeId element
+			if (!namespaceCheck(value)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool
+	HistoryStoreModelValuesConfig::namespaceCheck(HistoryStoreModelValueConfig::SPtr& value)
+	{
+		OpcUaReferenceConfig::Vec::iterator it;
+
+		// check server namespace index
+		for (it = value->serverVec().begin(); it != value->serverVec().end(); it++) {
+			OpcUaReferenceConfig::SPtr ref = *it;
+			uint32_t namespaceIndex = ref->nodeId().namespaceIndex();
+
+			if (namespaceIndex > namespaceUris_.size()) {
+				Log(Error, "invalid namespace index in config file")
+					.parameter("Element", "HistoryStoreModel.Values.Value.NodeId")
+					.parameter("NodeId", ref->nodeId().toString())
+					.parameter("ConfigFileName", configFileName_);
+				return false;
+			}
+
+			if (namespaceTypes_[namespaceIndex-1] == None) {
+				namespaceTypes_[namespaceIndex-1] = Server;
+			}
+			else if (namespaceTypes_[namespaceIndex-1] == Client) {
+				namespaceTypes_[namespaceIndex-1] = ClientServer;
+			}
+		}
+
+		// check client namespace index
+		for (it = value->clientVec().begin(); it != value->clientVec().end(); it++) {
+			OpcUaReferenceConfig::SPtr ref = *it;
+			uint32_t namespaceIndex = ref->nodeId().namespaceIndex();
+
+			if (namespaceIndex > namespaceUris_.size()) {
+				Log(Error, "invalid namespace index in config file")
+					.parameter("Element", "HistoryStoreModel.Values.Value.NodeId")
+					.parameter("NodeId", ref->nodeId().toString())
+					.parameter("ConfigFileName", configFileName_);
+				return false;
+			}
+
+			if (namespaceTypes_[namespaceIndex-1] == None) {
+				namespaceTypes_[namespaceIndex-1] = Client;
+			}
+			else if (namespaceTypes_[namespaceIndex-1] == Server) {
+				namespaceTypes_[namespaceIndex-1] = ClientServer;
+			}
 		}
 
 		return true;

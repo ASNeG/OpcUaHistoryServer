@@ -75,7 +75,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryServer::HistoryServer(void)
-	: historyServerConfig_()
+	: historyStoreModelConfig_()
 	, historyStoreIf_(nullptr)
 	, applicationServiceIf_(nullptr)
 	, namespaceMap_()
@@ -104,7 +104,7 @@ namespace OpcUaHistory
     HistoryServer::startup(std::string& fileName, ConfigXmlManager& configXmlManager)
     {
     	// parse server configuration file
-    	if (!historyServerConfig_.decode(fileName, configXmlManager)) {
+    	if (!historyStoreModelConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
 

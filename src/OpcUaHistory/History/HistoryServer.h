@@ -19,12 +19,14 @@
 #define __OpcUaHistory_HistoryServer_h__
 
 #include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackCore/Application/ApplicationHReadContext.h"
 #include "OpcUaStackCore/Application/ApplicationHWriteContext.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
-#include "OpcUaHistory/History/HistoryServerConfig.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
+#include "OpcUaHistory/History/HistoryStoreIf.h"
+#include "OpcUaHistory/History/HistoryStoreModelConfig.h"
+
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -87,7 +89,7 @@ namespace OpcUaHistory
 	    bool getNamespaceInfo(void);
 	    bool registerCallbacks(void);
 
-	    HistoryServerConfig historyServerConfig_;
+	    HistoryStoreModelConfig historyStoreModelConfig_;
 	    HistoryStoreIf* historyStoreIf_;
 	    ApplicationServiceIf* applicationServiceIf_;
 	    NamespaceMap namespaceMap_;
