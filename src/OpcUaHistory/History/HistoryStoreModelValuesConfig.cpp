@@ -143,6 +143,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	HistoryStoreModelValuesConfig::HistoryStoreModelValuesConfig(void)
 	: configFileName_("")
+	, elementPrefix_("")
 	, namespaceUris_()
 	, valueVec_()
 	{
@@ -150,6 +151,18 @@ namespace OpcUaHistory
 
 	HistoryStoreModelValuesConfig::~HistoryStoreModelValuesConfig(void)
 	{
+	}
+
+	void
+	HistoryStoreModelValuesConfig::configFileName(const std::string& configFileName)
+	{
+		configFileName_ = configFileName;
+	}
+
+	void
+	HistoryStoreModelValuesConfig::elementPrefix(const std::string& elementPrefix)
+	{
+		elementPrefix_ = elementPrefix;
 	}
 
 	HistoryStoreModelValuesConfig::NamespaceUris&
@@ -165,10 +178,8 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryStoreModelValuesConfig::decode(const std::string& configFileName, Config& config)
+	HistoryStoreModelValuesConfig::decode(Config& config)
 	{
-		configFileName_ = configFileName;
-
 		// get Values element
 		boost::optional<Config> valuesConfig = config.getChild("Values");
 		if (!valuesConfig) {
@@ -231,6 +242,7 @@ namespace OpcUaHistory
 
 			HistoryStoreModelValueConfig::SPtr value = constructSPtr<HistoryStoreModelValueConfig>();
 			value->configFileName(configFileName_);
+			value->configFileName(elementPrefix_ + ".Value");
 			if (!value->decode(*it)) {
 				return false;
 			}

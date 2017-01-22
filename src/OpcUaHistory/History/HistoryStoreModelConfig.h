@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaHistory/History/FileHistoryStoreConfig.h"
+#include "OpcUaHistory/History/HistoryStoreModelValuesConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -33,12 +34,14 @@ namespace OpcUaHistory
 		HistoryStoreModelConfig(void);
 		~HistoryStoreModelConfig(void);
 
-		FileHistoryStoreConfig& fileHistoryStoreconfig(void);
+		FileHistoryStoreConfig& fileHistoryStoreConfig(void);
+		HistoryStoreModelValuesConfig& historyStoreModelValuesConfig(void);
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
 	  private:
 		FileHistoryStoreConfig fileHistoryStoreConfig_;
+		HistoryStoreModelValuesConfig historyStoreModelValuesConfig_;
 
 	};
 

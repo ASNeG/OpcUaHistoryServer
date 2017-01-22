@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -15,8 +15,8 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_HistorySoreModelConfig_h__
-#define __OpcUaHistory_HistorySoreModelConfig_h__
+#ifndef __OpcUaHistory_HistoryStoreModelValuesConfig_h__
+#define __OpcUaHistory_HistoryStoreModelValuesConfig_h__
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaHistory/History/OpcUaReferenceConfig.h"
@@ -60,16 +60,19 @@ namespace OpcUaHistory
 		HistoryStoreModelValuesConfig(void);
 		~HistoryStoreModelValuesConfig(void);
 
+    	void configFileName(const std::string& configFileName);
+    	void elementPrefix(const std::string& elementPrefix);
 		NamespaceUris& namespaceUris(void);
 		HistoryStoreModelValueConfig::Vec& valueVec(void);
 
-		bool decode(const std::string& configFileName, Config& config);
+		bool decode(Config& config);
 
 	  private:
 		bool decodeNamespaceUris(Config& config);
 		bool decodeValues(Config& config);
 
 		std::string configFileName_;
+		std::string elementPrefix_;
 		NamespaceUris namespaceUris_;
 		HistoryStoreModelValueConfig::Vec valueVec_;
 

@@ -26,6 +26,7 @@ namespace OpcUaHistory
 
 	HistoryStoreModelConfig::HistoryStoreModelConfig(void)
 	: fileHistoryStoreConfig_()
+	, historyStoreModelValuesConfig_()
 	{
 	}
 
@@ -33,8 +34,14 @@ namespace OpcUaHistory
 	{
 	}
 
+	HistoryStoreModelValuesConfig&
+	HistoryStoreModelConfig::historyStoreModelValuesConfig(void)
+	{
+		return historyStoreModelValuesConfig_;
+	}
+
 	FileHistoryStoreConfig&
-	HistoryStoreModelConfig::fileHistoryStoreconfig(void)
+	HistoryStoreModelConfig::fileHistoryStoreConfig(void)
 	{
 		return fileHistoryStoreConfig_;
 	}
@@ -55,7 +62,7 @@ namespace OpcUaHistory
 			   return false;
 		}
 
-		// get HistoryStoreModel element
+		// get HistoryStoreModel configuration
 		boost::optional<Config> child = config->getChild("HistoryStoreModel");
 		if (!child) {
 			Log(Error, "element missing in config file")
@@ -71,8 +78,12 @@ namespace OpcUaHistory
 			return false;
 		}
 
-		// get ...
-		// FIXME: todo
+		// get values configuration
+		historyStoreModelValuesConfig_.configFileName(configFileName);
+		historyStoreModelValuesConfig_.elementPrefix("HistoryStoreModel");
+		if (!historyStoreModelValuesConfig_.decode(*child)) {
+			return false;
+		}
 
 		return true;
 	}
