@@ -87,7 +87,8 @@ namespace OpcUaHistory
 	    	HistoryServerItem::SPtr& historyServerItem
 	    );
 	    bool getNamespaceInfo(void);
-	    bool registerCallbacks(void);
+	    bool registerServerCallbacks(void);
+	    bool registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value);
 
 	    HistoryStoreModelConfig historyStoreModelConfig_;
 	    HistoryStoreIf* historyStoreIf_;

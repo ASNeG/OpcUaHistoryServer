@@ -114,7 +114,7 @@ namespace OpcUaHistory
 		}
 
 		// register history read callback functions
-    	if (!registerCallbacks()) {
+    	if (!registerServerCallbacks()) {
     		return false;
     	}
 
@@ -143,9 +143,22 @@ namespace OpcUaHistory
 
 		// create namespace mapping table // historyServerConfig_
 		namespaceMap_.clear();
-		for (uint32_t idx=0; idx<historyServerConfig_.namespaceUris().size(); idx++) {
+
+		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris =
+				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
+		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes =
+				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
+
+		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
 			uint32_t namespaceIndex = idx+1;
-			std::string namespaceName = historyServerConfig_.namespaceUris()[idx];
+			std::string namespaceName = namespaceUris[idx];
+			if (
+				namespaceTypes[idx] != HistoryStoreModelValuesConfig::Server &&
+				namespaceTypes[idx] != HistoryStoreModelValuesConfig::ClientServer
+			)
+			{
+				continue;
+			}
 
 			bool found = false;
 			NamespaceInfoResponse::Index2NamespaceMap::iterator it;
@@ -172,13 +185,33 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryServer::registerCallbacks(void)
+    HistoryServer::registerServerCallbacks(void)
     {
+    	HistoryStoreModelValueConfig::Vec::iterator it;
+    	HistoryStoreModelValueConfig::Vec& values =
+    		historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+
+    	// read all history values
+    	for (it = values.begin(); it != values.end(); it++) {
+    		HistoryStoreModelValueConfig::SPtr value = *it;
+
+    		if (!registerServerCallbacks(value)) {
+    			return false;
+    		}
+    	}
+    }
+
+    bool
+    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value)
+    {
+
+
+#if 0
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
 	  	RegisterForwardResponse::SPtr res = trx->response();
 	  	
-                req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
+        req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
 	  	req->forwardInfoSync()->writeHService().setCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(historyServerConfig_.serverNodeConfigMap().size());
 
@@ -230,6 +263,7 @@ namespace OpcUaHistory
 	  			return false;
 	  		}
 	  	}
+#endif
 
     	return true;
     }
