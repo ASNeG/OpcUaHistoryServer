@@ -80,12 +80,10 @@ namespace OpcUaHistory
 
 	  private:
 		std::string id_;
-
 		uint32_t publishingInterval_;
 		uint32_t livetimeCount_;
 		uint32_t maxKeepAliveCount_;
 		uint32_t maxNotificationsPerPublish_;
-
 		ClientMonitoredItemConfig::Map clientMonitoredItemConfigMap_;
 	};
 
@@ -115,13 +113,12 @@ namespace OpcUaHistory
 		ClientConfig(void);
 		~ClientConfig(void);
 
-		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
-
 		std::string id(void);
 		void id(const std::string& id);
-		std::string serverUri(void);
-		uint32_t reconnectTimeout(void);
+		ClientEndpointConfig& clientEndpointConfig(void);
 		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
+
+		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
 	  private:
 		bool decodeEndpoint(Config::SPtr& config);
@@ -130,8 +127,7 @@ namespace OpcUaHistory
 		bool decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap);
 
 		std::string id_;
-		std::string serverUri_;
-		uint32_t reconnectTimeout_;
+		ClientEndpointConfig clientEndpointConfig_;
 		ClientSubscriptionConfig::Map clientSubscriptionConfigMap_;
 	};
 

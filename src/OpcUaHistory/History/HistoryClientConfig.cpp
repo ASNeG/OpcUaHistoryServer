@@ -388,8 +388,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	ClientConfig::ClientConfig(void)
 	: id_("")
-	, serverUri_("")
-	, reconnectTimeout_(5000)
+	, clientEndpointConfig_()
 	, clientSubscriptionConfigMap_()
 	{
 	}
@@ -410,10 +409,23 @@ namespace OpcUaHistory
 		id_ = id;
 	}
 
+	ClientEndpointConfig&
+	ClientConfig::clientEndpointConfig(void)
+	{
+		return clientEndpointConfig_;
+	}
+
+	ClientSubscriptionConfig::Map&
+	ClientConfig::clientSubscriptionMap(void)
+	{
+		return clientSubscriptionConfigMap_;
+	}
+
 	bool
 	ClientConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
 	{
 		bool success;
+		ConfigBase configBase;
 
 		//
 		// read configuration file
@@ -427,240 +439,62 @@ namespace OpcUaHistory
 			   .parameter("ConfigFile", configFileName);
 			   return false;
 		}
+		configBase.configFileName(configFileName);
 
 		// client id
 		if (!config->getConfigParameter("OpcUaClientModel.<xmlattr>.Id", id_)) {
 			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode")
-				.parameter("Attribute", "Id");
-			return false;
-		}
-
-		//
-		// decode Endpoint configuration
-		//
-		if (!decodeEndpoint(config)) {
-			Log(Error, "read configuration file error")
+				.parameter("Element", "OpcUaClientModel")
+				.parameter("Attribute", "Id")
 				.parameter("ConfigFile", configFileName);
 			return false;
 		}
 
-		//
-		// decode Subscription configuration
-		//
-		if (!decodeSubscriptions(config)) {
-			Log(Error, "read configuration file error")
-				.parameter("ConfigFile", configFileName);
-			return false;
-		}
-
-		return true;
-	}
-
-	bool
-	ClientConfig::decodeEndpoint(Config::SPtr& config)
-	{
-		bool success;
-
-		// read Endpoint
+		// client endpoint
 		boost::optional<Config> child = config->getChild("OpcUaClientModel.Endpoint");
 		if (!child) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Endpoint");
+			Log(Error, "element missing in config file")
+				.parameter("Element", "OpcUaClientMode.Endpoint")
+				.parameter("ConfigFile", configFileName);
+			return false;
+		}
+		configBase.elementPrefix("OpcUaClientModel.Endpoint");
+		if (!clientEndpointConfig_.decode(*child, configBase)) {
 			return false;
 		}
 
-		// read ServerUri
-		success = child->getConfigParameter("ServerUri", serverUri_);
-		if (!success) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientModel.Endpoint.ServerUri");
-			return false;
-		}
-
-		// sampling interval
-		success = child->getConfigParameter("ReconnectTimeout", reconnectTimeout_);
-		if (!success) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientModel.Endpoint.ReconnectTimeout");
-			return false;
-		}
-
-		return true;
-	}
-
-	bool
-	ClientConfig::decodeSubscriptions(Config::SPtr& config)
-	{
-		// read list of subscriptions
+		// client subscription
+		configBase.elementPrefix("OpcUaClientModel.Subscription");
 		std::vector<Config> childs;
 		config->getChilds("OpcUaClientModel.Subscription", childs);
 		if (childs.size() == 0) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription");
+			Log(Error, "element missing in config file")
+						.parameter("Element", "OpcUaClientMode.Subscription")
+						.parameter("ConfigFile", configFileName);
 			return false;
 		}
 
 		std::vector<Config>::iterator it;
 		for (it = childs.begin(); it != childs.end(); it++) {
-			if (!decodeSubscription(*it)) return false;
+			ClientSubscriptionConfig::SPtr subscription = constructSPtr<ClientSubscriptionConfig>();
+
+			if (!subscription->decode(*it, configBase)) {
+				return false;
+			}
+
+			ClientSubscriptionConfig::Map::iterator it;
+			it = clientSubscriptionConfigMap_.find(subscription->id());
+			if (it != clientSubscriptionConfigMap_.end()) {
+				Log(Error, "dublicate subscription id in config file")
+					.parameter("Element", configBase.elementPrefix())
+					.parameter("SubscriptionId", subscription->id())
+					.parameter("ConfigFileName", configBase.configFileName());
+				return false;
+			}
+			clientSubscriptionConfigMap_.insert(std::make_pair(subscription->id(), subscription));
 		}
 
 		return true;
 	}
 
-	bool
-	ClientConfig::decodeSubscription(Config& config)
-	{
-		ClientSubscriptionConfig::SPtr subscription = constructSPtr<ClientSubscriptionConfig>();
-
-		// subscription id
-		std::string id;
-		if (!config.getConfigParameter("<xmlattr>.Id", id)) {
-			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription")
-				.parameter("Attribute", "Id");
-			return false;
-		}
-		subscription->id(id);
-
-		// publishing interval
-		uint32_t publishingInterval;
-		if (!config.getConfigParameter("PublishingInterval", publishingInterval)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.PublishingInterval")
-				.parameter("SubscriptionId", id);
-			return false;
-		}
-		subscription->publisingInterval(publishingInterval);
-
-		// max keepalive count
-		uint32_t maxKeepAliveCount;
-		if (!config.getConfigParameter("MaxKeepAliveCount", maxKeepAliveCount)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MaxKeepAliveCount")
-				.parameter("SubscriptionId", id);
-			return false;
-		}
-		subscription->maxKeepAliveCount(maxKeepAliveCount);
-
-		// max notification per publish
-		uint32_t maxNotificationsPerPublish;
-		if (!config.getConfigParameter("MaxNotificationsPerPublish", maxNotificationsPerPublish)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MaxNotificationsPerPublish")
-				.parameter("SubscriptionId", id);
-			return false;
-		}
-
-		// monitored items
-		std::vector<Config> childs;
-		config.getChilds("MonitoredItem", childs);
-		if (childs.size() == 0) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList");
-			return false;
-		}
-
-		std::vector<Config>::iterator it;
-		for (it = childs.begin(); it != childs.end(); it++) {
-			if (!decodeMonitoredItems(*it, subscription->clientNodeConfigMap())) return false;
-		}
-
-		ClientSubscriptionConfig::Map::iterator it1;
-		it1 = clientSubscriptionConfigMap_.find(id);
-		if (it1 != clientSubscriptionConfigMap_.end()) {
-			Log(Error, "dublicate node name in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.Id")
-				.parameter("ValueName", id);
-			return false;
-		}
-		clientSubscriptionConfigMap_.insert(std::make_pair(id, subscription));
-
-		return true;
-	}
-
-	bool
-	ClientConfig::decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap)
-	{
-		ClientMonitoredItemConfig::SPtr monitoredItem = constructSPtr<ClientMonitoredItemConfig>();
-
-		// monitored item id
-		std::string id;
-		if (!config.getConfigParameter("<xmlattr>.Id", id)) {
-			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem")
-				.parameter("Attribute", "Id");
-			return false;
-		}
-		monitoredItem->id(id);
-
-		// sampling interval
-		uint32_t samplingInterval;
-		if (!config.getConfigParameter("SamplingInterval", samplingInterval)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.SamplingInterval")
-				.parameter("MonitoredItemId", id);
-			return false;
-		}
-		monitoredItem->samplingInterval(samplingInterval);
-
-		// queue size
-		uint32_t queueSize;
-		if (!config.getConfigParameter("QueueSize", queueSize)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.QueueSize")
-				.parameter("MonitoredItemId", id);
-			return false;
-		}
-		monitoredItem->queueSize(queueSize);
-
-		// data change filter
-		std::string dataChangeFilter;
-		DataChangeFilter dataChangeFilterType;
-		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
-			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
-				.parameter("MonitoredItemId", id);
-			return false;
-		}
-		if (dataChangeFilter == "status") {
-			dataChangeFilterType = Status;
-		}
-		else if (dataChangeFilter == "status-value") {
-			dataChangeFilterType = StatusValue;
-		}
-		else if (dataChangeFilter == "status-value-timestamp") {
-			dataChangeFilterType = StatusValueTimestamp;
-		}
-		else {
-			Log(Error, "parameter invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
-				.parameter("MonitoredItemId", id)
-				.parameter("DataChangeFilter", dataChangeFilter);
-			return false;
-		}
-		monitoredItem->dataChangeFilter(dataChangeFilterType);
-
-		clientMonitoredItemConfigMap.insert(std::make_pair(id, monitoredItem));
-		return true;
-	}
-
-	std::string
-	ClientConfig::serverUri(void)
-	{
-		return serverUri_;
-	}
-
-	uint32_t
-	ClientConfig::reconnectTimeout(void)
-	{
-		return reconnectTimeout_;
-	}
-
-	ClientSubscriptionConfig::Map&
-	ClientConfig::clientSubscriptionMap(void)
-	{
-		return clientSubscriptionConfigMap_;
-	}
 }
