@@ -56,6 +56,8 @@ namespace OpcUaHistory
     		return false;
     	}
 
+#if 0   // FIXME: todo
+
     	// configure client connection
     	clientConnection_.serverUri(historyClientConfig_.serverUri());
     	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
@@ -113,6 +115,8 @@ namespace OpcUaHistory
 
     	// open connection to server
     	return clientConnection_.connect();
+#endif
+    	return true;
     }
 
     bool

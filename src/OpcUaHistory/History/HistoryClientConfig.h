@@ -44,15 +44,10 @@ namespace OpcUaHistory
 		DataChangeFilter dataChangeFilter(void);
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
 		OpcUaNodeId& nodeId(void);
-		void nodeId(OpcUaNodeId& nodeId);
-		std::string& valueName(void);
-		void valueName(const std::string& valueName);
 
 	  private:
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
-		OpcUaNodeId nodeId_;
-		std::string valueName_;
 		DataChangeFilter dataChangeFilter_;
 	};
 
@@ -98,20 +93,16 @@ namespace OpcUaHistory
 
 		std::string serverUri(void);
 		uint32_t reconnectTimeout(void);
-		std::vector<std::string>& namespaceUris(void);
 		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
 
 	  private:
 		bool decodeEndpoint(Config::SPtr& config);
-		bool decodeNamespaceUris(Config::SPtr& config);
 		bool decodeSubscriptions(Config::SPtr& config);
 		bool decodeSubscription(Config& config);
-		bool decodeNodeList(Config& config, ClientMonitoredItemConfig::Map& clientNodeConfigMap);
-		bool decodeNode(Config& config, ClientMonitoredItemConfig& clientNodeConfig);
+		bool decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap);
 
 		std::string serverUri_;
 		uint32_t reconnectTimeout_;
-		std::vector<std::string> namespaceUris_;
 		ClientSubscriptionConfig::Map clientSubscriptionConfigMap_;
 	};
 

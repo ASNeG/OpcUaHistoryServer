@@ -12,11 +12,11 @@
 		<MaxKeepAliveCount>0</MaxKeepAliveCount>
 		<MaxNotificationsPerPublish>0</MaxNotificationsPerPublish>
 		
-		<MonItem Id="MonItem">
+		<MonitoredItem Id="MonItem">
 			<SamplingInterval>0</SamplingInterval>
 		  	<QueueSize>1</QueueSize>
 		  	<DataChangeFilter>status-value-timestamp</DataChangeFilter> 
-		</MonItem>
+		</MonitoredItem>
 	</Subscription>
 	
 </OpcUaClientModel>

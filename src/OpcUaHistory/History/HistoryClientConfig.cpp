@@ -33,8 +33,6 @@ namespace OpcUaHistory
 	ClientMonitoredItemConfig::ClientMonitoredItemConfig(void)
 	: samplingInterval_(0)
 	, queueSize_(0)
-	, nodeId_()
-	, valueName_("")
 	, dataChangeFilter_(StatusValue)
 	{
 	}
@@ -65,30 +63,6 @@ namespace OpcUaHistory
 	ClientMonitoredItemConfig::queueSize(uint32_t queueSize)
 	{
 		queueSize_ = queueSize;
-	}
-
-	OpcUaNodeId&
-	ClientMonitoredItemConfig::nodeId(void)
-	{
-		return nodeId_;
-	}
-
-	void
-	ClientMonitoredItemConfig::nodeId(OpcUaNodeId& nodeId)
-	{
-		nodeId_ = nodeId;
-	}
-
-	std::string&
-	ClientMonitoredItemConfig::valueName(void)
-	{
-		return valueName_;
-	}
-
-	void
-	ClientMonitoredItemConfig::valueName(const std::string& valueName)
-	{
-		valueName_ = valueName;
 	}
 
 	DataChangeFilter
@@ -200,7 +174,6 @@ namespace OpcUaHistory
 	HistoryClientConfig::HistoryClientConfig(void)
 	: serverUri_("")
 	, reconnectTimeout_(5000)
-	, namespaceUris_()
 	, clientSubscriptionConfigMap_()
 	{
 	}
@@ -231,15 +204,6 @@ namespace OpcUaHistory
 		// decode Endpoint configuration
 		//
 		if (!decodeEndpoint(config)) {
-			Log(Error, "read configuration file error")
-				.parameter("ConfigFile", configFileName);
-			return false;
-		}
-
-		//
-		// decode NamespaceUris configuration
-		//
-		if (!decodeNamespaceUris(config)) {
 			Log(Error, "read configuration file error")
 				.parameter("ConfigFile", configFileName);
 			return false;
@@ -283,22 +247,6 @@ namespace OpcUaHistory
 		if (!success) {
 			Log(Error, "parameter missing in config file")
 				.parameter("Parameter", "OpcUaClientModel.Endpoint.ReconnectTimeout");
-			return false;
-		}
-
-		return true;
-	}
-
-	bool
-	HistoryClientConfig::decodeNamespaceUris(Config::SPtr& config)
-	{
-		bool success;
-
-		// read namespace uris
-		config->getValues("OpcUaClientModel.NamespaceUris.Uri", namespaceUris_);
-		if (namespaceUris_.size() == 0) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientModel.NamespaceUris.Uri");
 			return false;
 		}
 
@@ -369,9 +317,9 @@ namespace OpcUaHistory
 			return false;
 		}
 
-		// node lists
+		// monitored items
 		std::vector<Config> childs;
-		config.getChilds("NodeList", childs);
+		config.getChilds("MonitoredItem", childs);
 		if (childs.size() == 0) {
 			Log(Error, "parameter missing in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList");
@@ -380,7 +328,7 @@ namespace OpcUaHistory
 
 		std::vector<Config>::iterator it;
 		for (it = childs.begin(); it != childs.end(); it++) {
-			if (!decodeNodeList(*it, subscription->clientNodeConfigMap())) return false;
+			if (!decodeMonitoredItems(*it, subscription->clientNodeConfigMap())) return false;
 		}
 
 		ClientSubscriptionConfig::Map::iterator it1;
@@ -397,13 +345,13 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeNodeList(Config& config, ClientMonitoredItemConfig::Map& clientNodeConfigMap)
+	HistoryClientConfig::decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap)
 	{
 		// node list id
 		std::string id;
 		if (!config.getConfigParameter("<xmlattr>.Id", id)) {
 			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList")
+				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem")
 				.parameter("Attribute", "Id");
 			return false;
 		}
@@ -412,7 +360,7 @@ namespace OpcUaHistory
 		uint32_t samplingInterval;
 		if (!config.getConfigParameter("SamplingInterval", samplingInterval)) {
 			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.SamplingInterval")
+				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.SamplingInterval")
 				.parameter("NodeListId", id);
 			return false;
 		}
@@ -421,7 +369,7 @@ namespace OpcUaHistory
 		uint32_t queueSize;
 		if (!config.getConfigParameter("QueueSize", queueSize)) {
 			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.QueueSize")
+				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.QueueSize")
 				.parameter("NodeListId", id);
 			return false;
 		}
@@ -431,7 +379,7 @@ namespace OpcUaHistory
 		DataChangeFilter dataChangeFilterType;
 		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
 			Log(Error, "parameter missing or invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.DataChangeFilter")
+				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
 				.parameter("NodeListId", id);
 			return false;
 		}
@@ -446,74 +394,11 @@ namespace OpcUaHistory
 		}
 		else {
 			Log(Error, "parameter invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.DataChangeFilter")
+				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
 				.parameter("NodeListId", id)
 				.parameter("DataChangeFilter", dataChangeFilter);
 			return false;
 		}
-
-		// node
-		std::vector<Config> childs;
-		config.getChilds("Node", childs);
-		if (childs.size() == 0) {
-			Log(Error, "parameter missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.Node");
-			return false;
-		}
-
-		std::vector<Config>::iterator it;
-		for (it = childs.begin(); it != childs.end(); it++) {
-			ClientMonitoredItemConfig::SPtr node = constructSPtr<ClientMonitoredItemConfig>();
-			node->samplingInterval(samplingInterval);
-			node->queueSize(queueSize);
-			node->dataChangeFilter(dataChangeFilterType);
-
-			if (!decodeNode(*it, *node.get())) return false;
-
-			ClientMonitoredItemConfig::Map::iterator it;
-			it = clientNodeConfigMap.find(node->valueName());
-			if (it != clientNodeConfigMap.end()) {
-				Log(Error, "dublicate node name in config file")
-					.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.Node.ValueName")
-					.parameter("ValueName", node->valueName());
-				return false;
-			}
-			clientNodeConfigMap.insert(std::make_pair(node->valueName(), node));
-		}
-
-		return true;
-	}
-
-	bool
-	HistoryClientConfig::decodeNode(Config& config, ClientMonitoredItemConfig& clientNodeConfig)
-	{
-		// node id
-		std::string nodeIdString;
-		if (!config.getConfigParameter("<xmlattr>.NodeId", nodeIdString)) {
-			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.Node")
-				.parameter("Attribute", "NodeId");
-			return false;
-		}
-		OpcUaNodeId nodeId;
-		if (!nodeId.fromString(nodeIdString)) {
-			Log(Error, "attribute invalid in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.Node")
-				.parameter("Attribute", "NodeId")
-				.parameter("NodeId", nodeIdString);
-			return false;
-		}
-		clientNodeConfig.nodeId(nodeId);
-
-		// value name
-		std::string valueName;
-		if (!config.getConfigParameter("<xmlattr>.ValueName", valueName)) {
-			Log(Error, "attribute missing in config file")
-				.parameter("Parameter", "OpcUaClientMode.Subscription.NodeList.Node")
-				.parameter("Attribute", "ValueName");
-			return false;
-		}
-		clientNodeConfig.valueName(valueName);
 
 		return true;
 	}
@@ -528,12 +413,6 @@ namespace OpcUaHistory
 	HistoryClientConfig::reconnectTimeout(void)
 	{
 		return reconnectTimeout_;
-	}
-
-	std::vector<std::string>&
-	HistoryClientConfig::namespaceUris(void)
-	{
-		return namespaceUris_;
 	}
 
 	ClientSubscriptionConfig::Map&
