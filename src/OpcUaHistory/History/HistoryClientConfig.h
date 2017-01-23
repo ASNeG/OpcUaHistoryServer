@@ -19,8 +19,7 @@
 #define __OpcUaHistory_HistoryClientConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
-#include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaHistory/History/ConfigBase.h"
 #include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
@@ -37,7 +36,7 @@ namespace OpcUaHistory
 		ClientMonitoredItemConfig(void);
 		~ClientMonitoredItemConfig(void);
 
-		std::string id(void);
+		std::string& id(void);
 		void id(const std::string& id);
 		uint32_t samplingInterval(void);
 		void samplingInterval(uint32_t samplingInterval);
@@ -46,9 +45,10 @@ namespace OpcUaHistory
 		DataChangeFilter dataChangeFilter(void);
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
 
+		bool decode(Config& config, ConfigBase& configBase);
+
 	  private:
 		std::string id_;
-
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
 		DataChangeFilter dataChangeFilter_;

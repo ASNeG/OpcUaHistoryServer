@@ -18,11 +18,14 @@
 #ifndef __OpcUaHistory_HistoryServerManager_h__
 #define __OpcUaHistory_HistoryServerManager_h__
 
-#include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaHistory/History/HistoryServer.h"
+#include "OpcUaHistory/History/HistoryStoreIf.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackServer;
 
 namespace OpcUaHistory
 {

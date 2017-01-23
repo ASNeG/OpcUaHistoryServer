@@ -15,8 +15,8 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_HistoryServer_h__
-#define __OpcUaHistory_HistoryServer_h__
+#ifndef __OpcUaHistory_ConfigBase_h__
+#define __OpcUaHistory_ConfigBase_h__
 
 #include <iostream>
 

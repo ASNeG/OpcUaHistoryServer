@@ -16,6 +16,7 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackCore/Base/ObjectPool.h"
 #include "OpcUaHistory/History/HistoryClientConfig.h"
 
 using namespace OpcUaStackCore;
@@ -42,7 +43,7 @@ namespace OpcUaHistory
 	{
 	}
 
-	std::string
+	std::string&
 	ClientMonitoredItemConfig::id(void)
 	{
 		return id_;
@@ -88,6 +89,67 @@ namespace OpcUaHistory
 	ClientMonitoredItemConfig::dataChangeFilter(DataChangeFilter dataChangeFilter)
 	{
 		dataChangeFilter_ = dataChangeFilter;
+	}
+
+	bool
+	ClientMonitoredItemConfig::decode(Config& config, ConfigBase& configBase)
+	{
+		// monitored item id
+		if (!config.getConfigParameter("<xmlattr>.Id", id_)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Element", configBase.elementPrefix())
+				.parameter("Attribute", "Id")
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// sampling interval
+		if (!config.getConfigParameter("SamplingInterval", samplingInterval_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".SamplingInterval")
+				.parameter("MonitoredItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// queue size
+		if (!config.getConfigParameter("QueueSize", queueSize_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".QueueSize")
+				.parameter("MonitoredItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// data change filter
+		std::string dataChangeFilter;
+		DataChangeFilter dataChangeFilterType;
+		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".DataChangeFilter")
+				.parameter("MonitoredItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+		if (dataChangeFilter == "status") {
+			dataChangeFilter_ = Status;
+		}
+		else if (dataChangeFilter == "status-value") {
+			dataChangeFilter_ = StatusValue;
+		}
+		else if (dataChangeFilter == "status-value-timestamp") {
+			dataChangeFilter_ = StatusValueTimestamp;
+		}
+		else {
+			Log(Error, "element invalid in config file")
+				.parameter("Element", configBase.elementPrefix() + ".DataChangeFilter")
+				.parameter("MonitoredItemId", id_)
+				.parameter("DataChangeFilter", dataChangeFilter)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
@@ -383,7 +445,7 @@ namespace OpcUaHistory
 	{
 		ClientMonitoredItemConfig::SPtr monitoredItem = constructSPtr<ClientMonitoredItemConfig>();
 
-		// node list id
+		// monitored item id
 		std::string id;
 		if (!config.getConfigParameter("<xmlattr>.Id", id)) {
 			Log(Error, "attribute missing in config file")
