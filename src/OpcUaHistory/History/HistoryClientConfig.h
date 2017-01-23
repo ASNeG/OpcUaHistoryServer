@@ -109,11 +109,11 @@ namespace OpcUaHistory
 	};
 
 
-	class HistoryClientConfig
+	class ClientConfig
 	{
 	  public:
-		HistoryClientConfig(void);
-		~HistoryClientConfig(void);
+		ClientConfig(void);
+		~ClientConfig(void);
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 

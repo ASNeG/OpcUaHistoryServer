@@ -386,7 +386,7 @@ namespace OpcUaHistory
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
-	HistoryClientConfig::HistoryClientConfig(void)
+	ClientConfig::ClientConfig(void)
 	: id_("")
 	, serverUri_("")
 	, reconnectTimeout_(5000)
@@ -394,24 +394,24 @@ namespace OpcUaHistory
 	{
 	}
 
-	HistoryClientConfig::~HistoryClientConfig(void)
+	ClientConfig::~ClientConfig(void)
 	{
 	}
 
 	std::string
-	HistoryClientConfig::id(void)
+	ClientConfig::id(void)
 	{
 		return id_;
 	}
 
 	void
-	HistoryClientConfig::id(const std::string& id)
+	ClientConfig::id(const std::string& id)
 	{
 		id_ = id;
 	}
 
 	bool
-	HistoryClientConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
+	ClientConfig::decode(const std::string& configFileName, ConfigXmlManager& configXmlManager)
 	{
 		bool success;
 
@@ -458,7 +458,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeEndpoint(Config::SPtr& config)
+	ClientConfig::decodeEndpoint(Config::SPtr& config)
 	{
 		bool success;
 
@@ -490,7 +490,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeSubscriptions(Config::SPtr& config)
+	ClientConfig::decodeSubscriptions(Config::SPtr& config)
 	{
 		// read list of subscriptions
 		std::vector<Config> childs;
@@ -510,7 +510,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeSubscription(Config& config)
+	ClientConfig::decodeSubscription(Config& config)
 	{
 		ClientSubscriptionConfig::SPtr subscription = constructSPtr<ClientSubscriptionConfig>();
 
@@ -581,7 +581,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap)
+	ClientConfig::decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap)
 	{
 		ClientMonitoredItemConfig::SPtr monitoredItem = constructSPtr<ClientMonitoredItemConfig>();
 
@@ -647,19 +647,19 @@ namespace OpcUaHistory
 	}
 
 	std::string
-	HistoryClientConfig::serverUri(void)
+	ClientConfig::serverUri(void)
 	{
 		return serverUri_;
 	}
 
 	uint32_t
-	HistoryClientConfig::reconnectTimeout(void)
+	ClientConfig::reconnectTimeout(void)
 	{
 		return reconnectTimeout_;
 	}
 
 	ClientSubscriptionConfig::Map&
-	HistoryClientConfig::clientSubscriptionMap(void)
+	ClientConfig::clientSubscriptionMap(void)
 	{
 		return clientSubscriptionConfigMap_;
 	}
