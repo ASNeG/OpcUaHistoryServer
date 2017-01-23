@@ -359,7 +359,22 @@ namespace OpcUaHistory
 	bool
 	ClientEndpointConfig::decode(Config& config, ConfigBase& configBase)
 	{
-		// FIXME: todo
+		// ServerUri
+		if (!config.getConfigParameter("ServerUri", serverUri_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".ServerUri")
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// ReconnectTimeout
+		if (!config.getConfigParameter("ReconnectTimeout", reconnectTimeout_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".ReconnectTimeout")
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
 		return true;
 	}
 
