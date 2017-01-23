@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -30,7 +30,7 @@ namespace OpcUaHistory
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
-	ClientNodeConfig::ClientNodeConfig(void)
+	ClientMonitoredItemConfig::ClientMonitoredItemConfig(void)
 	: samplingInterval_(0)
 	, queueSize_(0)
 	, nodeId_()
@@ -39,66 +39,66 @@ namespace OpcUaHistory
 	{
 	}
 
-	ClientNodeConfig::~ClientNodeConfig(void)
+	ClientMonitoredItemConfig::~ClientMonitoredItemConfig(void)
 	{
 	}
 
 	uint32_t
-	ClientNodeConfig::samplingInterval(void)
+	ClientMonitoredItemConfig::samplingInterval(void)
 	{
 		return samplingInterval_;
 	}
 
 	void
-	ClientNodeConfig::samplingInterval(uint32_t samplingInterval)
+	ClientMonitoredItemConfig::samplingInterval(uint32_t samplingInterval)
 	{
 		samplingInterval_ = samplingInterval;
 	}
 
 	uint32_t
-	ClientNodeConfig::queueSize(void)
+	ClientMonitoredItemConfig::queueSize(void)
 	{
 		return queueSize_;
 	}
 
 	void
-	ClientNodeConfig::queueSize(uint32_t queueSize)
+	ClientMonitoredItemConfig::queueSize(uint32_t queueSize)
 	{
 		queueSize_ = queueSize;
 	}
 
 	OpcUaNodeId&
-	ClientNodeConfig::nodeId(void)
+	ClientMonitoredItemConfig::nodeId(void)
 	{
 		return nodeId_;
 	}
 
 	void
-	ClientNodeConfig::nodeId(OpcUaNodeId& nodeId)
+	ClientMonitoredItemConfig::nodeId(OpcUaNodeId& nodeId)
 	{
 		nodeId_ = nodeId;
 	}
 
 	std::string&
-	ClientNodeConfig::valueName(void)
+	ClientMonitoredItemConfig::valueName(void)
 	{
 		return valueName_;
 	}
 
 	void
-	ClientNodeConfig::valueName(const std::string& valueName)
+	ClientMonitoredItemConfig::valueName(const std::string& valueName)
 	{
 		valueName_ = valueName;
 	}
 
 	DataChangeFilter
-	ClientNodeConfig::dataChangeFilter(void)
+	ClientMonitoredItemConfig::dataChangeFilter(void)
 	{
 		return dataChangeFilter_;
 	}
 
 	void
-	ClientNodeConfig::dataChangeFilter(DataChangeFilter dataChangeFilter)
+	ClientMonitoredItemConfig::dataChangeFilter(DataChangeFilter dataChangeFilter)
 	{
 		dataChangeFilter_ = dataChangeFilter;
 	}
@@ -184,7 +184,7 @@ namespace OpcUaHistory
 		maxNotificationsPerPublish_ = maxNotificationsPerPublish;
 	}
 
-	ClientNodeConfig::Map&
+	ClientMonitoredItemConfig::Map&
 	ClientSubscriptionConfig::clientNodeConfigMap(void)
 	{
 		return clientNodeConfigMap_;
@@ -397,7 +397,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeNodeList(Config& config, ClientNodeConfig::Map& clientNodeConfigMap)
+	HistoryClientConfig::decodeNodeList(Config& config, ClientMonitoredItemConfig::Map& clientNodeConfigMap)
 	{
 		// node list id
 		std::string id;
@@ -463,14 +463,14 @@ namespace OpcUaHistory
 
 		std::vector<Config>::iterator it;
 		for (it = childs.begin(); it != childs.end(); it++) {
-			ClientNodeConfig::SPtr node = constructSPtr<ClientNodeConfig>();
+			ClientMonitoredItemConfig::SPtr node = constructSPtr<ClientMonitoredItemConfig>();
 			node->samplingInterval(samplingInterval);
 			node->queueSize(queueSize);
 			node->dataChangeFilter(dataChangeFilterType);
 
 			if (!decodeNode(*it, *node.get())) return false;
 
-			ClientNodeConfig::Map::iterator it;
+			ClientMonitoredItemConfig::Map::iterator it;
 			it = clientNodeConfigMap.find(node->valueName());
 			if (it != clientNodeConfigMap.end()) {
 				Log(Error, "dublicate node name in config file")
@@ -485,7 +485,7 @@ namespace OpcUaHistory
 	}
 
 	bool
-	HistoryClientConfig::decodeNode(Config& config, ClientNodeConfig& clientNodeConfig)
+	HistoryClientConfig::decodeNode(Config& config, ClientMonitoredItemConfig& clientNodeConfig)
 	{
 		// node id
 		std::string nodeIdString;

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -85,7 +85,7 @@ namespace OpcUaHistory
 
 
     		uint32_t clientHandle = 0;
-    		ClientNodeConfig::Map::iterator it2;
+    		ClientMonitoredItemConfig::Map::iterator it2;
     		for (it2 = csc->clientNodeConfigMap().begin();
     			 it2 != csc->clientNodeConfigMap().end();
     			 it2++) {
@@ -93,7 +93,7 @@ namespace OpcUaHistory
     			//
     			// create monitored item
     			//
-    			ClientNodeConfig::SPtr cnc = it2->second;
+    			ClientMonitoredItemConfig::SPtr cnc = it2->second;
     			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
 
     			Object::SPtr context;

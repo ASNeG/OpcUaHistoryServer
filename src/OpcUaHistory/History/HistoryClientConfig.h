@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -28,14 +28,14 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class ClientNodeConfig
+	class ClientMonitoredItemConfig
 	{
 	  public:
-		typedef boost::shared_ptr<ClientNodeConfig> SPtr;
-		typedef std::map<std::string, ClientNodeConfig::SPtr> Map;
+		typedef boost::shared_ptr<ClientMonitoredItemConfig> SPtr;
+		typedef std::map<std::string, ClientMonitoredItemConfig::SPtr> Map;
 
-		ClientNodeConfig(void);
-		~ClientNodeConfig(void);
+		ClientMonitoredItemConfig(void);
+		~ClientMonitoredItemConfig(void);
 
 		uint32_t samplingInterval(void);
 		void samplingInterval(uint32_t samplingInterval);
@@ -75,7 +75,7 @@ namespace OpcUaHistory
 		void maxKeepAliveCount(uint32_t maxKeepAliveCount);
 		uint32_t maxNotificationsPerPublish(void);
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
-		ClientNodeConfig::Map& clientNodeConfigMap(void);
+		ClientMonitoredItemConfig::Map& clientNodeConfigMap(void);
 
 	  private:
 		std::string id_;
@@ -85,7 +85,7 @@ namespace OpcUaHistory
 		uint32_t maxKeepAliveCount_;
 		uint32_t maxNotificationsPerPublish_;
 
-		ClientNodeConfig::Map clientNodeConfigMap_;
+		ClientMonitoredItemConfig::Map clientNodeConfigMap_;
 	};
 
 	class HistoryClientConfig
@@ -106,8 +106,8 @@ namespace OpcUaHistory
 		bool decodeNamespaceUris(Config::SPtr& config);
 		bool decodeSubscriptions(Config::SPtr& config);
 		bool decodeSubscription(Config& config);
-		bool decodeNodeList(Config& config, ClientNodeConfig::Map& clientNodeConfigMap);
-		bool decodeNode(Config& config, ClientNodeConfig& clientNodeConfig);
+		bool decodeNodeList(Config& config, ClientMonitoredItemConfig::Map& clientNodeConfigMap);
+		bool decodeNode(Config& config, ClientMonitoredItemConfig& clientNodeConfig);
 
 		std::string serverUri_;
 		uint32_t reconnectTimeout_;
