@@ -94,6 +94,8 @@ namespace OpcUaHistory
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
+		std::string id(void);
+		void id(const std::string& id);
 		std::string serverUri(void);
 		uint32_t reconnectTimeout(void);
 		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
@@ -104,6 +106,7 @@ namespace OpcUaHistory
 		bool decodeSubscription(Config& config);
 		bool decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap);
 
+		std::string id_;
 		std::string serverUri_;
 		uint32_t reconnectTimeout_;
 		ClientSubscriptionConfig::Map clientSubscriptionConfigMap_;

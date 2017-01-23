@@ -185,7 +185,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryClientConfig::HistoryClientConfig(void)
-	: serverUri_("")
+	: id_("")
+	, serverUri_("")
 	, reconnectTimeout_(5000)
 	, clientSubscriptionConfigMap_()
 	{
@@ -193,6 +194,18 @@ namespace OpcUaHistory
 
 	HistoryClientConfig::~HistoryClientConfig(void)
 	{
+	}
+
+	std::string
+	HistoryClientConfig::id(void)
+	{
+		return id_;
+	}
+
+	void
+	HistoryClientConfig::id(const std::string& id)
+	{
+		id_ = id;
 	}
 
 	bool
@@ -211,6 +224,14 @@ namespace OpcUaHistory
 			Log(Error, "read configuration file error")
 			   .parameter("ConfigFile", configFileName);
 			   return false;
+		}
+
+		// client id
+		if (!config->getConfigParameter("OpcUaClientModel.<xmlattr>.Id", id_)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Parameter", "OpcUaClientMode")
+				.parameter("Attribute", "Id");
+			return false;
 		}
 
 		//
