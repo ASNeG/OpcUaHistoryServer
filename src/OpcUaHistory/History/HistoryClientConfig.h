@@ -75,6 +75,8 @@ namespace OpcUaHistory
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
 		ClientMonitoredItemConfig::Map& clientNodeConfigMap(void);
 
+		bool decode(Config& config, ConfigBase& configBase);
+
 	  private:
 		std::string id_;
 
@@ -83,7 +85,7 @@ namespace OpcUaHistory
 		uint32_t maxKeepAliveCount_;
 		uint32_t maxNotificationsPerPublish_;
 
-		ClientMonitoredItemConfig::Map clientNodeConfigMap_;
+		ClientMonitoredItemConfig::Map clientMonitoredItemConfigMap_;
 	};
 
 	class HistoryClientConfig

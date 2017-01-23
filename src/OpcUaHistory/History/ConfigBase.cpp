@@ -26,6 +26,12 @@ namespace OpcUaHistory
 	{
 	}
 
+	ConfigBase::ConfigBase(ConfigBase& cb, const std::string& additionalElementPrefix)
+	: elementPrefix_(cb.elementPrefix_ + additionalElementPrefix)
+	, configFileName_(cb.configFileName_)
+	{
+	}
+
 	ConfigBase::~ConfigBase(void)
 	{
 	}

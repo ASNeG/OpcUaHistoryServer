@@ -27,6 +27,7 @@ namespace OpcUaHistory
 	{
 	  public:
 		ConfigBase(void);
+		ConfigBase(ConfigBase& cb, const std::string& additionalElementPrefix);
 		~ConfigBase(void);
 
 		void elementPrefix(const std::string& elementPrefix);

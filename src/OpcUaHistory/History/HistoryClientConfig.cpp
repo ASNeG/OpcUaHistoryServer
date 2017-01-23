@@ -27,7 +27,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	//
-	// class ClientNodeConfig
+	// class ClientMonitoredItemConfig
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
@@ -165,7 +165,7 @@ namespace OpcUaHistory
 	, livetimeCount_(0)
 	, maxKeepAliveCount_(0)
 	, maxNotificationsPerPublish_(0)
-	, clientNodeConfigMap_()
+	, clientMonitoredItemConfigMap_()
 	{
 	}
 
@@ -236,7 +236,82 @@ namespace OpcUaHistory
 	ClientMonitoredItemConfig::Map&
 	ClientSubscriptionConfig::clientNodeConfigMap(void)
 	{
-		return clientNodeConfigMap_;
+		return clientMonitoredItemConfigMap_;
+	}
+
+	bool
+	ClientSubscriptionConfig::decode(Config& config, ConfigBase& configBase)
+	{
+		// subscription id
+		if (!config.getConfigParameter("<xmlattr>.Id", id_)) {
+			Log(Error, "attribute missing in config file")
+				.parameter("Element", configBase.elementPrefix())
+				.parameter("Attribute", "Id")
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// publishing interval
+		if (!config.getConfigParameter("PublishingInterval", publishingInterval_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".PublishingInterval")
+				.parameter("SubscriptionItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// max keepalive count
+		if (!config.getConfigParameter("MaxKeepAliveCount", maxKeepAliveCount_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".MaxKeepAliveCount")
+				.parameter("SubscriptionItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// max notification per publish
+		if (!config.getConfigParameter("MaxNotificationsPerPublish", maxNotificationsPerPublish_)) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".MaxNotificationsPerPublish")
+				.parameter("SubscriptionItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		// monitored items
+		std::vector<Config> childs;
+		config.getChilds("MonitoredItem", childs);
+		if (childs.size() == 0) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", configBase.elementPrefix() + ".MonitoredItem")
+				.parameter("SubscriptionItemId", id_)
+				.parameter("ConfigFileName", configBase.configFileName());
+			return false;
+		}
+
+		std::vector<Config>::iterator it;
+		for (it = childs.begin(); it != childs.end(); it++) {
+			ClientMonitoredItemConfig::SPtr monitoredItem  = constructSPtr<ClientMonitoredItemConfig>();
+
+			ConfigBase cb(configBase, ".MonitoredItem");
+			if (!monitoredItem->decode(*it, cb)) {
+				return false;
+			}
+
+			ClientMonitoredItemConfig::Map::iterator it;
+			it = clientMonitoredItemConfigMap_.find(monitoredItem->id());
+			if (it != clientMonitoredItemConfigMap_.end()) {
+				Log(Error, "dublicate monitored item id in config file")
+					.parameter("Element", configBase.elementPrefix() + ".MonitoredItem")
+					.parameter("MonitoredItemId", monitoredItem->id())
+					.parameter("SubscriptionItemId", id_)
+					.parameter("ConfigFileName", configBase.configFileName());
+				return false;
+			}
+			clientMonitoredItemConfigMap_.insert(std::make_pair(monitoredItem->id(), monitoredItem));
+		}
+
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
