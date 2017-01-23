@@ -17,7 +17,7 @@
 
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackCore/Base/ObjectPool.h"
-#include "OpcUaHistory/History/HistoryClientConfig.h"
+#include "OpcUaHistory/History/ClientConfig.h"
 
 using namespace OpcUaStackCore;
 
