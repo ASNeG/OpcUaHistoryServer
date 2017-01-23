@@ -314,6 +314,56 @@ namespace OpcUaHistory
 		return true;
 	}
 
+
+	// -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	//
+	// class ClientEndpointConfig
+	//
+	// -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	ClientEndpointConfig::ClientEndpointConfig(void)
+	: serverUri_("")
+	, reconnectTimeout_(5000)
+	{
+	}
+
+	ClientEndpointConfig::~ClientEndpointConfig(void)
+	{
+	}
+
+	void
+	ClientEndpointConfig::serverUri(const std::string& serverUri)
+	{
+		serverUri_ = serverUri;
+	}
+
+	std::string&
+	ClientEndpointConfig::serverUri(void)
+	{
+		return serverUri_;
+	}
+
+	void
+	ClientEndpointConfig::reconnectTimeout(uint32_t reconnectTimeout)
+	{
+		reconnectTimeout_ = reconnectTimeout;
+	}
+
+	uint32_t
+	ClientEndpointConfig::reconnectTimeout(void)
+	{
+		return reconnectTimeout_;
+	}
+
+	bool
+	ClientEndpointConfig::decode(Config& config, ConfigBase& configBase)
+	{
+		// FIXME: todo
+		return true;
+	}
+
+
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	//

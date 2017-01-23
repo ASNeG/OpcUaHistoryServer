@@ -54,6 +54,7 @@ namespace OpcUaHistory
 		DataChangeFilter dataChangeFilter_;
 	};
 
+
 	class ClientSubscriptionConfig
 	{
 	  public:
@@ -87,6 +88,26 @@ namespace OpcUaHistory
 
 		ClientMonitoredItemConfig::Map clientMonitoredItemConfigMap_;
 	};
+
+
+	class ClientEndpointConfig
+	{
+	  public:
+		ClientEndpointConfig(void);
+		~ClientEndpointConfig(void);
+
+		void serverUri(const std::string& serverUri);
+		std::string& serverUri(void);
+		void reconnectTimeout(uint32_t reconnectTimeout);
+		uint32_t reconnectTimeout(void);
+
+		bool decode(Config& config, ConfigBase& configBase);
+
+	  private:
+		std::string serverUri_;
+		uint32_t reconnectTimeout_;
+	};
+
 
 	class HistoryClientConfig
 	{
