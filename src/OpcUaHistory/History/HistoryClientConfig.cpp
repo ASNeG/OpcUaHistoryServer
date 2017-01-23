@@ -31,7 +31,8 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	ClientMonitoredItemConfig::ClientMonitoredItemConfig(void)
-	: samplingInterval_(0)
+	: id_("")
+	, samplingInterval_(0)
 	, queueSize_(0)
 	, dataChangeFilter_(StatusValue)
 	{
@@ -39,6 +40,18 @@ namespace OpcUaHistory
 
 	ClientMonitoredItemConfig::~ClientMonitoredItemConfig(void)
 	{
+	}
+
+	std::string
+	ClientMonitoredItemConfig::id(void)
+	{
+		return id_;
+	}
+
+	void
+	ClientMonitoredItemConfig::id(const std::string& id)
+	{
+		id_ = id;
 	}
 
 	uint32_t
@@ -347,6 +360,8 @@ namespace OpcUaHistory
 	bool
 	HistoryClientConfig::decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap)
 	{
+		ClientMonitoredItemConfig::SPtr monitoredItem = constructSPtr<ClientMonitoredItemConfig>();
+
 		// node list id
 		std::string id;
 		if (!config.getConfigParameter("<xmlattr>.Id", id)) {
@@ -355,24 +370,27 @@ namespace OpcUaHistory
 				.parameter("Attribute", "Id");
 			return false;
 		}
+		monitoredItem->id(id);
 
 		// sampling interval
 		uint32_t samplingInterval;
 		if (!config.getConfigParameter("SamplingInterval", samplingInterval)) {
 			Log(Error, "parameter missing or invalid in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.SamplingInterval")
-				.parameter("NodeListId", id);
+				.parameter("MonitoredItemId", id);
 			return false;
 		}
+		monitoredItem->samplingInterval(samplingInterval);
 
 		// queue size
 		uint32_t queueSize;
 		if (!config.getConfigParameter("QueueSize", queueSize)) {
 			Log(Error, "parameter missing or invalid in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.QueueSize")
-				.parameter("NodeListId", id);
+				.parameter("MonitoredItemId", id);
 			return false;
 		}
+		monitoredItem->queueSize(queueSize);
 
 		// data change filter
 		std::string dataChangeFilter;
@@ -380,7 +398,7 @@ namespace OpcUaHistory
 		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
 			Log(Error, "parameter missing or invalid in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
-				.parameter("NodeListId", id);
+				.parameter("MonitoredItemId", id);
 			return false;
 		}
 		if (dataChangeFilter == "status") {
@@ -395,11 +413,13 @@ namespace OpcUaHistory
 		else {
 			Log(Error, "parameter invalid in config file")
 				.parameter("Parameter", "OpcUaClientMode.Subscription.MonitoredItem.DataChangeFilter")
-				.parameter("NodeListId", id)
+				.parameter("MonitoredItemId", id)
 				.parameter("DataChangeFilter", dataChangeFilter);
 			return false;
 		}
+		monitoredItem->dataChangeFilter(dataChangeFilterType);
 
+		clientMonitoredItemConfigMap.insert(std::make_pair(id, monitoredItem));
 		return true;
 	}
 

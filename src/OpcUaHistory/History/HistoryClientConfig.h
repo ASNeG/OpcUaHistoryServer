@@ -37,15 +37,18 @@ namespace OpcUaHistory
 		ClientMonitoredItemConfig(void);
 		~ClientMonitoredItemConfig(void);
 
+		std::string id(void);
+		void id(const std::string& id);
 		uint32_t samplingInterval(void);
 		void samplingInterval(uint32_t samplingInterval);
 		uint32_t queueSize(void);
 		void queueSize(uint32_t queueSize);
 		DataChangeFilter dataChangeFilter(void);
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
-		OpcUaNodeId& nodeId(void);
 
 	  private:
+		std::string id_;
+
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
 		DataChangeFilter dataChangeFilter_;
