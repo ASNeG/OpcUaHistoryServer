@@ -25,7 +25,8 @@ namespace OpcUaHistory
 {
 
 	HistoryClientManager::HistoryClientManager(void)
-	: historyClientSet_()
+	: clientConfigIf_(nullptr)
+	, historyClientSet_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
 	{
@@ -33,6 +34,12 @@ namespace OpcUaHistory
 
 	HistoryClientManager::~HistoryClientManager(void)
 	{
+	}
+
+	void
+	HistoryClientManager::clientConfigIf(ClientConfigIf* clientConfigIf)
+	{
+		clientConfigIf_ = clientConfigIf;
 	}
 
 	void
@@ -58,6 +65,7 @@ namespace OpcUaHistory
     		HistoryClient::SPtr historyClient = constructSPtr<HistoryClient>();
     		historyClientSet_.insert(historyClient);
 
+    		historyClient->clientConfigIf(clientConfigIf_);
     		historyClient->ioThread(ioThread_);
     		historyClient->historyStoreIf(historyStoreIf_);
     		if (!historyClient->startup(*it, configXmlManager)) {

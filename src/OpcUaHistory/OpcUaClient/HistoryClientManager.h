@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/Interface/ClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/HistoryClient.h"
 
 using namespace OpcUaStackCore;
@@ -33,6 +34,7 @@ namespace OpcUaHistory
 		HistoryClientManager(void);
 		~HistoryClientManager(void);
 
+		void clientConfigIf(ClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 
@@ -43,6 +45,7 @@ namespace OpcUaHistory
         bool shutdown(void);
 
 	  private:
+        ClientConfigIf* clientConfigIf_;
         HistoryClient::Set historyClientSet_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;

@@ -24,7 +24,8 @@ namespace OpcUaHistory
 {
 
 	HistoryClient::HistoryClient(void)
-	: clientConfig_()
+	: clientConfigIf_(nullptr)
+	, clientConfig_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
 	{
@@ -32,6 +33,12 @@ namespace OpcUaHistory
 
 	HistoryClient::~HistoryClient(void)
 	{
+	}
+
+	void
+	HistoryClient::clientConfigIf(ClientConfigIf* clientConfigIf)
+	{
+		clientConfigIf_ = clientConfigIf;
 	}
 
 	void
