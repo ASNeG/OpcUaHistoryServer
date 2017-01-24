@@ -24,7 +24,8 @@ namespace OpcUaHistory
 {
 
 	HistoryClient::HistoryClient(void)
-	: clientConfigIf_(nullptr)
+	: variableElementVec_()
+	, clientConfigIf_(nullptr)
 	, clientConfig_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
@@ -67,19 +68,33 @@ namespace OpcUaHistory
 		NamespaceElement::Vec namespaceElementVec;
 		clientConfigIf_->clientNamespaces(namespaceElementVec);
 
+		// get client references
+		clientConfigIf_->clientVariables(variableElementVec_);
+
     	// configure client connection
     	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
     	clientConnection_.reconnectTimeout(clientConfig_.clientEndpointConfig().reconnectTimeout());
     	clientConnection_.ioThread(ioThread_);
     	clientConnection_.namespaceElementVec(namespaceElementVec);
 
+    	if (!createSubscriptions()) {
+    		return false;
+    	}
+
+    	// open connection to server
+    	return clientConnection_.connect();
+
+    }
+
+    bool
+    HistoryClient::createSubscriptions(void)
+    {
     	// create subscriptions
     	ClientSubscriptionConfig::Map::iterator it1;
     	for (it1 = clientConfig_.clientSubscriptionMap().begin();
     		 it1 != clientConfig_.clientSubscriptionMap().end();
     		 it1++) {
 
-#if 0
     		//
     		// create subscription
     		//
@@ -95,18 +110,52 @@ namespace OpcUaHistory
 
     		clientConnection_.addClientSubscription(csc->id(), cs);
 
+    		if (!createMonitoredItems(csc, cs)) {
+    			return false;
+    		}
+    	}
 
-    		uint32_t clientHandle = 0;
-    		ClientMonitoredItemConfig::Map::iterator it2;
-    		for (it2 = csc->clientNodeConfigMap().begin();
-    			 it2 != csc->clientNodeConfigMap().end();
-    			 it2++) {
+    	return true;
+    }
 
+    bool
+    HistoryClient::createMonitoredItems(
+    	ClientSubscriptionConfig::SPtr& csc, ClientSubscription::SPtr& cs
+    )
+    {
+    	uint32_t clientHandle = 0;
+    	ClientMonitoredItemConfig::Map::iterator it;
+    	for (it = csc->clientNodeConfigMap().begin();
+    		it != csc->clientNodeConfigMap().end();
+    		it++)
+    	{
+    		ClientMonitoredItemConfig::SPtr cmic = it->second;
+
+    		if (!createMonitoredItems(csc, cs, cmic)) {
+    			return false;
+    		}
+
+    	}
+
+    	return true;
+    }
+
+    bool
+    HistoryClient::createMonitoredItems(
+     	ClientSubscriptionConfig::SPtr& csc,
+     	ClientSubscription::SPtr& cs,
+     	ClientMonitoredItemConfig::SPtr& cmic
+    )
+    {
+
+    	ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
+    	cs->addMonitoredItem(cmi);
+
+#if 0
     			//
     			// create monitored item
     			//
-    			ClientMonitoredItemConfig::SPtr cnc = it2->second;
-    			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
+
 
     			Object::SPtr context;
     			historyStoreIf_->getHistoryStoreContext(cnc->valueName(), context, HistoryStoreIf::Write);
@@ -119,13 +168,9 @@ namespace OpcUaHistory
     			cmi->nodeId(cnc->nodeId());
     			cmi->context(context);
 
-    			cs->addMonitoredItem(cmi);
-    		}
-#endif
-    	}
 
-    	// open connection to server
-    	return clientConnection_.connect();
+#endif
+    	return true;
 
     }
 

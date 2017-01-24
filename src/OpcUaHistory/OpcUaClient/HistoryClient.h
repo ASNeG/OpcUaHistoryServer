@@ -57,6 +57,18 @@ namespace OpcUaHistory
         // -- ClientSubscriptionIf --------------------------------------------
 
 	  private:
+        bool createSubscriptions(void);
+        bool createMonitoredItems(
+        	ClientSubscriptionConfig::SPtr& csc,
+        	ClientSubscription::SPtr& cs
+        );
+        bool createMonitoredItems(
+        	ClientSubscriptionConfig::SPtr& csc,
+        	ClientSubscription::SPtr& cs,
+        	ClientMonitoredItemConfig::SPtr& cmic
+        );
+
+        VariableElement::Vec variableElementVec_;
         ClientConfigIf* clientConfigIf_;
         ClientConfig clientConfig_;
         ClientConnection clientConnection_;
