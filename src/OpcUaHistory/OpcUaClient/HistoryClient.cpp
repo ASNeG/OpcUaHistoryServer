@@ -16,7 +16,7 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryClient.h"
+#include "OpcUaHistory/OpcUaClient/HistoryClient.h"
 
 using namespace OpcUaStackCore;
 
