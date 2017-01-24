@@ -144,7 +144,7 @@ namespace OpcUaHistory
 
 		// get server namespaces
 		NamespaceElement::Vec namespaceElementVec;
-		serverConfigIf_->namespaces(namespaceElementVec);
+		serverConfigIf_->serverNamespaces(namespaceElementVec);
 
 		// create namespace mapping table // historyServerConfig_
 		namespaceMap_.clear();
@@ -182,7 +182,7 @@ namespace OpcUaHistory
     {
     	VariableElement::Vec::iterator it;
     	VariableElement::Vec variableElementVec;
-    	serverConfigIf_->variables(variableElementVec);
+    	serverConfigIf_->serverVariables(variableElementVec);
 
     	for (it=variableElementVec.begin(); it!=variableElementVec.end(); it++) {
     		if (!registerServerCallbacks(*it)) {

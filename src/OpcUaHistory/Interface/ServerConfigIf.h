@@ -29,8 +29,8 @@ namespace OpcUaHistory
 		ServerConfigIf(void) {}
 		virtual ~ServerConfigIf(void) {}
 
-		virtual void namespaces(NamespaceElement::Vec& namespaceElementVec) = 0;
-		virtual void variables(VariableElement::Vec& variableElementVec) = 0;
+		virtual void serverNamespaces(NamespaceElement::Vec& namespaceElementVec) = 0;
+		virtual void serverVariables(VariableElement::Vec& variableElementVec) = 0;
 	};
 
 }
