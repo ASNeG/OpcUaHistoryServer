@@ -24,7 +24,7 @@ namespace OpcUaHistory
 {
 
 	HistoryClient::HistoryClient(void)
-	: historyClientConfig_()
+	: clientConfig_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
 	{
@@ -52,22 +52,22 @@ namespace OpcUaHistory
     	ConfigXmlManager& configXmlManager
     )
     {
-    	if (!historyClientConfig_.decode(fileName, configXmlManager)) {
+    	if (!clientConfig_.decode(fileName, configXmlManager)) {
     		return false;
     	}
 
 #if 0   // FIXME: todo
 
     	// configure client connection
-    	clientConnection_.serverUri(historyClientConfig_.serverUri());
-    	clientConnection_.reconnectTimeout(historyClientConfig_.reconnectTimeout());
+    	clientConnection_.serverUri(clientConfig_.serverUri());
+    	clientConnection_.reconnectTimeout(clientConfig_.reconnectTimeout());
     	clientConnection_.ioThread(ioThread_);
-    	clientConnection_.namespaceUris(historyClientConfig_.namespaceUris());
+    	clientConnection_.namespaceUris(clientConfig_.namespaceUris());
 
     	// create subscriptions
     	ClientSubscriptionConfig::Map::iterator it1;
-    	for (it1 = historyClientConfig_.clientSubscriptionMap().begin();
-    		 it1 != historyClientConfig_.clientSubscriptionMap().end();
+    	for (it1 = clientConfig_.clientSubscriptionMap().begin();
+    		 it1 != clientConfig_.clientSubscriptionMap().end();
     		 it1++) {
 
     		//

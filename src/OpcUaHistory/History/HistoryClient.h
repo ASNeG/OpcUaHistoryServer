@@ -55,7 +55,7 @@ namespace OpcUaHistory
         // -- ClientSubscriptionIf --------------------------------------------
 
 	  private:
-        ClientConfig historyClientConfig_;
+        ClientConfig clientConfig_;
         ClientConnection clientConnection_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;
