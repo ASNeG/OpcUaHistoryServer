@@ -63,13 +63,15 @@ namespace OpcUaHistory
     		return false;
     	}
 
+		// get client namespaces
+		NamespaceElement::Vec namespaceElementVec;
+		clientConfigIf_->clientNamespaces(namespaceElementVec);
+
     	// configure client connection
     	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
     	clientConnection_.reconnectTimeout(clientConfig_.clientEndpointConfig().reconnectTimeout());
     	clientConnection_.ioThread(ioThread_);
-    	//clientConnection_.namespaceUris(clientConfig_.namespaceUris());
-
-#if 0
+    	clientConnection_.namespaceElementVec(namespaceElementVec);
 
     	// create subscriptions
     	ClientSubscriptionConfig::Map::iterator it1;
@@ -77,6 +79,7 @@ namespace OpcUaHistory
     		 it1 != clientConfig_.clientSubscriptionMap().end();
     		 it1++) {
 
+#if 0
     		//
     		// create subscription
     		//
@@ -118,12 +121,12 @@ namespace OpcUaHistory
 
     			cs->addMonitoredItem(cmi);
     		}
+#endif
     	}
 
     	// open connection to server
     	return clientConnection_.connect();
-#endif
-    	return true;
+
     }
 
     bool

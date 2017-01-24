@@ -30,7 +30,7 @@ namespace OpcUaHistory
 
 	, init_(false)
 	, state_(S_Disconnected)
-	, namespaceUris_()
+	, namespaceElementVec_()
 
 	, ioThread_()
 	, slotTimerElement_()
@@ -117,15 +117,15 @@ namespace OpcUaHistory
 	}
 
 	void
-	ClientConnection::namespaceUris(NamespaceUris& namespaceUris)
+	ClientConnection::namespaceElementVec(NamespaceElement::Vec& namespaceElementVec)
 	{
-		namespaceUris_ = namespaceUris;
+		namespaceElementVec_ = namespaceElementVec;
 	}
 
-	ClientConnection::NamespaceUris&
-	ClientConnection::namespaceUris(void)
+	NamespaceElement::Vec&
+	ClientConnection::namespaceElementVec(void)
 	{
-		return namespaceUris_;
+		return namespaceElementVec_;
 	}
 
 	void
@@ -308,9 +308,9 @@ namespace OpcUaHistory
 
 		// create namespace mapping
 		namespaceMap_.clear();
-		for (uint32_t idx=0; idx<namespaceUris_.size(); idx++) {
-			uint32_t namespaceIndex = idx+1;
-			std::string namespaceName = namespaceUris_[idx];
+		for (uint32_t idx=0; idx<namespaceElementVec_.size(); idx++) {
+			uint32_t namespaceIndex = namespaceElementVec_[idx].namespaceIndex_;
+			std::string namespaceName = namespaceElementVec_[idx].namespaceName_;
 
 			it = namespaceMap.find(namespaceName);
 			if (it == namespaceMap.end()) {

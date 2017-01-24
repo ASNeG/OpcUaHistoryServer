@@ -18,6 +18,8 @@
 #ifndef __OpcUaHistory_ClientConfigIf_h__
 #define __OpcUaHistory_ClientConfigIf_h__
 
+#include "OpcUaHistory/Interface/ConfigIf.h"
+
 namespace OpcUaHistory
 {
 
@@ -26,6 +28,9 @@ namespace OpcUaHistory
 	  public:
 		ClientConfigIf(void) {}
 		virtual ~ClientConfigIf(void) {}
+
+		virtual void clientNamespaces(NamespaceElement::Vec& namespaceElementVec) = 0;
+		virtual void clientVariables(VariableElement::Vec& variableElementVec) = 0;
 	};
 
 }
