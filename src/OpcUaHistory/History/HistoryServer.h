@@ -24,7 +24,7 @@
 #include "OpcUaStackCore/Application/ApplicationHReadContext.h"
 #include "OpcUaStackCore/Application/ApplicationHWriteContext.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/HistoryStoreIf.h"
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 
 

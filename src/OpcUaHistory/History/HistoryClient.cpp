@@ -56,13 +56,13 @@ namespace OpcUaHistory
     		return false;
     	}
 
-#if 0   // FIXME: todo
-
     	// configure client connection
-    	clientConnection_.serverUri(clientConfig_.serverUri());
-    	clientConnection_.reconnectTimeout(clientConfig_.reconnectTimeout());
+    	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
+    	clientConnection_.reconnectTimeout(clientConfig_.clientEndpointConfig().reconnectTimeout());
     	clientConnection_.ioThread(ioThread_);
-    	clientConnection_.namespaceUris(clientConfig_.namespaceUris());
+    	//clientConnection_.namespaceUris(clientConfig_.namespaceUris());
+
+#if 0
 
     	// create subscriptions
     	ClientSubscriptionConfig::Map::iterator it1;
