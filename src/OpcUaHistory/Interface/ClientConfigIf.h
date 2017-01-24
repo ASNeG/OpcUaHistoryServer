@@ -15,17 +15,17 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_ServerConfigIf_h__
-#define __OpcUaHistory_ServerConfigIf_h__
+#ifndef __OpcUaHistory_ClientConfigIf_h__
+#define __OpcUaHistory_ClientConfigIf_h__
 
 namespace OpcUaHistory
 {
 
-	class ServerConfigIf
+	class ClientConfigIf
 	{
 	  public:
-		ServerConfigIf(void) {}
-		virtual ~ServerConfigIf(void) {}
+		ClientConfigIf(void) {}
+		virtual ~ClientConfigIf(void) {}
 	};
 
 }

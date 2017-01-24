@@ -18,14 +18,18 @@
 #ifndef __OpcUaHistory_ConfigIf_h__
 #define __OpcUaHistory_ConfigIf_h__
 
+#include <vector>
+
 namespace OpcUaHistory
 {
 
-	class ConfigIf
+	class NamespaceElement
 	{
 	  public:
-		ConfigIf(void) {}
-		virtual ~ConfigIf(void) {}
+		typedef std::vector<NamespaceElement> Vec;
+
+		uint32_t namespaceIndex_;
+		std::string namespaceName_;
 	};
 
 }

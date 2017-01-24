@@ -75,7 +75,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryServer::HistoryServer(void)
-	: historyStoreModelConfig_()
+	: serverConfigIf_(nullptr)
 	, historyStoreIf_(nullptr)
 	, applicationServiceIf_(nullptr)
 	, namespaceMap_()
@@ -86,6 +86,12 @@ namespace OpcUaHistory
 
 	HistoryServer::~HistoryServer(void)
 	{
+	}
+
+	void
+	HistoryServer::serverConfigIf(ServerConfigIf* serverConfigIf)
+	{
+		serverConfigIf_ = serverConfigIf;
 	}
 
 	void
@@ -103,11 +109,6 @@ namespace OpcUaHistory
     bool
     HistoryServer::startup(std::string& fileName, ConfigXmlManager& configXmlManager)
     {
-    	// parse server configuration file
-    	if (!historyStoreModelConfig_.decode(fileName, configXmlManager)) {
-    		return false;
-    	}
-
 		// read namespace info from server service
 		if (!getNamespaceInfo()) {
 			return false;
@@ -141,24 +142,16 @@ namespace OpcUaHistory
 			return false;
 		}
 
+		// get server namespaces
+		NamespaceElement::Vec namespaceElementVec;
+		serverConfigIf_->namespaces(namespaceElementVec);
+
 		// create namespace mapping table // historyServerConfig_
 		namespaceMap_.clear();
 
-		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris =
-				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
-		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes =
-				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
-
-		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
-			uint32_t namespaceIndex = idx+1;
-			std::string namespaceName = namespaceUris[idx];
-			if (
-				namespaceTypes[idx] != HistoryStoreModelValuesConfig::Server &&
-				namespaceTypes[idx] != HistoryStoreModelValuesConfig::ClientServer
-			)
-			{
-				continue;
-			}
+		for (uint32_t idx=0; idx<namespaceElementVec.size(); idx++) {
+			std::string namespaceName = namespaceElementVec[idx].namespaceName_;
+			uint32_t namespaceIndex = namespaceElementVec[idx].namespaceIndex_;
 
 			bool found = false;
 			NamespaceInfoResponse::Index2NamespaceMap::iterator it;
