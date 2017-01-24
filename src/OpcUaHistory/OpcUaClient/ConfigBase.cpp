@@ -15,7 +15,7 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#include "OpcUaHistory/History/ConfigBase.h"
+#include "OpcUaHistory/OpcUaClient/ConfigBase.h"
 
 namespace OpcUaHistory
 {

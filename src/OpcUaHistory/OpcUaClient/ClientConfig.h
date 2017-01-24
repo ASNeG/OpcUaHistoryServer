@@ -19,7 +19,7 @@
 #define __OpcUaHistory_HistoryClientConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
-#include "OpcUaHistory/History/ConfigBase.h"
+#include "OpcUaHistory/OpcUaClient/ConfigBase.h"
 #include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
