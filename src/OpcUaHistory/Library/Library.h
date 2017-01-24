@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -23,7 +23,7 @@
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaHistory/History/HistoryStore.h"
 #include "OpcUaHistory/History/HistoryClientManager.h"
-#include "OpcUaHistory/History/HistoryServerManager.h"
+#include "OpcUaHistory/OpcUaServer/HistoryServerManager.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;

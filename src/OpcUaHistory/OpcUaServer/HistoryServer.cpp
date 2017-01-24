@@ -16,8 +16,8 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryServer.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
+#include "OpcUaHistory/OpcUaServer/HistoryServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
