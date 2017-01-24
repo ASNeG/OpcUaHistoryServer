@@ -24,7 +24,8 @@ namespace OpcUaHistory
 {
 
 	HistoryClient::HistoryClient(void)
-	: variableElementVec_()
+	: clientHandle_(0)
+	, variableElementVec_()
 	, clientConfigIf_(nullptr)
 	, clientConfig_()
 	, ioThread_()
@@ -147,29 +148,40 @@ namespace OpcUaHistory
      	ClientMonitoredItemConfig::SPtr& cmic
     )
     {
+    	std::string monitredItem = clientConfig_.id() + "." + csc->id() + "." + cmic->id();
 
-    	ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
-    	cs->addMonitoredItem(cmi);
+    	VariableElement::Vec::iterator it1;
+    	for (it1=variableElementVec_.begin(); it1!=variableElementVec_.end(); it1++) {
 
-#if 0
-    			//
-    			// create monitored item
-    			//
+    		OpcUaReferenceConfig::Vec::iterator it2;
+    		for (it2=it1->references_.begin(); it2!=it1->references_.end(); it2++) {
 
+    			OpcUaReferenceConfig::SPtr ref = *it2;
+
+    			if (ref->service() != OpcUaReferenceConfig::Mon) continue;
+
+    			OpcUaMonReferenceConfig::SPtr refExt = boost::static_pointer_cast<OpcUaMonReferenceConfig>(ref->extension());
+    			if (monitredItem != refExt->handle()) continue;
 
     			Object::SPtr context;
-    			historyStoreIf_->getHistoryStoreContext(cnc->valueName(), context, HistoryStoreIf::Write);
+    			historyStoreIf_->getHistoryStoreContext(it1->name_, context, HistoryStoreIf::Write);
 
-    			clientHandle++;
-    			cmi->clientHandle(clientHandle);
-    			cmi->samplingInterval(cnc->samplingInterval());
-    			cmi->queueSize(cnc->queueSize());
-    			cmi->dataChangeFilter(cnc->dataChangeFilter());
-    			cmi->nodeId(cnc->nodeId());
-    			cmi->context(context);
+    			// create new monitored item
+    			ClientMonitoredItem::SPtr cmi = constructSPtr<ClientMonitoredItem>();
 
+       			clientHandle_++;
+        		cmi->clientHandle(clientHandle_);
+        		cmi->samplingInterval(cmi->samplingInterval());
+        		cmi->queueSize(cmi->queueSize());
+        		cmi->dataChangeFilter(cmi->dataChangeFilter());
+        		cmi->nodeId(ref->nodeId());
+        		cmi->context(context);
 
-#endif
+    			cs->addMonitoredItem(cmi);
+    		}
+
+    	}
+
     	return true;
 
     }

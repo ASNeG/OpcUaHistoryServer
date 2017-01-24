@@ -68,6 +68,7 @@ namespace OpcUaHistory
         	ClientMonitoredItemConfig::SPtr& cmic
         );
 
+        uint32_t clientHandle_;
         VariableElement::Vec variableElementVec_;
         ClientConfigIf* clientConfigIf_;
         ClientConfig clientConfig_;
