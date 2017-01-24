@@ -25,6 +25,7 @@ namespace OpcUaHistory
 
 	HistoryStore::HistoryStore(void)
 	: fileHistoryStore_()
+	, historyStoreModelConfig_()
 	{
 	}
 
@@ -35,34 +36,29 @@ namespace OpcUaHistory
     bool
     HistoryStore::startup(std::string& configFile, ConfigXmlManager& configXmlManager)
     {
-    	// startup file history store interface
-    	if (!fileHistoryStore_.startup(configFile, configXmlManager)) {
-    	    return false;
+    	// parse history model configuration
+    	if (!historyStoreModelConfig_.decode(configFile, configXmlManager)) {
+    		return false;
     	}
 
-    	return true;
+    	// check configuratiom
+    	if (historyStoreModelConfig_.fileHistoryStoreConfig().activate()) {
+    		return fileHistoryStore_.startup(&historyStoreModelConfig_.fileHistoryStoreConfig());
+    	}
+
+    	return false;
     }
 
     HistoryStoreIf*
     HistoryStore::historyStoreIf(void)
     {
-
-    	// get interface
-    	if (fileHistoryStore_.activate()) {
-    		return &fileHistoryStore_;
-    	}
-    	else {
-    		return nullptr;
-    	}
+    	return &fileHistoryStore_;
     }
 
     bool
     HistoryStore::shutdown(void)
     {
-    	if (fileHistoryStore_.activate()) {
-    		return fileHistoryStore_.shutdown();
-    	}
-    	return false;
+    	return fileHistoryStore_.shutdown();
     }
 
 }

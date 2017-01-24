@@ -15,11 +15,12 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_HistoryManager_h__
-#define __OpcUaHistory_HistoryManager_h__
+#ifndef __OpcUaHistory_HistoryStore_h__
+#define __OpcUaHistory_HistoryStore_h__
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 #include "OpcUaHistory/History/FileHistoryStore.h"
 
 using namespace OpcUaStackCore;
@@ -38,6 +39,7 @@ namespace OpcUaHistory
 	    HistoryStoreIf* historyStoreIf(void);
 
 	  private:
+	    HistoryStoreModelConfig historyStoreModelConfig_;
 	    FileHistoryStore fileHistoryStore_;
 	};
 
