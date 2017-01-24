@@ -90,8 +90,8 @@ namespace OpcUaHistory
 	    );
 	    bool getNamespaceInfo(void);
 	    bool registerServerCallbacks(void);
-	    bool registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value);
-	    bool registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value, OpcUaReferenceConfig::SPtr& ref);
+	    bool registerServerCallbacks(VariableElement& variableElement);
+	    bool registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref);
 
 
 	    ServerConfigIf* serverConfigIf_;

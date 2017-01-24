@@ -180,31 +180,24 @@ namespace OpcUaHistory
     bool
     HistoryServer::registerServerCallbacks(void)
     {
-    	HistoryStoreModelValueConfig::Vec::iterator it;
-    	HistoryStoreModelValueConfig::Vec& values =
-    		historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+    	VariableElement::Vec::iterator it;
+    	VariableElement::Vec variableElementVec;
+    	serverConfigIf_->variables(variableElementVec);
 
-    	// read all history values
-    	for (it = values.begin(); it != values.end(); it++) {
-    		HistoryStoreModelValueConfig::SPtr value = *it;
-
-    		if (!registerServerCallbacks(value)) {
-    			return false;
+    	for (it=variableElementVec.begin(); it!=variableElementVec.end(); it++) {
+    		if (!registerServerCallbacks(*it)) {
+    		    return false;
     		}
     	}
     }
 
     bool
-    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value)
+    HistoryServer::registerServerCallbacks(VariableElement& variableElement)
     {
-    	// read server nodes
     	OpcUaReferenceConfig::Vec::iterator it;
-    	OpcUaReferenceConfig::Vec& refVec = value->serverVec();
 
-    	for (it = refVec.begin(); it != refVec.end(); it++) {
-    		OpcUaReferenceConfig::SPtr ref = *it;
-
-    		if (!registerServerCallbacks(value, ref)) {
+    	for (it=variableElement.references_.begin(); it!=variableElement.references_.end(); it++) {
+    		if (!registerServerCallbacks(variableElement, *it)) {
     			return false;
     		}
     	}
@@ -213,7 +206,7 @@ namespace OpcUaHistory
     }
 
     bool
-    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value, OpcUaReferenceConfig::SPtr& ref)
+    HistoryServer::registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref)
     {
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
@@ -241,13 +234,13 @@ namespace OpcUaHistory
   		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
   		if (ref->service() == OpcUaReferenceConfig::HRead) {
   			Object::SPtr contextRead;
-  			historyStoreIf_->getHistoryStoreContext(value->name(), contextRead, HistoryStoreIf::Read);
+  			historyStoreIf_->getHistoryStoreContext(variableElement.name_, contextRead, HistoryStoreIf::Read);
   			historyServerItem->contextRead(contextRead);
   			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
   		}
   		else if (ref->service() == OpcUaReferenceConfig::HWrite) {
   			Object::SPtr contextWrite;
-  			historyStoreIf_->getHistoryStoreContext(value->name(), contextWrite, HistoryStoreIf::Write);
+  			historyStoreIf_->getHistoryStoreContext(variableElement.name_, contextWrite, HistoryStoreIf::Write);
   			historyServerItem->contextWrite(contextWrite);
   			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
   		}

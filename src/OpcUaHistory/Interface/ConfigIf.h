@@ -18,6 +18,7 @@
 #ifndef __OpcUaHistory_ConfigIf_h__
 #define __OpcUaHistory_ConfigIf_h__
 
+#include "OpcUaHistory/Interface/OpcUaReferenceConfig.h"
 #include <vector>
 
 namespace OpcUaHistory
@@ -30,6 +31,15 @@ namespace OpcUaHistory
 
 		uint32_t namespaceIndex_;
 		std::string namespaceName_;
+	};
+
+	class VariableElement
+	{
+	  public:
+		typedef std::vector<VariableElement> Vec;
+
+		std::string name_;
+		OpcUaReferenceConfig::Vec references_;
 	};
 
 }
