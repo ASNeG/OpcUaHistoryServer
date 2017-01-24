@@ -19,7 +19,7 @@
 #define __OpcUaHistory_HistoryStoreModelValuesConfig_h__
 
 #include "OpcUaStackCore/Base/Config.h"
-#include "OpcUaHistory/History/OpcUaReferenceConfig.h"
+#include "OpcUaHistory/Interface/OpcUaReferenceConfig.h"
 
 using namespace OpcUaStackCore;
 
