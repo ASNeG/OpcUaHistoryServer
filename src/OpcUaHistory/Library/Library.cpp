@@ -102,16 +102,19 @@ namespace OpcUaHistory
         if (!ioThread_->startup()) return false;
 
         // start history store
+        Log(Info, "startup history store");
         if (!historyStore_.startup(configHistory, configXmlManager_)) return false;
         HistoryStoreIf* historyStoreIf = historyStore_.historyStoreIf();
 
         // start history client manager
+        Log(Info, "startup history client");
         historyClientManager_.ioThread(ioThread_);
         historyClientManager_.historyStoreIf(historyStoreIf);
         historyClientManager_.clientConfigIf(&historyStore_);
         if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
 
         // start history server
+        Log(Info, "startup history server");
         historyServer_.historyStoreIf(historyStoreIf);
         historyServer_.applicationServiceIf(&service());
         historyServer_.serverConfigIf(&historyStore_);
