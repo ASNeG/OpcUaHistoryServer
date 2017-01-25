@@ -189,6 +189,8 @@ namespace OpcUaHistory
     		    return false;
     		}
     	}
+
+    	return true;
     }
 
     bool

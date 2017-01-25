@@ -120,6 +120,7 @@ namespace OpcUaHistory
         historyServer_.serverConfigIf(&historyStore_);
         if (!historyServer_.startup()) return false;
 
+        Log(Info, "startup history server complete");
 		return true;
 	}
 
