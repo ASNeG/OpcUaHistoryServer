@@ -64,6 +64,18 @@ namespace OpcUaHistory
 	void
 	HistoryStore::clientNamespaces(NamespaceElement::Vec& namespaceElementVec)
 	{
+		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
+		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
+
+		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
+			if ( namespaceTypes[idx] == HistoryStoreModelValuesConfig::Client ||
+				 namespaceTypes[idx] == HistoryStoreModelValuesConfig::ClientServer ) {
+				NamespaceElement namespaceElement;
+				namespaceElement.namespaceIndex_ = idx+1;
+				namespaceElement.namespaceName_ = namespaceUris[idx];
+				namespaceElementVec.push_back(namespaceElement);
+			}
+		}
 	}
 
 	void
@@ -74,6 +86,18 @@ namespace OpcUaHistory
 	void
 	HistoryStore::serverNamespaces(NamespaceElement::Vec& namespaceElementVec)
 	{
+		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
+		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
+
+		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
+			if ( namespaceTypes[idx] == HistoryStoreModelValuesConfig::Server ||
+				 namespaceTypes[idx] == HistoryStoreModelValuesConfig::ClientServer ) {
+				NamespaceElement namespaceElement;
+				namespaceElement.namespaceIndex_ = idx+1;
+				namespaceElement.namespaceName_ = namespaceUris[idx];
+				namespaceElementVec.push_back(namespaceElement);
+			}
+		}
 	}
 
 	void
