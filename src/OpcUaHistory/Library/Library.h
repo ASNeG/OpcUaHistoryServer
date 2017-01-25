@@ -23,7 +23,7 @@
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaHistory/History/HistoryStore.h"
 #include "OpcUaHistory/OpcUaClient/HistoryClientManager.h"
-#include "OpcUaHistory/OpcUaServer/HistoryServerManager.h"
+#include "OpcUaHistory/OpcUaServer/HistoryServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -48,7 +48,7 @@ namespace OpcUaHistory
 		ConfigXmlManager configXmlManager_;
 		HistoryStore historyStore_;
 		HistoryClientManager historyClientManager_;
-		HistoryServerManager historyServerManager_;
+		HistoryServer historyServer_;
 	};
 
 }

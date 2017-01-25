@@ -70,7 +70,7 @@ namespace OpcUaHistory
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
 
-	    bool startup(std::string& fileName, ConfigXmlManager& configXmlManager);
+	    bool startup(void);
 	    bool shutdown(void);
 
 	  private:

@@ -107,7 +107,7 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryServer::startup(std::string& fileName, ConfigXmlManager& configXmlManager)
+    HistoryServer::startup(void)
     {
 		// read namespace info from server service
 		if (!getNamespaceInfo()) {
