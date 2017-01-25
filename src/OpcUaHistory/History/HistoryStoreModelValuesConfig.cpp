@@ -105,7 +105,9 @@ namespace OpcUaHistory
 			client->configFileName(configFileName_);
 			client->elementPrefix(elementPrefix_ + ".Client");
 
-			if (!client->decode(*it))
+			if (!client->decode(*it)) {
+				return false;
+			}
 
 			clientVec_.push_back(client);
 		}
@@ -126,7 +128,9 @@ namespace OpcUaHistory
 			server->configFileName(configFileName_);
 			server->elementPrefix(elementPrefix_ + ".Server");
 
-			if (!server->decode(*it))
+			if (!server->decode(*it)) {
+				return false;
+			}
 
 			serverVec_.push_back(server);
 		}

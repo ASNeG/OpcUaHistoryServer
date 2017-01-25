@@ -68,8 +68,10 @@ namespace OpcUaHistory
 		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
 
 		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
+
 			if ( namespaceTypes[idx] == HistoryStoreModelValuesConfig::Client ||
 				 namespaceTypes[idx] == HistoryStoreModelValuesConfig::ClientServer ) {
+
 				NamespaceElement namespaceElement;
 				namespaceElement.namespaceIndex_ = idx+1;
 				namespaceElement.namespaceName_ = namespaceUris[idx];
