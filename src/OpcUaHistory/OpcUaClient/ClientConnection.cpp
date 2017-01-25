@@ -306,6 +306,12 @@ namespace OpcUaHistory
 			namespaceMap.insert(std::make_pair(uri, idx));
 		}
 
+		// check number of internal namespaces
+		if (namespaceElementVec_.size() == 0) {
+			Log(Error, "no internal namespace uri in client configuration available");
+			return;
+		}
+
 		// create namespace mapping
 		namespaceMap_.clear();
 		for (uint32_t idx=0; idx<namespaceElementVec_.size(); idx++) {
