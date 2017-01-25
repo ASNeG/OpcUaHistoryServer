@@ -58,7 +58,8 @@ namespace OpcUaHistory
 		success = configXmlManager.registerConfiguration(configFileName, config);
 		if (!success) {
 			Log(Error, "read configuration file error")
-			   .parameter("ConfigFile", configFileName);
+			   .parameter("ConfigFile", configFileName)
+			   .parameter("ErrorMessage", configXmlManager.errorMessage());
 			   return false;
 		}
 
