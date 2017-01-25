@@ -43,7 +43,7 @@
         	<Server Service="HWrite" NodeId="ns=1;i=200"/>
         	<Server Service="Mon"    NodeId="ns=1;i=200"/>
         	<Client Service="Mon"    NodeId="ns=2;i=200" Handle="Client.Subst.MonItem"/>
-		</Value
+		</Value>
 		
 		<Value Name="SByteArrayValue">
         	<Server Service="HRead"  NodeId="ns=1;i=201"/>
