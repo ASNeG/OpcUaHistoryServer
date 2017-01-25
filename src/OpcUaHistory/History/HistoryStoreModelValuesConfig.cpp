@@ -81,7 +81,7 @@ namespace OpcUaHistory
 		std::vector<Config>::iterator it;
 
 		// get name element
-		if (!config.getConfigParameter("<xmlattr>.name", name_)) {
+		if (!config.getConfigParameter("<xmlattr>.Name", name_)) {
 			Log(Error, "attribute missing in config file")
 				.parameter("Element", elementPrefix_)
 				.parameter("Attribute", "Name")
