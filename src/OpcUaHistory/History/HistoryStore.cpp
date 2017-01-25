@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -60,5 +60,25 @@ namespace OpcUaHistory
     {
     	return fileHistoryStore_.shutdown();
     }
+
+	void
+	HistoryStore::clientNamespaces(NamespaceElement::Vec& namespaceElementVec)
+	{
+	}
+
+	void
+	HistoryStore::clientVariables(VariableElement::Vec& variableElementVec)
+	{
+	}
+
+	void
+	HistoryStore::serverNamespaces(NamespaceElement::Vec& namespaceElementVec)
+	{
+	}
+
+	void
+	HistoryStore::serverVariables(VariableElement::Vec& variableElementVec)
+	{
+	}
 
 }
