@@ -34,8 +34,8 @@
 	
 	<Values>
 		<NamespaceUris>
-		    <Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
 			<Uri>http://ASNeG.de/HistoryServer/</Uri>
+		    <Uri>http://ASNeG-Demo.de/Test-Server-Lib/</Uri>
 	    </NamespaceUris>
 	
 		<Value Name="SByteValue">

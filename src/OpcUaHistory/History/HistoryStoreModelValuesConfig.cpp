@@ -236,6 +236,9 @@ namespace OpcUaHistory
 
 		// create namespace types
 		for (uint32_t idx=0; idx<namespaceUris_.size(); idx++) {
+			Log(Debug, "read namespace uri")
+				.parameter("NamespaceIndex", idx+1)
+				.parameter("NamespaceUri", namespaceUris_[idx]);
 			namespaceTypes_.push_back(None);
 		}
 
