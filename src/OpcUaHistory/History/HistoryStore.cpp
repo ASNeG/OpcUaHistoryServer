@@ -81,6 +81,18 @@ namespace OpcUaHistory
 	void
 	HistoryStore::clientVariables(VariableElement::Vec& variableElementVec)
 	{
+		HistoryStoreModelValueConfig::Vec::iterator it;
+		HistoryStoreModelValueConfig::Vec& valueVec = historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+
+		for (it=valueVec.begin(); it!=valueVec.end(); it++) {
+			HistoryStoreModelValueConfig::SPtr modelValue = *it;
+
+			VariableElement variableElement;
+			variableElement.name_ = modelValue->name();
+			variableElement.references_ = modelValue->clientVec();
+
+			variableElementVec.push_back(variableElement);
+		}
 	}
 
 	void
@@ -103,6 +115,18 @@ namespace OpcUaHistory
 	void
 	HistoryStore::serverVariables(VariableElement::Vec& variableElementVec)
 	{
+		HistoryStoreModelValueConfig::Vec::iterator it;
+		HistoryStoreModelValueConfig::Vec& valueVec = historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+
+		for (it=valueVec.begin(); it!=valueVec.end(); it++) {
+			HistoryStoreModelValueConfig::SPtr modelValue = *it;
+
+			VariableElement variableElement;
+			variableElement.name_ = modelValue->name();
+			variableElement.references_ = modelValue->serverVec();
+
+			variableElementVec.push_back(variableElement);
+		}
 	}
 
 }
