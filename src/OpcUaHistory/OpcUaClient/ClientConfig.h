@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -19,8 +19,7 @@
 #define __OpcUaHistory_HistoryClientConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
-#include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaHistory/OpcUaClient/ConfigBase.h"
 #include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
@@ -28,33 +27,33 @@ using namespace OpcUaStackCore;
 namespace OpcUaHistory
 {
 
-	class ClientNodeConfig
+	class ClientMonitoredItemConfig
 	{
 	  public:
-		typedef boost::shared_ptr<ClientNodeConfig> SPtr;
-		typedef std::map<std::string, ClientNodeConfig::SPtr> Map;
+		typedef boost::shared_ptr<ClientMonitoredItemConfig> SPtr;
+		typedef std::map<std::string, ClientMonitoredItemConfig::SPtr> Map;
 
-		ClientNodeConfig(void);
-		~ClientNodeConfig(void);
+		ClientMonitoredItemConfig(void);
+		~ClientMonitoredItemConfig(void);
 
+		std::string& id(void);
+		void id(const std::string& id);
 		uint32_t samplingInterval(void);
 		void samplingInterval(uint32_t samplingInterval);
 		uint32_t queueSize(void);
 		void queueSize(uint32_t queueSize);
 		DataChangeFilter dataChangeFilter(void);
 		void dataChangeFilter(DataChangeFilter dataChangeFilter);
-		OpcUaNodeId& nodeId(void);
-		void nodeId(OpcUaNodeId& nodeId);
-		std::string& valueName(void);
-		void valueName(const std::string& valueName);
+
+		bool decode(Config& config, ConfigBase& configBase);
 
 	  private:
+		std::string id_;
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
-		OpcUaNodeId nodeId_;
-		std::string valueName_;
 		DataChangeFilter dataChangeFilter_;
 	};
+
 
 	class ClientSubscriptionConfig
 	{
@@ -75,43 +74,60 @@ namespace OpcUaHistory
 		void maxKeepAliveCount(uint32_t maxKeepAliveCount);
 		uint32_t maxNotificationsPerPublish(void);
 		void maxNotificationsPerPublish(uint32_t maxNotificationsPerPublish);
-		ClientNodeConfig::Map& clientNodeConfigMap(void);
+		ClientMonitoredItemConfig::Map& clientNodeConfigMap(void);
+
+		bool decode(Config& config, ConfigBase& configBase);
 
 	  private:
 		std::string id_;
-
 		uint32_t publishingInterval_;
 		uint32_t livetimeCount_;
 		uint32_t maxKeepAliveCount_;
 		uint32_t maxNotificationsPerPublish_;
-
-		ClientNodeConfig::Map clientNodeConfigMap_;
+		ClientMonitoredItemConfig::Map clientMonitoredItemConfigMap_;
 	};
 
-	class HistoryClientConfig
+
+	class ClientEndpointConfig
 	{
 	  public:
-		HistoryClientConfig(void);
-		~HistoryClientConfig(void);
+		ClientEndpointConfig(void);
+		~ClientEndpointConfig(void);
+
+		void serverUri(const std::string& serverUri);
+		std::string& serverUri(void);
+		void reconnectTimeout(uint32_t reconnectTimeout);
+		uint32_t reconnectTimeout(void);
+
+		bool decode(Config& config, ConfigBase& configBase);
+
+	  private:
+		std::string serverUri_;
+		uint32_t reconnectTimeout_;
+	};
+
+
+	class ClientConfig
+	{
+	  public:
+		ClientConfig(void);
+		~ClientConfig(void);
+
+		std::string id(void);
+		void id(const std::string& id);
+		ClientEndpointConfig& clientEndpointConfig(void);
+		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
 
 		bool decode(const std::string& configFileName, ConfigXmlManager& configXmlManager);
 
-		std::string serverUri(void);
-		uint32_t reconnectTimeout(void);
-		std::vector<std::string>& namespaceUris(void);
-		ClientSubscriptionConfig::Map& clientSubscriptionMap(void);
-
 	  private:
 		bool decodeEndpoint(Config::SPtr& config);
-		bool decodeNamespaceUris(Config::SPtr& config);
 		bool decodeSubscriptions(Config::SPtr& config);
 		bool decodeSubscription(Config& config);
-		bool decodeNodeList(Config& config, ClientNodeConfig::Map& clientNodeConfigMap);
-		bool decodeNode(Config& config, ClientNodeConfig& clientNodeConfig);
+		bool decodeMonitoredItems(Config& config, ClientMonitoredItemConfig::Map& clientMonitoredItemConfigMap);
 
-		std::string serverUri_;
-		uint32_t reconnectTimeout_;
-		std::vector<std::string> namespaceUris_;
+		std::string id_;
+		ClientEndpointConfig clientEndpointConfig_;
 		ClientSubscriptionConfig::Map clientSubscriptionConfigMap_;
 	};
 

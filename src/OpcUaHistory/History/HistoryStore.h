@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -15,12 +15,15 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_HistoryManager_h__
-#define __OpcUaHistory_HistoryManager_h__
+#ifndef __OpcUaHistory_HistoryStore_h__
+#define __OpcUaHistory_HistoryStore_h__
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
+#include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 #include "OpcUaHistory/History/FileHistoryStore.h"
+#include "OpcUaHistory/Interface/ClientConfigIf.h"
+#include "OpcUaHistory/Interface/ServerConfigIf.h"
 
 using namespace OpcUaStackCore;
 
@@ -28,6 +31,8 @@ namespace OpcUaHistory
 {
 
 	class HistoryStore
+	: public ClientConfigIf
+	, public ServerConfigIf
 	{
 	  public:
 		HistoryStore(void);
@@ -37,7 +42,18 @@ namespace OpcUaHistory
 	    bool shutdown(void);
 	    HistoryStoreIf* historyStoreIf(void);
 
+	    //- ClientConfigIf ----------------------------------------------------
+		virtual void clientNamespaces(NamespaceElement::Vec& namespaceElementVec);
+		virtual void clientVariables(VariableElement::Vec& variableElementVec);
+	    //- ClientConfigIf ----------------------------------------------------
+
+	    //- ServerConfigIf ----------------------------------------------------
+		virtual void serverNamespaces(NamespaceElement::Vec& namespaceElementVec);
+		virtual void serverVariables(VariableElement::Vec& variableElementVec);
+	    //- ServerConfigIf ----------------------------------------------------
+
 	  private:
+	    HistoryStoreModelConfig historyStoreModelConfig_;
 	    FileHistoryStore fileHistoryStore_;
 	};
 

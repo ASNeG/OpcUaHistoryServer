@@ -76,70 +76,49 @@ namespace OpcUaHistory
 	}
 
     bool
-    FileHistoryStore::startup(const std::string& fileName, ConfigXmlManager& configXmlManager)
+    FileHistoryStore::startup(FileHistoryStoreConfig* fileHistoryConfig)
     {
-#if 0
-    	if (!fileHistoryConfig_.decode(fileName, configXmlManager)) {
-    		return false;
+    	fileHistoryConfig_ = fileHistoryConfig;
+
+    	// create base folder if the base folder do not exist
+    	if (!boost::filesystem::exists(fileHistoryConfig_->baseFolder())) {
+    		Log(Info, "base folder not exist - create base folder")
+    			.parameter("BaseFolder", fileHistoryConfig_->baseFolder());
+
+    		if (!boost::filesystem::create_directory(fileHistoryConfig_->baseFolder())) {
+    			Log(Error, "create base folder error")
+    			    .parameter("ValueFolder", fileHistoryConfig_->baseFolder());
+    		}
     	}
 
-    	if (!fileHistoryConfig_.activate()) {
-    		return true;
-    	}
-#endif
+    	// init file read manager
+    	fileReadManager_.baseFolder(fileHistoryConfig_->baseFolder());
+    	fileReadManager_.verbose(fileHistoryConfig_->historyStoreFileReadConfig().verboseLogging_);
 
-    	// startup reader and writer
-    	return startupFileStore();
+    	fileReadManager_.maxConcurrentValues(fileHistoryConfig_->historyStoreFileReadConfig().maxConcurrentValues_);
+    	fileReadManager_.ageCounter(fileHistoryConfig_->historyStoreFileReadConfig().ageCounter_);
+
+    	fileReadManager_.maxContinousPoint(fileHistoryConfig_->historyStoreFileReadConfig().maxContinousPoint_);
+    	fileReadManager_.continousPointIdleTimeout(fileHistoryConfig_->historyStoreFileReadConfig().continousPointIdleTimeout_);
+    	fileReadManager_.maxDeleteTimeoutEntries(fileHistoryConfig_->historyStoreFileReadConfig().maxDeleteTimeoutEntries_);
+
+
+    	// init file write manager
+    	fileWriteManager_.baseFolder(fileHistoryConfig_->baseFolder());
+    	fileWriteManager_.verbose(fileHistoryConfig_->historyStoreFileWriteConfig().verboseLogging_);
+
+    	fileWriteManager_.maxDataFolderInValueFolder(fileHistoryConfig_->historyStoreFileWriteConfig().maxDataFolderInValueFolder_);
+    	fileWriteManager_.maxDataFilesInDataFolder(fileHistoryConfig_->historyStoreFileWriteConfig().maxDataFilesInDataFolder_);
+    	fileWriteManager_.maxEntriesInDataFile(fileHistoryConfig_->historyStoreFileWriteConfig().maxEntriesInDataFile_);
+    	fileWriteManager_.maxConcurrentValues(fileHistoryConfig_->historyStoreFileWriteConfig().maxConcurrentValues_);
+    	fileWriteManager_.ageCounter(fileHistoryConfig_->historyStoreFileWriteConfig().ageCounter_);
+
+    	return true;
     }
 
     bool
     FileHistoryStore::shutdown(void)
     {
-    	return true;
-    }
-
-    bool
-    FileHistoryStore::activate(void)
-    {
-    	return fileHistoryConfig_.activate();
-    }
-
-    bool
-    FileHistoryStore::startupFileStore(void)
-    {
-    	// create base folder if the base folder do not exist
-    	if (!boost::filesystem::exists(fileHistoryConfig_.baseFolder())) {
-    		Log(Info, "base folder not exist - create base folder")
-    			.parameter("BaseFolder", fileHistoryConfig_.baseFolder());
-
-    		if (!boost::filesystem::create_directory(fileHistoryConfig_.baseFolder())) {
-    			Log(Error, "create base folder error")
-    			    .parameter("ValueFolder", fileHistoryConfig_.baseFolder());
-    		}
-    	}
-
-    	// init file read manager
-    	fileReadManager_.baseFolder(fileHistoryConfig_.baseFolder());
-    	fileReadManager_.verbose(fileHistoryConfig_.historyStoreFileReadConfig().verboseLogging_);
-
-    	fileReadManager_.maxConcurrentValues(fileHistoryConfig_.historyStoreFileReadConfig().maxConcurrentValues_);
-    	fileReadManager_.ageCounter(fileHistoryConfig_.historyStoreFileReadConfig().ageCounter_);
-
-    	fileReadManager_.maxContinousPoint(fileHistoryConfig_.historyStoreFileReadConfig().maxContinousPoint_);
-    	fileReadManager_.continousPointIdleTimeout(fileHistoryConfig_.historyStoreFileReadConfig().continousPointIdleTimeout_);
-    	fileReadManager_.maxDeleteTimeoutEntries(fileHistoryConfig_.historyStoreFileReadConfig().maxDeleteTimeoutEntries_);
-
-
-    	// init file write manager
-    	fileWriteManager_.baseFolder(fileHistoryConfig_.baseFolder());
-    	fileWriteManager_.verbose(fileHistoryConfig_.historyStoreFileWriteConfig().verboseLogging_);
-
-    	fileWriteManager_.maxDataFolderInValueFolder(fileHistoryConfig_.historyStoreFileWriteConfig().maxDataFolderInValueFolder_);
-    	fileWriteManager_.maxDataFilesInDataFolder(fileHistoryConfig_.historyStoreFileWriteConfig().maxDataFilesInDataFolder_);
-    	fileWriteManager_.maxEntriesInDataFile(fileHistoryConfig_.historyStoreFileWriteConfig().maxEntriesInDataFile_);
-    	fileWriteManager_.maxConcurrentValues(fileHistoryConfig_.historyStoreFileWriteConfig().maxConcurrentValues_);
-    	fileWriteManager_.ageCounter(fileHistoryConfig_.historyStoreFileWriteConfig().ageCounter_);
-
     	return true;
     }
 
@@ -203,10 +182,10 @@ namespace OpcUaHistory
 
 		if (
 			maxResultEntries == 0 ||
-			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_
+			maxResultEntries > fileHistoryConfig_->historyStoreFileReadConfig().maxNumResultValuesPerNode_
 		)
 		{
-			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_;
+			maxResultEntries = fileHistoryConfig_->historyStoreFileReadConfig().maxNumResultValuesPerNode_;
 		}
 
     	bool success = fileReadManager_.readInitial(
@@ -241,10 +220,10 @@ namespace OpcUaHistory
 
 		if (
 			maxResultEntries == 0 ||
-			maxResultEntries > fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_
+			maxResultEntries > fileHistoryConfig_->historyStoreFileReadConfig().maxNumResultValuesPerNode_
 		)
 		{
-			maxResultEntries = fileHistoryConfig_.historyStoreFileReadConfig().maxNumResultValuesPerNode_;
+			maxResultEntries = fileHistoryConfig_->historyStoreFileReadConfig().maxNumResultValuesPerNode_;
 		}
 
 		bool success = fileReadManager_.readNext(

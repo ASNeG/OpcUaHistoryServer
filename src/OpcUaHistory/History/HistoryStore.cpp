@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -25,6 +25,7 @@ namespace OpcUaHistory
 
 	HistoryStore::HistoryStore(void)
 	: fileHistoryStore_()
+	, historyStoreModelConfig_()
 	{
 	}
 
@@ -35,34 +36,99 @@ namespace OpcUaHistory
     bool
     HistoryStore::startup(std::string& configFile, ConfigXmlManager& configXmlManager)
     {
-    	// startup file history store interface
-    	if (!fileHistoryStore_.startup(configFile, configXmlManager)) {
-    	    return false;
+    	// parse history model configuration
+    	if (!historyStoreModelConfig_.decode(configFile, configXmlManager)) {
+    		return false;
     	}
 
-    	return true;
+    	// check configuratiom
+    	if (historyStoreModelConfig_.fileHistoryStoreConfig().activate()) {
+    		return fileHistoryStore_.startup(&historyStoreModelConfig_.fileHistoryStoreConfig());
+    	}
+
+    	return false;
     }
 
     HistoryStoreIf*
     HistoryStore::historyStoreIf(void)
     {
-
-    	// get interface
-    	if (fileHistoryStore_.activate()) {
-    		return &fileHistoryStore_;
-    	}
-    	else {
-    		return nullptr;
-    	}
+    	return &fileHistoryStore_;
     }
 
     bool
     HistoryStore::shutdown(void)
     {
-    	if (fileHistoryStore_.activate()) {
-    		return fileHistoryStore_.shutdown();
-    	}
-    	return false;
+    	return fileHistoryStore_.shutdown();
     }
+
+	void
+	HistoryStore::clientNamespaces(NamespaceElement::Vec& namespaceElementVec)
+	{
+		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
+		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
+
+		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
+
+			if ( namespaceTypes[idx] == HistoryStoreModelValuesConfig::Client ||
+				 namespaceTypes[idx] == HistoryStoreModelValuesConfig::ClientServer ) {
+
+				NamespaceElement namespaceElement;
+				namespaceElement.namespaceIndex_ = idx+1;
+				namespaceElement.namespaceName_ = namespaceUris[idx];
+				namespaceElementVec.push_back(namespaceElement);
+			}
+		}
+	}
+
+	void
+	HistoryStore::clientVariables(VariableElement::Vec& variableElementVec)
+	{
+		HistoryStoreModelValueConfig::Vec::iterator it;
+		HistoryStoreModelValueConfig::Vec& valueVec = historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+
+		for (it=valueVec.begin(); it!=valueVec.end(); it++) {
+			HistoryStoreModelValueConfig::SPtr modelValue = *it;
+
+			VariableElement variableElement;
+			variableElement.name_ = modelValue->name();
+			variableElement.references_ = modelValue->clientVec();
+
+			variableElementVec.push_back(variableElement);
+		}
+	}
+
+	void
+	HistoryStore::serverNamespaces(NamespaceElement::Vec& namespaceElementVec)
+	{
+		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
+		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes = historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
+
+		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
+			if ( namespaceTypes[idx] == HistoryStoreModelValuesConfig::Server ||
+				 namespaceTypes[idx] == HistoryStoreModelValuesConfig::ClientServer ) {
+				NamespaceElement namespaceElement;
+				namespaceElement.namespaceIndex_ = idx+1;
+				namespaceElement.namespaceName_ = namespaceUris[idx];
+				namespaceElementVec.push_back(namespaceElement);
+			}
+		}
+	}
+
+	void
+	HistoryStore::serverVariables(VariableElement::Vec& variableElementVec)
+	{
+		HistoryStoreModelValueConfig::Vec::iterator it;
+		HistoryStoreModelValueConfig::Vec& valueVec = historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+
+		for (it=valueVec.begin(); it!=valueVec.end(); it++) {
+			HistoryStoreModelValueConfig::SPtr modelValue = *it;
+
+			VariableElement variableElement;
+			variableElement.name_ = modelValue->name();
+			variableElement.references_ = modelValue->serverVec();
+
+			variableElementVec.push_back(variableElement);
+		}
+	}
 
 }

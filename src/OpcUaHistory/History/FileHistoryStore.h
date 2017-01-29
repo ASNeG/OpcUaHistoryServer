@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -20,7 +20,7 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/HistoryStoreIf.h"
 #include "OpcUaHistory/History/FileHistoryStoreConfig.h"
 #include "OpcUaHistory/HistoryAccessFile/FileReadManager.h"
 #include "OpcUaHistory/HistoryAccessFile/FileWriteManager.h"
@@ -67,13 +67,10 @@ namespace OpcUaHistory
 		FileHistoryStore(void);
 		~FileHistoryStore(void);
 
-        bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
+        bool startup(FileHistoryStoreConfig* fileHistoryConfig);
         bool shutdown(void);
 
-        bool activate(void);
-
 	  private:
-        bool startupFileStore(void);
 
 	    // -- HistoryStoreIf --------------------------------------------------
 	    bool write(
@@ -104,7 +101,7 @@ namespace OpcUaHistory
 		);
 	    // -- HistoryStoreIf --------------------------------------------------
 
-        FileHistoryStoreConfig fileHistoryConfig_;
+        FileHistoryStoreConfig* fileHistoryConfig_;
 
         FileReadManager fileReadManager_;
         FileWriteManager fileWriteManager_;

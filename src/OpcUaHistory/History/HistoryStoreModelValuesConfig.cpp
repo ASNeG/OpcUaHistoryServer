@@ -81,9 +81,9 @@ namespace OpcUaHistory
 		std::vector<Config>::iterator it;
 
 		// get name element
-		if (!config.getConfigParameter("<xmlattr>.name", name_)) {
+		if (!config.getConfigParameter("<xmlattr>.Name", name_)) {
 			Log(Error, "attribute missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.Value")
+				.parameter("Element", elementPrefix_)
 				.parameter("Attribute", "Name")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
@@ -94,7 +94,7 @@ namespace OpcUaHistory
 		config.getChilds("Client", clients);
 		if (clients.size() == 0) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.Value.Client")
+				.parameter("Element", elementPrefix_ + ".Client")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
@@ -103,9 +103,11 @@ namespace OpcUaHistory
 
 			OpcUaReferenceConfig::SPtr client = constructSPtr<OpcUaReferenceConfig>();
 			client->configFileName(configFileName_);
-			client->elementPrefix("HistoryStoreModel.Values.Value.Client");
+			client->elementPrefix(elementPrefix_ + ".Client");
 
-			if (!client->decode(*it))
+			if (!client->decode(*it)) {
+				return false;
+			}
 
 			clientVec_.push_back(client);
 		}
@@ -115,7 +117,7 @@ namespace OpcUaHistory
 		config.getChilds("Server", servers);
 		if (servers.size() == 0) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.Value.Server")
+				.parameter("Element", elementPrefix_ + ".Server")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
@@ -124,9 +126,11 @@ namespace OpcUaHistory
 
 			OpcUaReferenceConfig::SPtr server = constructSPtr<OpcUaReferenceConfig>();
 			server->configFileName(configFileName_);
-			server->elementPrefix("HistoryStoreModel.Values.Value.Client");
+			server->elementPrefix(elementPrefix_ + ".Server");
 
-			if (!server->decode(*it))
+			if (!server->decode(*it)) {
+				return false;
+			}
 
 			serverVec_.push_back(server);
 		}
@@ -191,7 +195,7 @@ namespace OpcUaHistory
 		boost::optional<Config> valuesConfig = config.getChild("Values");
 		if (!valuesConfig) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values")
+				.parameter("Element", elementPrefix_ + ".Values")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
@@ -216,22 +220,25 @@ namespace OpcUaHistory
 		boost::optional<Config> namespaceUris = config.getChild("NamespaceUris");
 		if (!namespaceUris) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.NamespaceUris")
+				.parameter("Element", elementPrefix_ + "Values.NamespaceUris")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 
 		// get Uri elements
-		config.getValues("Uri", namespaceUris_);
+		namespaceUris->getValues("Uri", namespaceUris_);
 		if (namespaceUris_.size() == 0) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.NamespaceUris.Uri")
+				.parameter("Element", elementPrefix_ + ".Values.NamespaceUris.Uri")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
 
 		// create namespace types
 		for (uint32_t idx=0; idx<namespaceUris_.size(); idx++) {
+			Log(Debug, "read namespace uri")
+				.parameter("NamespaceIndex", idx+1)
+				.parameter("NamespaceUri", namespaceUris_[idx]);
 			namespaceTypes_.push_back(None);
 		}
 
@@ -246,7 +253,7 @@ namespace OpcUaHistory
 		config.getChilds("Value", childs);
 		if (childs.size() == 0) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "HistoryStoreModel.Values.Value");
+				.parameter("Element", elementPrefix_ + ".Values.Value");
 			return false;
 		}
 
@@ -256,7 +263,7 @@ namespace OpcUaHistory
 			// get value element
 			HistoryStoreModelValueConfig::SPtr value = constructSPtr<HistoryStoreModelValueConfig>();
 			value->configFileName(configFileName_);
-			value->configFileName(elementPrefix_ + ".Value");
+			value->elementPrefix(elementPrefix_ + ".Values.Value");
 			if (!value->decode(*it)) {
 				return false;
 			}
@@ -304,7 +311,7 @@ namespace OpcUaHistory
 
 			if (namespaceIndex > namespaceUris_.size()) {
 				Log(Error, "invalid namespace index in config file")
-					.parameter("Element", "HistoryStoreModel.Values.Value.NodeId")
+					.parameter("Element", elementPrefix_ + ".Values.Value.NodeId")
 					.parameter("NodeId", ref->nodeId().toString())
 					.parameter("ConfigFileName", configFileName_);
 				return false;

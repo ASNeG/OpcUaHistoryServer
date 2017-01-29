@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -21,8 +21,9 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
-#include "OpcUaHistory/History/HistoryClientConfig.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/ClientConfigIf.h"
+#include "OpcUaHistory/OpcUaClient/ClientConfig.h"
 #include "OpcUaHistory/OpcUaClient/ClientConnection.h"
 
 namespace OpcUaHistory
@@ -44,6 +45,7 @@ namespace OpcUaHistory
 		HistoryClient(void);
 		~HistoryClient(void);
 
+		void clientConfigIf(ClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 
@@ -55,7 +57,21 @@ namespace OpcUaHistory
         // -- ClientSubscriptionIf --------------------------------------------
 
 	  private:
-        HistoryClientConfig historyClientConfig_;
+        bool createSubscriptions(void);
+        bool createMonitoredItems(
+        	ClientSubscriptionConfig::SPtr& csc,
+        	ClientSubscription::SPtr& cs
+        );
+        bool createMonitoredItems(
+        	ClientSubscriptionConfig::SPtr& csc,
+        	ClientSubscription::SPtr& cs,
+        	ClientMonitoredItemConfig::SPtr& cmic
+        );
+
+        uint32_t clientHandle_;
+        VariableElement::Vec variableElementVec_;
+        ClientConfigIf* clientConfigIf_;
+        ClientConfig clientConfig_;
         ClientConnection clientConnection_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -20,7 +20,8 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/History/HistoryClient.h"
+#include "OpcUaHistory/Interface/ClientConfigIf.h"
+#include "OpcUaHistory/OpcUaClient/HistoryClient.h"
 
 using namespace OpcUaStackCore;
 
@@ -33,6 +34,7 @@ namespace OpcUaHistory
 		HistoryClientManager(void);
 		~HistoryClientManager(void);
 
+		void clientConfigIf(ClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 
@@ -43,6 +45,7 @@ namespace OpcUaHistory
         bool shutdown(void);
 
 	  private:
+        ClientConfigIf* clientConfigIf_;
         HistoryClient::Set historyClientSet_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;

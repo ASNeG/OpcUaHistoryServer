@@ -33,7 +33,7 @@ namespace OpcUaHistory
 	, configXmlManager_()
 	, historyStore_()
 	, historyClientManager_()
-	, historyServerManager_()
+	, historyServer_()
 	{
 		Log(Debug, "Library::Library");
 	}
@@ -88,27 +88,6 @@ namespace OpcUaHistory
             configClients.push_back(configFileName);
         }
 
-
-        //
-        // read OpcUaServer configuration file
-        //
-        std::vector<Config> configVecServer;
-        std::vector<std::string> configServers;
-        config->getChilds("HistoryModel.OpcUaServers", configVecServer);
-
-        for (it1 = configVecServer.begin(); it1 != configVecServer.end(); it1++) {
-        	std::string configFileName;
-        	success = it1->getConfigParameter("OpcUaServer", configFileName);
-            if (!success) {
-             	Log(Error, "history manager configuration entry missing")
-             		.parameter("ConfigFile", applicationInfo()->configFileName())
-             		.parameter("Parameter", "HistoryModel.OpcUaServer.OpcUaServer");
-             	return false;
-            }
-            configServers.push_back(configFileName);
-        }
-
-
         // read history manager configuration
         std::string configHistory;
         success = config->getConfigParameter("HistoryModel.HistoryStore", configHistory);
@@ -123,19 +102,25 @@ namespace OpcUaHistory
         if (!ioThread_->startup()) return false;
 
         // start history store
+        Log(Info, "startup history store");
         if (!historyStore_.startup(configHistory, configXmlManager_)) return false;
         HistoryStoreIf* historyStoreIf = historyStore_.historyStoreIf();
 
         // start history client manager
+        Log(Info, "startup history client");
         historyClientManager_.ioThread(ioThread_);
         historyClientManager_.historyStoreIf(historyStoreIf);
+        historyClientManager_.clientConfigIf(&historyStore_);
         if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
 
-        // start history server manager
-        historyServerManager_.historyStoreIf(historyStoreIf);
-        historyServerManager_.applicationServiceIf(&service());
-        if (!historyServerManager_.startup(configServers, configXmlManager_)) return false;
+        // start history server
+        Log(Info, "startup history server");
+        historyServer_.historyStoreIf(historyStoreIf);
+        historyServer_.applicationServiceIf(&service());
+        historyServer_.serverConfigIf(&historyStore_);
+        if (!historyServer_.startup()) return false;
 
+        Log(Info, "startup history server complete");
 		return true;
 	}
 
@@ -148,7 +133,7 @@ namespace OpcUaHistory
         ioThread_.reset();
 
         // shutdown history client and history server
-        if (!historyServerManager_.shutdown()) return false;
+        if (!historyServer_.shutdown()) return false;
         if (!historyClientManager_.shutdown()) return false;
         if (!historyStore_.shutdown()) return false;
 

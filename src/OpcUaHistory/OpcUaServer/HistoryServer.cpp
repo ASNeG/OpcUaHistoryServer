@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -16,8 +16,8 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/HistoryServer.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
+#include "OpcUaHistory/OpcUaServer/HistoryServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -75,7 +75,7 @@ namespace OpcUaHistory
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	HistoryServer::HistoryServer(void)
-	: historyStoreModelConfig_()
+	: serverConfigIf_(nullptr)
 	, historyStoreIf_(nullptr)
 	, applicationServiceIf_(nullptr)
 	, namespaceMap_()
@@ -86,6 +86,12 @@ namespace OpcUaHistory
 
 	HistoryServer::~HistoryServer(void)
 	{
+	}
+
+	void
+	HistoryServer::serverConfigIf(ServerConfigIf* serverConfigIf)
+	{
+		serverConfigIf_ = serverConfigIf;
 	}
 
 	void
@@ -101,13 +107,8 @@ namespace OpcUaHistory
 	}
 
     bool
-    HistoryServer::startup(std::string& fileName, ConfigXmlManager& configXmlManager)
+    HistoryServer::startup(void)
     {
-    	// parse server configuration file
-    	if (!historyStoreModelConfig_.decode(fileName, configXmlManager)) {
-    		return false;
-    	}
-
 		// read namespace info from server service
 		if (!getNamespaceInfo()) {
 			return false;
@@ -141,24 +142,16 @@ namespace OpcUaHistory
 			return false;
 		}
 
+		// get server namespaces
+		NamespaceElement::Vec namespaceElementVec;
+		serverConfigIf_->serverNamespaces(namespaceElementVec);
+
 		// create namespace mapping table // historyServerConfig_
 		namespaceMap_.clear();
 
-		HistoryStoreModelValuesConfig::NamespaceUris& namespaceUris =
-				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceUris();
-		HistoryStoreModelValuesConfig::NamespaceTypes& namespaceTypes =
-				historyStoreModelConfig_.historyStoreModelValuesConfig().namespaceTypes();
-
-		for (uint32_t idx=0; idx<namespaceUris.size(); idx++) {
-			uint32_t namespaceIndex = idx+1;
-			std::string namespaceName = namespaceUris[idx];
-			if (
-				namespaceTypes[idx] != HistoryStoreModelValuesConfig::Server &&
-				namespaceTypes[idx] != HistoryStoreModelValuesConfig::ClientServer
-			)
-			{
-				continue;
-			}
+		for (uint32_t idx=0; idx<namespaceElementVec.size(); idx++) {
+			std::string namespaceName = namespaceElementVec[idx].namespaceName_;
+			uint32_t namespaceIndex = namespaceElementVec[idx].namespaceIndex_;
 
 			bool found = false;
 			NamespaceInfoResponse::Index2NamespaceMap::iterator it;
@@ -187,31 +180,26 @@ namespace OpcUaHistory
     bool
     HistoryServer::registerServerCallbacks(void)
     {
-    	HistoryStoreModelValueConfig::Vec::iterator it;
-    	HistoryStoreModelValueConfig::Vec& values =
-    		historyStoreModelConfig_.historyStoreModelValuesConfig().valueVec();
+    	VariableElement::Vec::iterator it;
+    	VariableElement::Vec variableElementVec;
+    	serverConfigIf_->serverVariables(variableElementVec);
 
-    	// read all history values
-    	for (it = values.begin(); it != values.end(); it++) {
-    		HistoryStoreModelValueConfig::SPtr value = *it;
-
-    		if (!registerServerCallbacks(value)) {
-    			return false;
+    	for (it=variableElementVec.begin(); it!=variableElementVec.end(); it++) {
+    		if (!registerServerCallbacks(*it)) {
+    		    return false;
     		}
     	}
+
+    	return true;
     }
 
     bool
-    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value)
+    HistoryServer::registerServerCallbacks(VariableElement& variableElement)
     {
-    	// read server nodes
     	OpcUaReferenceConfig::Vec::iterator it;
-    	OpcUaReferenceConfig::Vec& refVec = value->serverVec();
 
-    	for (it = refVec.begin(); it != refVec.end(); it++) {
-    		OpcUaReferenceConfig::SPtr ref = *it;
-
-    		if (!registerServerCallbacks(value, ref)) {
+    	for (it=variableElement.references_.begin(); it!=variableElement.references_.end(); it++) {
+    		if (!registerServerCallbacks(variableElement, *it)) {
     			return false;
     		}
     	}
@@ -220,7 +208,7 @@ namespace OpcUaHistory
     }
 
     bool
-    HistoryServer::registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value, OpcUaReferenceConfig::SPtr& ref)
+    HistoryServer::registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref)
     {
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
 	  	RegisterForwardRequest::SPtr req = trx->request();
@@ -248,13 +236,13 @@ namespace OpcUaHistory
   		HistoryServerItem::SPtr historyServerItem = constructSPtr<HistoryServerItem>();
   		if (ref->service() == OpcUaReferenceConfig::HRead) {
   			Object::SPtr contextRead;
-  			historyStoreIf_->getHistoryStoreContext(value->name(), contextRead, HistoryStoreIf::Read);
+  			historyStoreIf_->getHistoryStoreContext(variableElement.name_, contextRead, HistoryStoreIf::Read);
   			historyServerItem->contextRead(contextRead);
   			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
   		}
   		else if (ref->service() == OpcUaReferenceConfig::HWrite) {
   			Object::SPtr contextWrite;
-  			historyStoreIf_->getHistoryStoreContext(value->name(), contextWrite, HistoryStoreIf::Write);
+  			historyStoreIf_->getHistoryStoreContext(variableElement.name_, contextWrite, HistoryStoreIf::Write);
   			historyServerItem->contextWrite(contextWrite);
   			historyServerItemMap_.insert(std::make_pair(*nodeId.get(), historyServerItem));
   		}

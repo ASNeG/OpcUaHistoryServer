@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -24,7 +24,8 @@
 #include "OpcUaStackCore/Application/ApplicationHReadContext.h"
 #include "OpcUaStackCore/Application/ApplicationHWriteContext.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
-#include "OpcUaHistory/History/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/HistoryStoreIf.h"
+#include "OpcUaHistory/Interface/ServerConfigIf.h"
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 
 
@@ -65,10 +66,11 @@ namespace OpcUaHistory
 		HistoryServer(void);
 		~HistoryServer(void);
 
+		void serverConfigIf(ServerConfigIf* serverConfigIf);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
 
-	    bool startup(std::string& fileName, ConfigXmlManager& configXmlManager);
+	    bool startup(void);
 	    bool shutdown(void);
 
 	  private:
@@ -88,12 +90,14 @@ namespace OpcUaHistory
 	    );
 	    bool getNamespaceInfo(void);
 	    bool registerServerCallbacks(void);
-	    bool registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value);
-	    bool registerServerCallbacks(HistoryStoreModelValueConfig::SPtr& value, OpcUaReferenceConfig::SPtr& ref);
+	    bool registerServerCallbacks(VariableElement& variableElement);
+	    bool registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref);
 
-	    HistoryStoreModelConfig historyStoreModelConfig_;
+
+	    ServerConfigIf* serverConfigIf_;
 	    HistoryStoreIf* historyStoreIf_;
 	    ApplicationServiceIf* applicationServiceIf_;
+
 	    NamespaceMap namespaceMap_;
 	    Callback hReadCallback_;
 	    Callback hWriteCallback_;

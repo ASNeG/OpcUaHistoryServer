@@ -18,7 +18,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaHistory/History/OpcUaReferenceConfig.h"
+#include "OpcUaHistory/Interface/OpcUaReferenceConfig.h"
 
 using namespace OpcUaStackCore;
 

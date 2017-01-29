@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
+#include "OpcUaHistory/Interface/ClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/ClientSubscription.h"
 #include <map>
 #include <set>
@@ -66,8 +67,8 @@ namespace OpcUaHistory
 
 		void state(State state);
 		State state(void);
-		void namespaceUris(NamespaceUris& namespaceUris);
-		NamespaceUris& namespaceUris(void);
+		void namespaceElementVec(NamespaceElement::Vec& namespaceElementVec);
+		NamespaceElement::Vec& namespaceElementVec(void);
 
 		bool connect(void);
 		bool disconnect(void);
@@ -93,7 +94,7 @@ namespace OpcUaHistory
 		// runtime parameters
 		bool init_;
 		State state_;
-		NamespaceUris namespaceUris_;
+		NamespaceElement::Vec namespaceElementVec_;
 
 		SlotTimerElement::SPtr slotTimerElement_;
 		ServiceSetManager serviceSetManager_;
