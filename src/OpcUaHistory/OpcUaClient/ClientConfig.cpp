@@ -35,7 +35,7 @@ namespace OpcUaHistory
 	: id_("")
 	, samplingInterval_(0)
 	, queueSize_(0)
-	, dataChangeFilter_(StatusValue)
+	, dataChangeFilter_(DCT_StatusValue)
 	{
 	}
 
@@ -79,14 +79,14 @@ namespace OpcUaHistory
 		queueSize_ = queueSize;
 	}
 
-	DataChangeFilter
+	DataChangeTrigger
 	ClientMonitoredItemConfig::dataChangeFilter(void)
 	{
 		return dataChangeFilter_;
 	}
 
 	void
-	ClientMonitoredItemConfig::dataChangeFilter(DataChangeFilter dataChangeFilter)
+	ClientMonitoredItemConfig::dataChangeFilter(DataChangeTrigger dataChangeFilter)
 	{
 		dataChangeFilter_ = dataChangeFilter;
 	}
@@ -123,7 +123,7 @@ namespace OpcUaHistory
 
 		// data change filter
 		std::string dataChangeFilter;
-		DataChangeFilter dataChangeFilterType;
+		DataChangeTrigger dataChangeFilterType;
 		if (!config.getConfigParameter("DataChangeFilter", dataChangeFilter)) {
 			Log(Error, "element missing in config file")
 				.parameter("Element", configBase.elementPrefix() + ".DataChangeFilter")
@@ -132,19 +132,19 @@ namespace OpcUaHistory
 			return false;
 		}
 		if (dataChangeFilter == "status") {
-			dataChangeFilter_ = Status;
+			dataChangeFilter_ = DCT_Status;
 		}
 		else if (dataChangeFilter == "status-value") {
-			dataChangeFilter_ = StatusValue;
+			dataChangeFilter_ = DCT_StatusValue;
 		}
 		else if (dataChangeFilter == "status-value-timestamp") {
-			dataChangeFilter_ = StatusValueTimestamp;
+			dataChangeFilter_ = DCT_StatusValueTimestamp;
 		}
 		else {
 			Log(Error, "element invalid in config file")
-				.parameter("Element", configBase.elementPrefix() + ".DataChangeFilter")
+				.parameter("Element", configBase.elementPrefix() + ".DataChangeTrigger")
 				.parameter("MonitoredItemId", id_)
-				.parameter("DataChangeFilter", dataChangeFilter)
+				.parameter("DataChangeTrigger", dataChangeFilter)
 				.parameter("ConfigFileName", configBase.configFileName());
 			return false;
 		}

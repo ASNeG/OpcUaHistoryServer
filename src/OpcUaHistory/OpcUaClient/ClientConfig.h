@@ -19,8 +19,8 @@
 #define __OpcUaHistory_HistoryClientConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
+#include "OpcUaStackCore/BuildInTypes/DataChangeTrigger.h"
 #include "OpcUaHistory/OpcUaClient/ConfigBase.h"
-#include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
 
@@ -42,8 +42,8 @@ namespace OpcUaHistory
 		void samplingInterval(uint32_t samplingInterval);
 		uint32_t queueSize(void);
 		void queueSize(uint32_t queueSize);
-		DataChangeFilter dataChangeFilter(void);
-		void dataChangeFilter(DataChangeFilter dataChangeFilter);
+		DataChangeTrigger dataChangeFilter(void);
+		void dataChangeFilter(DataChangeTrigger dataChangeFilter);
 
 		bool decode(Config& config, ConfigBase& configBase);
 
@@ -51,7 +51,7 @@ namespace OpcUaHistory
 		std::string id_;
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
-		DataChangeFilter dataChangeFilter_;
+		DataChangeTrigger dataChangeFilter_;
 	};
 
 

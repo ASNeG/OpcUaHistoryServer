@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2016-2017 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -24,8 +24,8 @@
 #include <vector>
 #include <stdint.h>
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaStackCore/BuildInTypes/DataChangeTrigger.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
-#include "OpcUaHistory/OpcUaClient/DataChangeFilter.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackClient;
@@ -54,8 +54,8 @@ namespace OpcUaHistory
 		void samplingInterval(uint32_t samplingInterval);
 		uint32_t queueSize(void);
 		void queueSize(uint32_t queueSize);
-		DataChangeFilter dataChangeFilter(void);
-		void dataChangeFilter(DataChangeFilter dataChangeFilter);
+		DataChangeTrigger dataChangeFilter(void);
+		void dataChangeFilter(DataChangeTrigger dataChangeFilter);
 		OpcUaNodeId& nodeId(void);
 		void nodeId(OpcUaNodeId& nodeId);
 		void clientHandle(uint32_t clientHandle);
@@ -76,7 +76,7 @@ namespace OpcUaHistory
 		uint32_t samplingInterval_;
 		uint32_t queueSize_;
 		OpcUaNodeId nodeId_;
-		DataChangeFilter dataChangeFilter_;
+		DataChangeTrigger dataChangeFilter_;
 		uint32_t clientHandle_;
 
 		// runtime data

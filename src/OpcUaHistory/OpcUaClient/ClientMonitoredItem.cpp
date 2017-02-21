@@ -29,7 +29,7 @@ namespace OpcUaHistory
 	, samplingInterval_(250)
 	, queueSize_(1)
 	, nodeId_()
-	, dataChangeFilter_(StatusValue)
+	, dataChangeFilter_(DCT_StatusValue)
 	, clientHandle_(0)
 	, context_()
 	{
@@ -135,14 +135,14 @@ namespace OpcUaHistory
 		return context_;
 	}
 
-	DataChangeFilter
+	DataChangeTrigger
 	ClientMonitoredItem::dataChangeFilter(void)
 	{
 		return dataChangeFilter_;
 	}
 
 	void
-	ClientMonitoredItem::dataChangeFilter(DataChangeFilter dataChangeFilter)
+	ClientMonitoredItem::dataChangeFilter(DataChangeTrigger dataChangeFilter)
 	{
 		dataChangeFilter_ = dataChangeFilter;
 	}
