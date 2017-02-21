@@ -20,9 +20,10 @@
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackCore/BuildInTypes/DataChangeTrigger.h"
-#include "OpcUaHistory/OpcUaClient/ConfigBase.h"
+#include "OpcUaStackClient/ClientConnection/ConfigBase.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
