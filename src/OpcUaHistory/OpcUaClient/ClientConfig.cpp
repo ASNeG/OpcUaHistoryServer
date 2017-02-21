@@ -323,13 +323,26 @@ namespace OpcUaHistory
 	// -----------------------------------------------------------------------
 	// -----------------------------------------------------------------------
 	ClientEndpointConfig::ClientEndpointConfig(void)
-	: serverUri_("")
+	: serverUrn_("")
+	, serverUri_("")
 	, reconnectTimeout_(5000)
 	{
 	}
 
 	ClientEndpointConfig::~ClientEndpointConfig(void)
 	{
+	}
+
+	void
+	ClientEndpointConfig::serverUrn(const std::string& serverUrn)
+	{
+		serverUrn_ = serverUrn;
+	}
+
+	std::string&
+	ClientEndpointConfig::serverUrn(void)
+	{
+		return serverUrn_;
 	}
 
 	void
@@ -359,6 +372,10 @@ namespace OpcUaHistory
 	bool
 	ClientEndpointConfig::decode(Config& config, ConfigBase& configBase)
 	{
+
+		// ServerUrn
+		config.getConfigParameter("ServerUrn", serverUrn_, "");
+
 		// ServerUri
 		if (!config.getConfigParameter("ServerUri", serverUri_)) {
 			Log(Error, "element missing in config file")

@@ -94,6 +94,8 @@ namespace OpcUaHistory
 		ClientEndpointConfig(void);
 		~ClientEndpointConfig(void);
 
+		void serverUrn(const std::string& serverUrn);
+		std::string& serverUrn(void);
 		void serverUri(const std::string& serverUri);
 		std::string& serverUri(void);
 		void reconnectTimeout(uint32_t reconnectTimeout);
@@ -102,6 +104,7 @@ namespace OpcUaHistory
 		bool decode(Config& config, ConfigBase& configBase);
 
 	  private:
+		std::string serverUrn_;
 		std::string serverUri_;
 		uint32_t reconnectTimeout_;
 	};
