@@ -18,7 +18,7 @@
 #ifndef __OpcUaHistory_ApplicationClientConfigIf_h__
 #define __OpcUaHistory_ApplicationClientConfigIf_h__
 
-#include "OpcUaHistory/Interface/ConfigIf.h"
+#include "OpcUaHistory/Interface/ApplicationConfigIf.h"
 
 namespace OpcUaHistory
 {

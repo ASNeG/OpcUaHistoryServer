@@ -15,8 +15,8 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_ConfigIf_h__
-#define __OpcUaHistory_ConfigIf_h__
+#ifndef __OpcUaHistory_ApplicationConfigIf_h__
+#define __OpcUaHistory_ApplicationConfigIf_h__
 
 #include "OpcUaHistory/Interface/OpcUaReferenceConfig.h"
 #include <vector>
