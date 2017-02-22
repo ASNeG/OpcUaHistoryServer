@@ -21,7 +21,7 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
-#include "OpcUaStackClient/ClientConnection/ClientConfig.h"
+#include "OpcUaStackClient/ApplicationUtility/ClientConfig.h"
 #include "OpcUaHistory/Interface/HistoryStoreIf.h"
 #include "OpcUaHistory/Interface/ClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/ClientConnection.h"
