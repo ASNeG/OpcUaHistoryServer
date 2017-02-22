@@ -34,7 +34,7 @@ namespace OpcUaHistory
 		HistoryClientManager(void);
 		~HistoryClientManager(void);
 
-		void clientConfigIf(ClientConfigIf* clientConfigIf);
+		void clientConfigIf(ApplicationClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 
@@ -45,7 +45,7 @@ namespace OpcUaHistory
         bool shutdown(void);
 
 	  private:
-        ClientConfigIf* clientConfigIf_;
+        ApplicationClientConfigIf* clientConfigIf_;
         HistoryClient::Set historyClientSet_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;

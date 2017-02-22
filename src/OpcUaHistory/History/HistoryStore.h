@@ -31,7 +31,7 @@ namespace OpcUaHistory
 {
 
 	class HistoryStore
-	: public ClientConfigIf
+	: public ApplicationClientConfigIf
 	, public ServerConfigIf
 	{
 	  public:

@@ -38,7 +38,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	HistoryClient::clientConfigIf(ClientConfigIf* clientConfigIf)
+	HistoryClient::clientConfigIf(ApplicationClientConfigIf* clientConfigIf)
 	{
 		clientConfigIf_ = clientConfigIf;
 	}

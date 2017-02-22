@@ -45,7 +45,7 @@ namespace OpcUaHistory
 		HistoryClient(void);
 		~HistoryClient(void);
 
-		void clientConfigIf(ClientConfigIf* clientConfigIf);
+		void clientConfigIf(ApplicationClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 
@@ -70,7 +70,7 @@ namespace OpcUaHistory
 
         uint32_t clientHandle_;
         VariableElement::Vec variableElementVec_;
-        ClientConfigIf* clientConfigIf_;
+        ApplicationClientConfigIf* clientConfigIf_;
         ClientConfig clientConfig_;
         ClientConnection clientConnection_;
         IOThread::SPtr ioThread_;
