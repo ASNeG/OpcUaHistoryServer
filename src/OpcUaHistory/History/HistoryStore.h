@@ -22,7 +22,7 @@
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 #include "OpcUaHistory/History/FileHistoryStore.h"
-#include "OpcUaHistory/Interface/ClientConfigIf.h"
+#include "OpcUaHistory/Interface/ApplicationClientConfigIf.h"
 #include "OpcUaHistory/Interface/ServerConfigIf.h"
 
 using namespace OpcUaStackCore;

@@ -21,7 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
-#include "OpcUaHistory/Interface/ClientConfigIf.h"
+#include "OpcUaHistory/Interface/ApplicationClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/ClientSubscription.h"
 #include <map>
 #include <set>
