@@ -45,6 +45,7 @@ namespace OpcUaHistory
 
 	ClientConnection::~ClientConnection(void)
 	{
+		serviceSetManager_.deregisterIOThread("GlobalIOThread");
 	}
 
 	void
