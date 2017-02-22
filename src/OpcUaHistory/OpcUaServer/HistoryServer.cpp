@@ -89,7 +89,7 @@ namespace OpcUaHistory
 	}
 
 	void
-	HistoryServer::serverConfigIf(ServerConfigIf* serverConfigIf)
+	HistoryServer::serverConfigIf(ApplicationServerConfigIf* serverConfigIf)
 	{
 		serverConfigIf_ = serverConfigIf;
 	}

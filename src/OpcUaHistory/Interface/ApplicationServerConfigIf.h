@@ -15,19 +15,19 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaHistory_ServerConfigIf_h__
-#define __OpcUaHistory_ServerConfigIf_h__
+#ifndef __OpcUaHistory_ApplicationServerConfigIf_h__
+#define __OpcUaHistory_ApplicationServerConfigIf_h__
 
 #include "OpcUaHistory/Interface/ApplicationConfigIf.h"
 
 namespace OpcUaHistory
 {
 
-	class ServerConfigIf
+	class ApplicationServerConfigIf
 	{
 	  public:
-		ServerConfigIf(void) {}
-		virtual ~ServerConfigIf(void) {}
+		ApplicationServerConfigIf(void) {}
+		virtual ~ApplicationServerConfigIf(void) {}
 
 		virtual void serverNamespaces(NamespaceElement::Vec& namespaceElementVec) = 0;
 		virtual void serverVariables(VariableElement::Vec& variableElementVec) = 0;

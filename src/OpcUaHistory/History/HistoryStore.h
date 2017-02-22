@@ -23,7 +23,7 @@
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 #include "OpcUaHistory/History/FileHistoryStore.h"
 #include "OpcUaHistory/Interface/ApplicationClientConfigIf.h"
-#include "OpcUaHistory/Interface/ServerConfigIf.h"
+#include "OpcUaHistory/Interface/ApplicationServerConfigIf.h"
 
 using namespace OpcUaStackCore;
 
@@ -32,7 +32,7 @@ namespace OpcUaHistory
 
 	class HistoryStore
 	: public ApplicationClientConfigIf
-	, public ServerConfigIf
+	, public ApplicationServerConfigIf
 	{
 	  public:
 		HistoryStore(void);

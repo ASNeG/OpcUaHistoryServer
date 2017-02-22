@@ -25,7 +25,7 @@
 #include "OpcUaStackCore/Application/ApplicationHWriteContext.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaHistory/Interface/HistoryStoreIf.h"
-#include "OpcUaHistory/Interface/ServerConfigIf.h"
+#include "OpcUaHistory/Interface/ApplicationServerConfigIf.h"
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 
 
@@ -66,7 +66,7 @@ namespace OpcUaHistory
 		HistoryServer(void);
 		~HistoryServer(void);
 
-		void serverConfigIf(ServerConfigIf* serverConfigIf);
+		void serverConfigIf(ApplicationServerConfigIf* serverConfigIf);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
 		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
 
@@ -94,7 +94,7 @@ namespace OpcUaHistory
 	    bool registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref);
 
 
-	    ServerConfigIf* serverConfigIf_;
+	    ApplicationServerConfigIf* serverConfigIf_;
 	    HistoryStoreIf* historyStoreIf_;
 	    ApplicationServiceIf* applicationServiceIf_;
 
