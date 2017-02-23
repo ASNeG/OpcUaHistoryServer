@@ -18,7 +18,9 @@
 #ifndef __OpcUaHistory_ApplicationServerConfigIf_h__
 #define __OpcUaHistory_ApplicationServerConfigIf_h__
 
-#include "OpcUaHistory/Interface/ApplicationConfigIf.h"
+#include "OpcUaStackCore/ApplicationUtility/ApplicationConfigIf.h"
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
