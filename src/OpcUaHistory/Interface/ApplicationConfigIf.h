@@ -18,8 +18,10 @@
 #ifndef __OpcUaHistory_ApplicationConfigIf_h__
 #define __OpcUaHistory_ApplicationConfigIf_h__
 
-#include "OpcUaHistory/Interface/OpcUaReferenceConfig.h"
+#include "OpcUaStackCore/ApplicationUtility/OpcUaReferenceConfig.h"
 #include <vector>
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaHistory
 {
