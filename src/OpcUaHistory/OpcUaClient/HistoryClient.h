@@ -22,9 +22,11 @@
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaStackClient/ApplicationUtility/ClientConfig.h"
+#include "OpcUaStackClient/ApplicationUtility/ApplicationClientConfigIf.h"
 #include "OpcUaHistory/Interface/HistoryStoreIf.h"
-#include "OpcUaHistory/Interface/ApplicationClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/ClientConnection.h"
+
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {

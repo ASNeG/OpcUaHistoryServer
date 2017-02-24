@@ -20,10 +20,11 @@
 
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
-#include "OpcUaHistory/Interface/ApplicationClientConfigIf.h"
+#include "OpcUaStackClient/ApplicationUtility/ApplicationClientConfigIf.h"
 #include "OpcUaHistory/OpcUaClient/HistoryClient.h"
 
 using namespace OpcUaStackCore;
+using namespace OpcUaStackClient;
 
 namespace OpcUaHistory
 {
