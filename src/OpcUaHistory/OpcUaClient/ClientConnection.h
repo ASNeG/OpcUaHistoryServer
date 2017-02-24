@@ -22,7 +22,7 @@
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ServiceSet/ServiceSetManager.h"
 #include "OpcUaStackClient/ApplicationUtility/ApplicationClientConfigIf.h"
-#include "OpcUaHistory/OpcUaClient/ClientSubscription.h"
+#include "OpcUaStackClient/ApplicationUtility/ClientSubscription.h"
 #include <map>
 #include <set>
 #include <vector>
