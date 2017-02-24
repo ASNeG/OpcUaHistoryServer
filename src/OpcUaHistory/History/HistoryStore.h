@@ -21,12 +21,13 @@
 #include "OpcUaStackCore/Base/Config.h"
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackClient/ApplicationUtility/ApplicationClientConfigIf.h"
+#include "OpcUaStackServer/ApplicationUtility/ApplicationServerConfigIf.h"
 #include "OpcUaHistory/History/HistoryStoreModelConfig.h"
 #include "OpcUaHistory/History/FileHistoryStore.h"
-#include "OpcUaHistory/Interface/ApplicationServerConfigIf.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackClient;
+using namespace OpcUaStackServer;
 
 namespace OpcUaHistory
 {
