@@ -189,7 +189,7 @@ namespace OpcUaHistory
     bool
     HistoryClient::shutdown(void)
     {
-    	clientConnection_.disconnect();
+    	clientConnection_.syncDisconnect();
     	return true;
     }
 
