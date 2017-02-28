@@ -129,13 +129,13 @@ namespace OpcUaHistory
 	{
 		Log(Debug, "Library::shutdown");
 
-        if (!ioThread_->shutdown()) return false;
-        ioThread_.reset();
-
         // shutdown history client and history server
         if (!historyServer_.shutdown()) return false;
         if (!historyClientManager_.shutdown()) return false;
         if (!historyStore_.shutdown()) return false;
+
+        if (!ioThread_->shutdown()) return false;
+        ioThread_.reset();
 
 		return true;
 	}
