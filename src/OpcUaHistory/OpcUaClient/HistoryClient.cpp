@@ -83,8 +83,8 @@ namespace OpcUaHistory
     	}
 
     	// open connection to server
-    	return clientConnection_.connect();
-
+    	clientConnection_.connect();
+    	return true;
     }
 
     bool
