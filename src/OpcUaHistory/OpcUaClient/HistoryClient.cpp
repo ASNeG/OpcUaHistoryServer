@@ -75,6 +75,7 @@ namespace OpcUaHistory
     	// configure client connection
     	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
     	clientConnection_.reconnectTimeout(clientConfig_.clientEndpointConfig().reconnectTimeout());
+    	clientConnection_.sessionName("OpcUaHistoryServer");
     	clientConnection_.ioThread(ioThread_);
     	clientConnection_.namespaceElementVec(namespaceElementVec);
 
