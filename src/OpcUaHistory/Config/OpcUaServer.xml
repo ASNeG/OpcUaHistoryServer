@@ -30,8 +30,21 @@
     
   </Logging>
    
+  <DiscoveryServer>
+      <DiscoveryUrl>opc.tcp://localhost:4840</DiscoveryUrl>
+      <RegisterInterval>40000</RegisterInterval>
+  </DiscoveryServer>
+   
   <Endpoints>
     <EndpointDescription>
+      <EndpointUrl>opc.tcp://0.0.0.0:8895</EndpointUrl>
+	  <ApplicationUri>urn:ASNeG:OpcUaHistory</ApplicationUri>
+	  <ProductUri>urn:ASNeG:OpcUaHistory</ProductUri>
+	  <ApplicationName>OpcUaHistory</ApplicationName>
+	  <DiscoveryUrl>opc.tcp://0.0.0.0:8895</DiscoveryUrl>	
+	  <GatewayServerUri></GatewayServerUri>
+    
+    
 	  <EndpointUrl>opc.tcp://0.0.0.0:8895/0.0.0.0</EndpointUrl>
 	  <ApplicationUri>urn:localhost:OpcUaServer::TestAppl</ApplicationUri>
 	  <ProductUri>urn:company:OpcUaServer</ProductUri>
