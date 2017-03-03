@@ -80,7 +80,11 @@ namespace OpcUaHistory
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;
 
+        // discovery parameters
         Config* mainConfig_;
+        bool startupDiscovery(void);
+        bool shutdownDiscovery(void);
+        bool discoveryEnabled_;
         DiscoveryClientFindServers discoveryClient_;
 	};
 

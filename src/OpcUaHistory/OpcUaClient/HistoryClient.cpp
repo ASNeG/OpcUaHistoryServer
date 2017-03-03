@@ -32,6 +32,7 @@ namespace OpcUaHistory
 	, historyStoreIf_(nullptr)
 	, discoveryClient_()
 	, mainConfig_(nullptr)
+	, discoveryEnabled_(false)
 	{
 	}
 
@@ -81,7 +82,9 @@ namespace OpcUaHistory
 		clientConfigIf_->clientVariables(variableElementVec_);
 
 		// startup discovery service
-		// FIXME: todo
+		if (!startupDiscovery()) {
+			return false;
+		}
 
     	// configure client connection
     	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
@@ -202,7 +205,7 @@ namespace OpcUaHistory
     HistoryClient::shutdown(void)
     {
     	// shutdown discovery client
-    	// FIXME: todo
+    	shutdownDiscovery();
 
     	// close client connection
     	clientConnection_.syncDisconnect();
@@ -216,5 +219,41 @@ namespace OpcUaHistory
     	historyStoreIf_->write(clientMonitoredItem->context(), dataValue);
     }
 
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    //
+    // discovery process
+    //
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    bool
+    HistoryClient::startupDiscovery(void)
+    {
+    	// read discover uri from configuration file
+    	std::string discoveryUri = "";
+    	mainConfig_->getConfigParameter("OpcUaServer.DiscoveryServer.DiscoveryUrl", discoveryUri, "");
 
+    	// read server urn
+    	std::string serverUrn = clientConfig_.clientEndpointConfig().serverUrn();
+
+    	// check if discovery process is enabled
+    	if (discoveryUri.empty() || serverUrn.empty()) {
+    		return true;
+    	}
+
+    	// startup discovery client
+    	discoveryEnabled_ = true;
+    	discoveryClient_.ioThread(ioThread_);
+    	discoveryClient_.discoveryUri(discoveryUri);
+    	return discoveryClient_.startup();
+    }
+
+    bool
+    HistoryClient::shutdownDiscovery(void)
+    {
+    	if (discoveryEnabled_) {
+    		discoveryClient_.shutdown();
+    	}
+    	return true;
+    }
 }
