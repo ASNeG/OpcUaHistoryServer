@@ -245,7 +245,11 @@ namespace OpcUaHistory
     	discoveryEnabled_ = true;
     	discoveryClient_.ioThread(ioThread_);
     	discoveryClient_.discoveryUri(discoveryUri);
-    	return discoveryClient_.startup();
+    	if (!discoveryClient_.startup()) {
+    		return false;
+    	}
+    	clientConnection_.discoveryIf(&discoveryClient_, serverUrn);
+    	return true;
     }
 
     bool
