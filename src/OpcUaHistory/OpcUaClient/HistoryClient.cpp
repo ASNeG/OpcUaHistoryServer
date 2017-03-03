@@ -30,6 +30,8 @@ namespace OpcUaHistory
 	, clientConfig_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
+	, discoveryClient_()
+	, mainConfig_(nullptr)
 	{
 	}
 
@@ -55,6 +57,12 @@ namespace OpcUaHistory
 		historyStoreIf_ = historyStoreIf;
 	}
 
+	void
+	HistoryClient::mainConfig(Config* config)
+	{
+		mainConfig_ = config;
+	}
+
     bool
     HistoryClient::startup(
     	const std::string& fileName,
@@ -71,6 +79,9 @@ namespace OpcUaHistory
 
 		// get client references
 		clientConfigIf_->clientVariables(variableElementVec_);
+
+		// startup discovery service
+		// FIXME: todo
 
     	// configure client connection
     	clientConnection_.serverUri(clientConfig_.clientEndpointConfig().serverUri());
@@ -190,7 +201,12 @@ namespace OpcUaHistory
     bool
     HistoryClient::shutdown(void)
     {
+    	// shutdown discovery client
+    	// FIXME: todo
+
+    	// close client connection
     	clientConnection_.syncDisconnect();
+
     	return true;
     }
 

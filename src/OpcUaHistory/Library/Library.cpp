@@ -111,6 +111,7 @@ namespace OpcUaHistory
         historyClientManager_.ioThread(ioThread_);
         historyClientManager_.historyStoreIf(historyStoreIf);
         historyClientManager_.clientConfigIf(&historyStore_);
+        historyClientManager_.mainConfig(this->config());
         if (!historyClientManager_.startup(configClients, configXmlManager_)) return false;
 
         // start history server

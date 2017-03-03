@@ -29,6 +29,7 @@ namespace OpcUaHistory
 	, historyClientSet_()
 	, ioThread_()
 	, historyStoreIf_(nullptr)
+	, mainConfig_(nullptr)
 	{
 	}
 
@@ -54,6 +55,12 @@ namespace OpcUaHistory
 		historyStoreIf_ = historyStoreIf;
 	}
 
+	void
+	HistoryClientManager::mainConfig(Config* config)
+	{
+		mainConfig_ = config;
+	}
+
     bool
     HistoryClientManager::startup(
     	std::vector<std::string>& configFiles,
@@ -68,6 +75,7 @@ namespace OpcUaHistory
     		historyClient->clientConfigIf(clientConfigIf_);
     		historyClient->ioThread(ioThread_);
     		historyClient->historyStoreIf(historyStoreIf_);
+    		historyClient->mainConfig(mainConfig_);
     		if (!historyClient->startup(*it, configXmlManager)) {
     			return false;
     		}

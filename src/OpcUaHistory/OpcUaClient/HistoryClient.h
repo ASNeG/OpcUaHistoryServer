@@ -24,6 +24,7 @@
 #include "OpcUaStackClient/ApplicationUtility/ClientConfig.h"
 #include "OpcUaStackClient/ApplicationUtility/ApplicationClientConfigIf.h"
 #include "OpcUaStackClient/ApplicationUtility/ClientConnection.h"
+#include "OpcUaStackClient/ApplicationUtility/DiscoveryClientFindServers.h"
 #include "OpcUaHistory/Interface/HistoryStoreIf.h"
 
 using namespace OpcUaStackClient;
@@ -50,6 +51,7 @@ namespace OpcUaHistory
 		void clientConfigIf(ApplicationClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+		void mainConfig(Config* config);
 
         bool startup(const std::string& fileName, ConfigXmlManager& configXmlManager);
         bool shutdown(void);
@@ -77,6 +79,9 @@ namespace OpcUaHistory
         ClientConnection clientConnection_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;
+
+        Config* mainConfig_;
+        DiscoveryClientFindServers discoveryClient_;
 	};
 
 }

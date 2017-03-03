@@ -38,6 +38,7 @@ namespace OpcUaHistory
 		void clientConfigIf(ApplicationClientConfigIf* clientConfigIf);
 		void ioThread(IOThread::SPtr& ioThread);
 		void historyStoreIf(HistoryStoreIf* historyStoreIf);
+		void mainConfig(Config* config);
 
         bool startup(
         	std::vector<std::string>& configFiles,
@@ -50,6 +51,7 @@ namespace OpcUaHistory
         HistoryClient::Set historyClientSet_;
         IOThread::SPtr ioThread_;
         HistoryStoreIf* historyStoreIf_;
+        Config* mainConfig_;
 	};
 
 }
