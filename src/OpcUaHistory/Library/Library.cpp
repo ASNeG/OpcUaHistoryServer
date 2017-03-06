@@ -35,12 +35,10 @@ namespace OpcUaHistory
 	, historyClientManager_()
 	, historyServer_()
 	{
-		Log(Debug, "Library::Library");
 	}
 
 	Library::~Library(void)
 	{
-		Log(Debug, "Library::~Library");
 	}
 
 	bool
