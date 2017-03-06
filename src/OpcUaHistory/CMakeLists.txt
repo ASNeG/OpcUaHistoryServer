@@ -6,6 +6,11 @@
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 configure_file(
+    "${PROJECT_SOURCE_DIR}/OpcUaHistory/Build/BuildConfig.h.in"
+    "${PROJECT_BINARY_DIR}/BuildConfig.h"
+)
+
+configure_file(
     "${PROJECT_SOURCE_DIR}/OpcUaHistory/linux/etc/init/OpcUaHistory.conf.in"
     "${PROJECT_BINARY_DIR}/OpcUaHistory.conf"
 )
@@ -30,6 +35,7 @@ configure_file(
 # -----------------------------------------------------------------------------
 include_directories(
     ${OPCUASTACK_INSTALL_PREFIX}/usr/include/OpcUaStack${OPCUASTACK_VERSION_MAJOR}
+    ${PROJECT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}
     ${Boost_INCLUDE_DIR}
     ${OPENSSL_INCLUDE_DIR}
