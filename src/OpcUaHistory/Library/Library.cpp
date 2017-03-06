@@ -45,8 +45,6 @@ namespace OpcUaHistory
 	bool
 	Library::startup(void)
 	{
-		std::cout << "VERSION= " << this->version() << std::endl;
-
 		bool success;
 		std::vector<Config>::iterator it1;
 		std::vector<std::string>::iterator it2;
