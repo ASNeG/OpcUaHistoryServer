@@ -210,12 +210,12 @@ namespace OpcUaHistory
     bool
     HistoryServer::registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref)
     {
-	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
+	  	ServiceTransactionRegisterForwardNode::SPtr trx = constructSPtr<ServiceTransactionRegisterForwardNode>();
 	  	RegisterForwardNodeRequest::SPtr req = trx->request();
 	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 	  	
-        req->forwardCallbackSync()->readHService().setCallback(hReadCallback_);
-	  	req->forwardCallbackSync()->writeHService().setCallback(hWriteCallback_);
+        req->forwardNodeSync()->readHService().setCallback(hReadCallback_);
+	  	req->forwardNodeSync()->writeHService().setCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(1);
 
 	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
