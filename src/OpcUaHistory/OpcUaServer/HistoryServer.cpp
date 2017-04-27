@@ -211,11 +211,11 @@ namespace OpcUaHistory
     HistoryServer::registerServerCallbacks(VariableElement& variableElement, OpcUaReferenceConfig::SPtr& ref)
     {
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardRequest::SPtr req = trx->request();
-	  	RegisterForwardResponse::SPtr res = trx->response();
+	  	RegisterForwardNodeRequest::SPtr req = trx->request();
+	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 	  	
-        req->forwardInfoSync()->readHService().setCallback(hReadCallback_);
-	  	req->forwardInfoSync()->writeHService().setCallback(hWriteCallback_);
+        req->forwardCallbackSync()->readHService().setCallback(hReadCallback_);
+	  	req->forwardCallbackSync()->writeHService().setCallback(hWriteCallback_);
 	  	req->nodesToRegister()->resize(1);
 
 	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
