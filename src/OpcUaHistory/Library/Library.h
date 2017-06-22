@@ -41,6 +41,7 @@ namespace OpcUaHistory
 		//- ApplicationIf -----------------------------------------------------
 		virtual bool startup(void);
 		virtual bool shutdown(void);
+		virtual std::string version(void);
 		//- ApplicationIf -----------------------------------------------------
 
 	  private:

@@ -22,6 +22,7 @@
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
 #include "OpcUaHistory/Library/Library.h"
 #include <iostream>
+#include "BuildConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -35,12 +36,10 @@ namespace OpcUaHistory
 	, historyClientManager_()
 	, historyServer_()
 	{
-		Log(Debug, "Library::Library");
 	}
 
 	Library::~Library(void)
 	{
-		Log(Debug, "Library::~Library");
 	}
 
 	bool
@@ -139,6 +138,15 @@ namespace OpcUaHistory
         ioThread_.reset();
 
 		return true;
+	}
+
+	std::string
+	Library::version(void)
+	{
+		std::stringstream version;
+
+		version << LIBRARY_VERSION_MAJOR << "." << LIBRARY_VERSION_MINOR << "." << LIBRARY_VERSION_PATCH;
+		return version.str();
 	}
 
 }
