@@ -1,5 +1,5 @@
 <!--
-   Copyright 2015 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2018 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -14,6 +14,8 @@
 
    Autor: Kai Huebl (kai@huebl-sgh.de)
 -->
+
+<!-- 
 
 <OpcUaServer>
 
@@ -59,37 +61,6 @@
 	  <SecurityLevel>0</SecurityLevel>
 	</EndpointDescription>
 
-	<!--
-    <EndpointDescription>
-	  <EndpointUrl>opc.tcp://0.0.0.0:4888/0.0.0.0</EndpointUrl>
-	  <ApplicationUri>urn:localhost:OpcUaServer::TestAppl</ApplicationUri>
-	  <ProductUri>urn:company:OpcUaServer</ProductUri>
-	  <ApplicationName>OpcUaServer</ApplicationName>
-	  <DiscoveryUrl>opc.tcp://localhost:4841/0.0.0.0</DiscoveryUrl>	
-	  <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#None</SecurityPolicyUri>
-	  <UserTokenPolicy>
-	    <PolicyId>OpcUaStack</PolicyId>
-		<TokenType>Anonymous</TokenType>
-	  </UserTokenPolicy>
-	  <TransportProfileUri>http://opcfoundation.org/UA-Profile/Transport/uatcp-uasc-uabinary</TransportProfileUri>
-	  <SecurityLevel>1</SecurityLevel>
-	</EndpointDescription>
-	
-    <EndpointDescription>
-	  <EndpointUrl>opc.tcp://0.0.0.0:4888/0.0.0.0</EndpointUrl>
-	  <ApplicationUri>urn:localhost:OpcUaServer::TestAppl</ApplicationUri>
-	  <ProductUri>urn:company:OpcUaServer</ProductUri>
-	  <ApplicationName>OpcUaServer</ApplicationName>
-	  <DiscoveryUrl>opc.tcp://localhost:4841/0.0.0.0</DiscoveryUrl>	
-	  <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#None</SecurityPolicyUri>
-	  <UserTokenPolicy>
-	    <PolicyId>OpcUaStack</PolicyId>
-		<TokenType>Anonymous</TokenType>
-	  </UserTokenPolicy>
-	  <TransportProfileUri>http://opcfoundation.org/UA-Profile/Transport/uatcp-uasc-uabinary</TransportProfileUri>
-	  <SecurityLevel>2</SecurityLevel>
-	</EndpointDescription>
-	-->
   </Endpoints>
 
   <Applications>
@@ -106,4 +77,138 @@
     <NodeSetFile>@CONF_DIR@/Opc.Ua.History.NodeSet.xml</NodeSetFile>
   </InformationModel>
 
+</OpcUaServer>
+
+
+-->
+
+
+
+
+<OpcUaServer>
+
+  <Logging>
+    <FileLogger>
+      <LogFileName>@CONF_DIR@/../../../var/log/OpcUaStack/OpcUaHistory/OpcUaServer.log</LogFileName>
+      <MaxLogFileNumber>20</MaxLogFileNumber>
+      <MaxLogFileSize>5000000</MaxLogFileSize>
+      <LogLevel>Trace</LogLevel>
+    </FileLogger>
+    
+    <Log4cxxLogger>
+    </Log4cxxLogger>
+    
+    <SecureChannelLog>1</SecureChannelLog>
+    
+  </Logging>
+  
+  <DiscoveryServer>
+      <DiscoveryUrl>opc.tcp://localhost:4840</DiscoveryUrl>
+      <RegisterInterval>40000</RegisterInterval>
+  </DiscoveryServer>
+  
+  <Endpoints>
+    <EndpointDescription>
+	  <EndpointUrl>opc.tcp://127.0.0.1:8895</EndpointUrl>
+	  <ApplicationUri>urn:127.0.0.1:ASNeG:OpcUaHistory</ApplicationUri>
+	  <ProductUri>urn:ASNeG:OpcUaHistory</ProductUri>
+	  <ApplicationName>OpcUaHistory</ApplicationName>
+	  <DiscoveryUrl>opc.tcp://127.0.0.1:8895</DiscoveryUrl>	
+	  <GatewayServerUri></GatewayServerUri>
+	  <!-- <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#None</SecurityPolicyUri> -->
+	  
+	  <SecuritySetting>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#None</SecurityPolicyUri>
+	    <MessageSecurityMode>None</MessageSecurityMode>
+	  </SecuritySetting>
+	  <SecuritySetting>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15</SecurityPolicyUri>
+	    <MessageSecurityMode>SignAndEncrypt</MessageSecurityMode>
+	  </SecuritySetting>
+	  <SecuritySetting>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic256</SecurityPolicyUri>
+	    <MessageSecurityMode>SignAndEncrypt</MessageSecurityMode>
+	  </SecuritySetting>
+	  <SecuritySetting>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256</SecurityPolicyUri>
+	    <MessageSecurityMode>SignAndEncrypt</MessageSecurityMode>
+	  </SecuritySetting>
+	  
+	  <UserTokenPolicy>
+	    <PolicyId>OpcUaStack1</PolicyId>
+	    <TokenType>Anonymous</TokenType>
+	  </UserTokenPolicy>
+	  <UserTokenPolicy>
+	    <PolicyId>OpcUaStack2</PolicyId>
+	    <TokenType>Username</TokenType>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic256</SecurityPolicyUri>
+	  </UserTokenPolicy>
+	  <UserTokenPolicy>
+	    <PolicyId>OpcUaStack3</PolicyId>
+	    <TokenType>IssuedToken</TokenType>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic256</SecurityPolicyUri>
+	  </UserTokenPolicy>
+	  <UserTokenPolicy>
+	    <PolicyId>OpcUaStack3</PolicyId>
+	    <TokenType>Certificate</TokenType>
+	    <SecurityPolicyUri>http://opcfoundation.org/UA/SecurityPolicy#Basic256</SecurityPolicyUri>
+	  </UserTokenPolicy>
+	  <TransportProfileUri>http://opcfoundation.org/UA-Profile/Transport/uatcp-uasc-uabinary</TransportProfileUri>
+	  <SecurityLevel>0</SecurityLevel>
+	</EndpointDescription>
+  </Endpoints>
+  
+  <ServerInfo>
+      <ServerUri>urn:@HOSTNAME@:ASNeG:OpcUaHistory</ServerUri>
+      <ServerName>OpcUaHistory@@HOSTNAME@</ServerName>
+  </ServerInfo>
+
+  <ApplicationCertificate>
+  
+      <Folder>
+          <CertificateTrustListLocation>@CONF_DIR@/pki/trusted/certs/</CertificateTrustListLocation>
+          <CertificateRevocationListLocation>@CONF_DIR@/pki/trusted/crl/</CertificateRevocationListLocation>
+          <IssuersCertificatesLocation>@CONF_DIR@/pki/issuers/certs/</IssuersCertificatesLocation>
+          <IssuersRevocationListLocation>@CONF_DIR@/pki/issuers/crl/</IssuersRevocationListLocation>
+          <CertificateRejectListLocation>@CONF_DIR@/pki/reject/certs/</CertificateRejectListLocation>
+      </Folder>
+  
+      <Files>
+          <ApplicationCertificateFile>@CONF_DIR@/pki/own/certs/OpcUaHistory.der</ApplicationCertificateFile>
+          <PrivateKeyFile>@CONF_DIR@/pki/own/private/OpcUaHistory.pem</PrivateKeyFile>
+      </Files>
+      
+      <CertificateSettings>
+          <GenerateCertificate>true</GenerateCertificate>
+          
+          <CommonName>OpcUaHistory</CommonName>		
+          <DomainComponent>127.0.0.1</DomainComponent>	
+          <Organization>ASNeG</Organization>
+          <OrganizationUnit>OPC UA Service Department</OrganizationUnit>
+          <Locality>Neukirchen</Locality>
+          <State>Hessen</State>
+          <Country>DE</Country>
+          <YearsValidFor>5</YearsValidFor>
+          <KeyLength>2048</KeyLength>
+          <CertificateType>RsaSha256</CertificateType>
+          <IPAddress>127.0.0.1</IPAddress>
+          <DNSName>ASNeG.de</DNSName>
+          <EMail>info@ASNeG.de</EMail>
+      </CertificateSettings>
+      
+  </ApplicationCertificate>
+  
+  <Applications>
+    <Application>
+      <Name>OpcUaHistory</Name>  
+      <Library>OpcUaHistory</Library>
+      <Config>@CONF_DIR@/HistoryModel.xml</Config>
+    </Application>
+  </Applications>
+ 
+  
+  <InformationModel>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.History.NodeSet.xml</NodeSetFile>
+  </InformationModel>
 </OpcUaServer>
